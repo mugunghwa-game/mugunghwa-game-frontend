@@ -13,6 +13,15 @@ const ButtonBody = styled.button`
   font-size: 25px;
   border-radius: 20px;
   border-style: none;
+
+  :hover {
+    background-color: #fbddcf;
+    transform: translateY(-3px);
+  }
+
+  :active {
+    transform: translateY(3px);
+  }
 `;
 
 export default Button;
