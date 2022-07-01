@@ -29,6 +29,7 @@ const Winner = styled.div`
   font-size: 45px;
   text-align: center;
   margin-top: 100px;
+
   .win {
     color: #f47676;
   }

@@ -13,7 +13,6 @@ function App() {
       <Route path="/waitingRoom" element={<WaitingRoom />} />
       <Route path="/it" element={<ItPage />} />
       <Route path="/participant" element={<Participant />} />
-
       <Route path="/ending" element={<EndingPage />} />
     </Routes>
   );

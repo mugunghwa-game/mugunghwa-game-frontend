@@ -36,6 +36,7 @@ const Description = styled.div`
   margin-top: 20px;
   text-align: center;
   font-size: 20px;
+
   .color {
     color: #199816;
   }
