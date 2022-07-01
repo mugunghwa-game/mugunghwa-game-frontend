@@ -88,11 +88,20 @@ const Content = styled.div`
     margin-top: 60px;
     margin-inline: auto;
     border-radius: 20px;
+    cursor: pointer;
 
     .choice {
       padding-top: 15px;
       margin-left: 20px;
-      cursor: pointer;
+    }
+
+    :hover {
+      background-color: #ffe9e0;
+      transform: translateY(-3px);
+    }
+
+    :active {
+      transform: translateY(3px);
     }
   }
 

@@ -11,7 +11,7 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
   };
 
   return (
-    <Content>
+    <Content modalTitle={modalTitle}>
       <h3>
         <MdClose onClick={handleClick} />
       </h3>
@@ -20,10 +20,10 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
         {modalTitle}
       </h2>
       <hr />
-      <h2 className="difficulty"> {modalText}</h2>
+      <h2 className="description"> {modalText}</h2>
       {modalTitle === "난이도 선택" && (
         <>
-          <div className="none"></div>
+          <div className="none" />
           <span className="buttonWarp">
             <span className="easy">
               <Button>쉬움</Button>
@@ -43,14 +43,17 @@ const Content = styled.div`
     width: 30px;
     height: 70px;
     vertical-align: middle;
+    margin-right: 5px;
   }
 
   .none {
     height: 40px;
   }
 
-  .difficulty {
-    margin-top: 30px;
+  .description {
+    margin-top: ${(props) =>
+      props.modalTitle === "난이도 선택" ? "30px" : "4px"};
+    line-height: 50px;
   }
 
   h3 {
