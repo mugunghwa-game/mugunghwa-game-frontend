@@ -28,7 +28,6 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
             <span className="easy">
               <Button>쉬움</Button>
             </span>
-
             <span className="difficult">
               <Button>어려움</Button>
             </span>
@@ -54,10 +53,6 @@ const Content = styled.div`
     margin-top: 30px;
   }
 
-  .easy {
-    margin-right: 80px;
-  }
-
   h3 {
     text-align: end;
     cursor: pointer;
@@ -68,7 +63,8 @@ const Content = styled.div`
   }
 
   .buttonWarp {
-    margin-right: 80px;
+    display: flex;
+    justify-content: space-around;
   }
 `;
 
