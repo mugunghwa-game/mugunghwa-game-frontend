@@ -12,7 +12,7 @@ function WaitingRoom() {
   const [shoulDisplayModal, setShouldDisplayModal] = useState(false);
   const [shoulDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -23,7 +23,7 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    navigator("/it");
+    navigate("/countdown");
   };
 
   return (

@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
+import Countdown from "./components/Countdown";
 import EndingPage from "./components/EndingPage";
 import ItPage from "./components/ItPage";
 import Main from "./components/Main";
@@ -12,6 +13,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Main />} />
       <Route path="/waitingRoom" element={<WaitingRoom />} />
+      <Route path="/countdown" element={<Countdown />} />
       <Route path="/it" element={<ItPage />} />
       <Route path="/participant" element={<Participant />} />
       <Route path="/ending" element={<EndingPage />} />
