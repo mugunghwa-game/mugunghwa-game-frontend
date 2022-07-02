@@ -29,9 +29,9 @@ function Main() {
 }
 
 const Sentence = styled.div`
+  margin-left: 150px;
   text-align: left;
   font-size: 65px;
-  margin-left: 150px;
 
   .flower {
     color: #f47676;
@@ -45,8 +45,8 @@ const Sentence = styled.div`
   img {
     position: relative;
     width: 570px;
-    float: right;
     margin-right: 100px;
+    float: right;
   }
 `;
 

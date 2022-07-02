@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 
 import Countdown from "./components/Countdown";
-import EndingPage from "./components/EndingPage";
-import ItPage from "./components/ItPage";
+import Ending from "./components/Ending";
+import It from "./components/It";
 import Main from "./components/Main";
 import NotFound from "./components/NotFound";
 import Participant from "./components/Participant";
@@ -14,9 +14,9 @@ function App() {
       <Route path="/" element={<Main />} />
       <Route path="/waitingRoom" element={<WaitingRoom />} />
       <Route path="/countdown" element={<Countdown />} />
-      <Route path="/it" element={<ItPage />} />
+      <Route path="/it" element={<It />} />
       <Route path="/participant" element={<Participant />} />
-      <Route path="/ending" element={<EndingPage />} />
+      <Route path="/ending" element={<Ending />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

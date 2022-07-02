@@ -1,10 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 
-function EndingPage() {
+function Ending() {
+  const navigate = useNavigate();
+  const goHome = () => {
+    navigate("/");
+  };
+
   return (
     <DefaultPage>
       <Result>게임 결과</Result>
@@ -12,9 +18,9 @@ function EndingPage() {
         <span className="win">OO</span>의 <span className="win">승리</span>
         입니다
       </Winner>
-      <WarpButton>
-        <Button>처음으로 돌아가기</Button>
-      </WarpButton>
+      <ButtonWarp>
+        <Button handleClick={goHome}>처음으로 돌아가기</Button>
+      </ButtonWarp>
     </DefaultPage>
   );
 }
@@ -35,9 +41,9 @@ const Winner = styled.div`
   }
 `;
 
-const WarpButton = styled.div`
+const ButtonWarp = styled.div`
   text-align: center;
-  margin-top: 120px;
+  margin-top: 80px;
 `;
 
-export default EndingPage;
+export default Ending;

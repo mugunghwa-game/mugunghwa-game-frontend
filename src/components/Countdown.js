@@ -28,8 +28,8 @@ function Countdown() {
     <DefaultPage>
       <Content>잠시 후 게임이 시작됩니다</Content>
       <Img>
-        {flower.map((item) => (
-          <img key={item} src={item} alt={item} />
+        {flower.map((eachFlower) => (
+          <img key={eachFlower} src={eachFlower} alt={eachFlower} />
         ))}
       </Img>
     </DefaultPage>
@@ -37,8 +37,8 @@ function Countdown() {
 }
 
 const Content = styled.div`
-  text-align: center;
   margin-top: 40px;
+  text-align: center;
   font-size: 50px;
 `;
 

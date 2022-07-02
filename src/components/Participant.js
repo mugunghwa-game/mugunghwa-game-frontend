@@ -12,10 +12,10 @@ function Participant() {
           <span className="color">3초</span>간 동작을 멈춰야합니다
         </div>
       </Description>
-      <Participants>
-        <div className="participants"></div>
-        <div className="participants"></div>
-      </Participants>
+      <ParticipantCamera>
+        <div className="participant"></div>
+        <div className="participant"></div>
+      </ParticipantCamera>
       <It>
         <div className="opportunity">남은기회의 수</div>
         <div className="it"></div>
@@ -23,7 +23,7 @@ function Participant() {
     </DefaultPage>
   );
 }
-const Participants = styled.div`
+const ParticipantCamera = styled.div`
   display: grid;
   grid-template-columns: 400px 400px;
   grid-template-rows: 250px;
@@ -31,7 +31,7 @@ const Participants = styled.div`
   margin-top: 20px;
   justify-content: center;
 
-  .participants {
+  .participant {
     background-color: white;
   }
 `;

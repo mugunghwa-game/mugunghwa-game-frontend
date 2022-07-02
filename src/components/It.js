@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 
-function ItPage() {
+function It() {
   return (
     <DefaultPage>
       <Description>
@@ -18,16 +18,16 @@ function ItPage() {
         </div>
       </Description>
       <Participant>
-        <div className="participants"></div>
-        <div className="participants"></div>
+        <div className="participant"></div>
+        <div className="participant"></div>
       </Participant>
-      <It>
+      <ItsCamera>
         <div className="opportunity">남은기회의 수</div>
         <div className="it"></div>
         <div className="stop">
           <Button property="stop">멈춤</Button>
         </div>
-      </It>
+      </ItsCamera>
     </DefaultPage>
   );
 }
@@ -50,12 +50,12 @@ const Participant = styled.div`
   margin-top: 10px;
   justify-content: center;
 
-  .participants {
+  .participant {
     background-color: white;
   }
 `;
 
-const It = styled.div`
+const ItsCamera = styled.div`
   margin-top: 10px;
   display: grid;
   grid-template-columns: 260px 260px 260px;
@@ -77,4 +77,4 @@ const It = styled.div`
   }
 `;
 
-export default ItPage;
+export default It;
