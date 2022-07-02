@@ -52,7 +52,7 @@ const Content = styled.div`
 
   .description {
     margin-top: ${(props) =>
-      props.modalTitle === "난이도 선택" ? "30px" : "4px"};
+    props.modalTitle === "난이도 선택" ? "30px" : "4px"};
     line-height: 50px;
   }
 

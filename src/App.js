@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import EndingPage from "./components/EndingPage";
 import ItPage from "./components/ItPage";
 import Main from "./components/Main";
+import NotFound from "./components/NotFound";
 import Participant from "./components/Participant";
 import WaitingRoom from "./components/WaitingRoom";
 
@@ -14,6 +15,7 @@ function App() {
       <Route path="/it" element={<ItPage />} />
       <Route path="/participant" element={<Participant />} />
       <Route path="/ending" element={<EndingPage />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

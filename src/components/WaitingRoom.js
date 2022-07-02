@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { RULE_DESCRIPTION } from "../constants/constants";
@@ -11,6 +12,7 @@ function WaitingRoom() {
   const [shoulDisplayModal, setShouldDisplayModal] = useState(false);
   const [shoulDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
+  const navigator = useNavigate();
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -18,6 +20,10 @@ function WaitingRoom() {
 
   const handleDifficultyChoice = () => {
     setShouldDisplayDifficultyModal(true);
+  };
+
+  const handleGame = () => {
+    navigator("/it");
   };
 
   return (
@@ -59,7 +65,7 @@ function WaitingRoom() {
         </div>
       </Content>
       <ButtonWrap>
-        <Button>게임시작</Button>
+        <Button handleClick={handleGame}>게임시작</Button>
       </ButtonWrap>
     </DefaultPage>
   );
@@ -95,6 +101,11 @@ const Content = styled.div`
       margin-left: 20px;
     }
 
+    .count {
+      float: right;
+      margin-right: 30px;
+    }
+
     :hover {
       background-color: #ffe9e0;
       transform: translateY(-3px);
@@ -103,11 +114,6 @@ const Content = styled.div`
     :active {
       transform: translateY(3px);
     }
-  }
-
-  .count {
-    float: right;
-    margin-right: 30px;
   }
 `;
 
