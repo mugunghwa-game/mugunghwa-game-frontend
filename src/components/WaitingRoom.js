@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { RULE_DESCRIPTION } from "../constants/constants";
+import { SOCKET } from "../constants/constants";
+import useStore from "../store/store";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 import Modal from "./Modal";
@@ -12,7 +15,9 @@ function WaitingRoom() {
   const [shoulDisplayModal, setShouldDisplayModal] = useState(false);
   const [shoulDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
+  const [socketId, setSocketId] = useState(null);
   const navigate = useNavigate();
+  const { people, addPerson } = useStore();
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -25,6 +30,29 @@ function WaitingRoom() {
   const handleGame = () => {
     navigate("/countdown");
   };
+
+  const handleRole = () => {
+    addPerson({ person: socket.id, role: "participant" });
+  };
+
+  useEffect(() => {
+    socket.emit(SOCKET.JOIN_ROOM, "gameRoom");
+    socket.on("socket-id", (id) => {
+      setSocketId(id);
+    });
+
+    return () => {
+      socket.off("socket-id");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("all users", (data) => {});
+
+    return () => {
+      socket.off("all users");
+    };
+  }, []);
 
   return (
     <DefaultPage>
@@ -58,7 +86,7 @@ function WaitingRoom() {
             술래 <span className="count">/1명</span>
           </p>
         </div>
-        <div className="participant">
+        <div className="participant" onClick={handleRole}>
           <p className="choice">
             참가자 <span className="count">/2명</span>
           </p>

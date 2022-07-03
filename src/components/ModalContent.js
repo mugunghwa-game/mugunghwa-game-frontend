@@ -3,11 +3,23 @@ import { MdClose } from "react-icons/md";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
+import useStore from "../store/store";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 
 function ModalContent({ modalText, modalTitle, handleModal }) {
+  const { addDifficulty, addPerson, people } = useStore();
   const handleClick = () => {
     handleModal(false);
+  };
+
+  const handleDifficulty = (event) => {
+    socket.emit("user count", {
+      id: socket.id,
+      role: "it",
+    });
+    addDifficulty(event.target.innerText);
+    addPerson({ person: socket.id, role: "it" });
   };
 
   return (
@@ -26,10 +38,10 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
           <div className="none" />
           <span className="buttonWarp">
             <span className="easy">
-              <Button>쉬움</Button>
+              <Button handleClick={handleDifficulty}>쉬움</Button>
             </span>
             <span className="difficult">
-              <Button>어려움</Button>
+              <Button handleClick={handleDifficulty}>어려움</Button>
             </span>
           </span>
         </>
@@ -52,7 +64,7 @@ const Content = styled.div`
 
   .description {
     margin-top: ${(props) =>
-    props.modalTitle === "난이도 선택" ? "30px" : "4px"};
+      props.modalTitle === "난이도 선택" ? "30px" : "4px"};
     line-height: 50px;
   }
 
