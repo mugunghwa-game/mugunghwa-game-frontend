@@ -1,7 +1,7 @@
 import create from "zustand";
 
 const useStore = create((set) => ({
-  people: [{ person: "", role: "" }],
+  people: [],
   participant: [],
   difficulty: "",
   addPerson: (item) =>

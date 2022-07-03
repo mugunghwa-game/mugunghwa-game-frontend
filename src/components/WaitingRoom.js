@@ -4,7 +4,6 @@ import styled from "styled-components";
 
 import { RULE_DESCRIPTION } from "../constants/constants";
 import { SOCKET } from "../constants/constants";
-import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
@@ -16,8 +15,9 @@ function WaitingRoom() {
   const [shoulDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
   const [socketId, setSocketId] = useState(null);
+  const [itCount, setItCount] = useState(0);
+  const [participantCount, setParticipantCount] = useState(0);
   const navigate = useNavigate();
-  const { people, addPerson } = useStore();
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -32,7 +32,10 @@ function WaitingRoom() {
   };
 
   const handleRole = () => {
-    addPerson({ person: socket.id, role: "participant" });
+    socket.emit("user count", {
+      id: socket.id,
+      role: "participant",
+    });
   };
 
   useEffect(() => {
@@ -47,10 +50,19 @@ function WaitingRoom() {
   }, []);
 
   useEffect(() => {
-    socket.on("all users", (data) => {});
+    socket.on("role-count", (data) => {
+      setItCount(data.it);
+      setParticipantCount(data.participant);
+    });
+
+    socket.on("role-counts", (data) => {
+      setItCount(data.it);
+      setParticipantCount(data.participant);
+    });
 
     return () => {
-      socket.off("all users");
+      socket.off("role-count");
+      socket.off("role-counts");
     };
   }, []);
 
@@ -83,12 +95,12 @@ function WaitingRoom() {
         <div className="participation">게임참여하기</div>
         <div className="it">
           <p className="choice" onClick={handleDifficultyChoice}>
-            술래 <span className="count">/1명</span>
+            술래 <span className="count">{itCount}/1명</span>
           </p>
         </div>
         <div className="participant" onClick={handleRole}>
           <p className="choice">
-            참가자 <span className="count">/2명</span>
+            참가자 <span className="count">{participantCount}/2명</span>
           </p>
         </div>
       </Content>
