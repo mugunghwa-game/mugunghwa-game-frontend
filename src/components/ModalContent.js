@@ -3,6 +3,7 @@ import { MdClose } from "react-icons/md";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
+import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
@@ -14,7 +15,7 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   };
 
   const handleDifficulty = (event) => {
-    socket.emit("user count", {
+    socket.emit(SOCKET.USER_COUNT, {
       id: socket.id,
       role: "it",
     });

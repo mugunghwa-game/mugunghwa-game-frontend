@@ -37,13 +37,13 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    socket.emit("run", true);
+    socket.emit(SOCKET.READY, true);
     navigate("/countdown");
   };
 
   const handleRole = () => {
-    if (participant.length < 2) {
-      socket.emit("user count", {
+    if (participantCount < 2) {
+      socket.emit(SOCKET.USER_COUNT, {
         id: socket.id,
         role: "participant",
       });
@@ -55,32 +55,32 @@ function WaitingRoom() {
   };
 
   useEffect(() => {
-    socket.emit(SOCKET.JOIN_ROOM, "gameRoom");
-    socket.on("socket-id", (id) => {
+    socket.emit(SOCKET.JOIN_ROOM, SOCKET.ROOM_NAME);
+    socket.on(SOCKET.SOCKET_ID, (id) => {
       setSocketId(id);
     });
 
-    socket.on("role-count", (data) => {
+    socket.on(SOCKET.ROLE_COUNT, (data) => {
       setItCount(data.it);
       setParticipantCount(data.participant);
     });
 
-    socket.on("role-counts", (data) => {
+    socket.on(SOCKET.ROLE_COUNTS, (data) => {
       setItCount(data.it);
       setParticipantCount(data.participant);
     });
 
-    socket.on("start", (data) => {
+    socket.on(SOCKET.START, (data) => {
       if (data) {
         navigate("/countdown");
       }
     });
 
     return () => {
-      socket.off("socket-id");
-      socket.off("role-count");
-      socket.off("role-counts");
-      socket.off("start");
+      socket.off(SOCKET.SOCKET_ID);
+      socket.off(SOCKET.ROLE_COUNT);
+      socket.off(SOCKET.ROLE_COUNTS);
+      socket.off(SOCKET.START);
     };
   }, []);
 

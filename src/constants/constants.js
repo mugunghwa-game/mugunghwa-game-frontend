@@ -19,5 +19,12 @@ export const RULE_DESCRIPTION = (() => (
 ))();
 
 export const SOCKET = {
+  ROOM_NAME: "gameRoom",
   JOIN_ROOM: "join-room",
+  SOCKET_ID: "socket-id",
+  USER_COUNT: "user-count",
+  ROLE_COUNT: "role-count",
+  ROLE_COUNTS: "role-counts",
+  READY: "ready",
+  START: "start",
 };
