@@ -13,15 +13,16 @@ function Countdown() {
   const navigate = useNavigate();
   const [flower, setFlower] = useState([]);
   const flowers = [flower1, flower2, flower3, flower4, flower5];
+  const count = [0, 1, 2, 3, 4, 5];
 
   useEffect(() => {
-    for (let i = 0; i < 6; i++) {
+    count.forEach((item) =>
       setTimeout(
-        () => setFlower(flowers.slice(0, flowers.length - i)),
-        1000 * i
-      );
-    }
-    setTimeout(() => navigate("/it"), 5500);
+        () => setFlower(flowers.slice(0, flowers.length - item)),
+        1000 * item
+      )
+    );
+    setTimeout(() => navigate("/game"), 5500);
   }, []);
 
   return (

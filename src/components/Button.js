@@ -3,7 +3,11 @@ import styled from "styled-components";
 
 function Button({ children, handleClick, property }) {
   return (
-    <ButtonBody onClick={handleClick} property={property}>
+    <ButtonBody
+      disabled={property === "disabled" ? true : false}
+      onClick={handleClick}
+      property={property}
+    >
       {children}
     </ButtonBody>
   );
@@ -13,7 +17,7 @@ const ButtonBody = styled.button`
   width: ${(props) => (props.property === "stop" ? "150px" : "300px")};
   height: 70px;
   background-color: #fbe6ce;
-  color: #199816;
+  color: ${(props) => (props.property === "disabled" ? "#808080" : "#199816")};
   font-size: 25px;
   border-radius: 20px;
   border-style: none;

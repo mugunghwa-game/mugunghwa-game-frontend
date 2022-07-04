@@ -3,10 +3,26 @@ import { MdClose } from "react-icons/md";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
+import { SOCKET } from "../constants/constants";
+import useStore from "../store/store";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function ModalContent({ modalText, modalTitle, handleModal }) {
+function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
+  const { addDifficulty, addPerson } = useStore();
   const handleClick = () => {
+    handleModal(false);
+  };
+
+  const handleDifficulty = (event) => {
+    socket.emit(SOCKET.USER_COUNT, {
+      id: socket.id,
+      role: "it",
+    });
+    addDifficulty(event.target.innerText);
+    addPerson({ person: socket.id, role: "it" });
+    handleItCount((prev) => prev + 1);
+
     handleModal(false);
   };
 
@@ -26,10 +42,10 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
           <div className="none" />
           <span className="buttonWarp">
             <span className="easy">
-              <Button>쉬움</Button>
+              <Button handleClick={handleDifficulty}>쉬움</Button>
             </span>
             <span className="difficult">
-              <Button>어려움</Button>
+              <Button handleClick={handleDifficulty}>어려움</Button>
             </span>
           </span>
         </>
@@ -52,7 +68,11 @@ const Content = styled.div`
 
   .description {
     margin-top: ${(props) =>
-    props.modalTitle === "난이도 선택" ? "30px" : "4px"};
+      props.modalTitle === "난이도 선택"
+        ? "30px"
+        : props.modalTitle === "알려드립니다"
+        ? "70px"
+        : "4px"};
     line-height: 50px;
   }
 

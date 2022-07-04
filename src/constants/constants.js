@@ -17,3 +17,14 @@ export const RULE_DESCRIPTION = (() => (
     <br /> 8. 참가자는 끝까지 살아남게되면 이기게 됩니다
   </div>
 ))();
+
+export const SOCKET = {
+  ROOM_NAME: "gameRoom",
+  JOIN_ROOM: "join-room",
+  SOCKET_ID: "socket-id",
+  USER_COUNT: "user-count",
+  ROLE_COUNT: "role-count",
+  ROLE_COUNTS: "role-counts",
+  READY: "ready",
+  START: "start",
+};
