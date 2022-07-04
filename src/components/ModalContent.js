@@ -7,8 +7,8 @@ import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function ModalContent({ modalText, modalTitle, handleModal }) {
-  const { addDifficulty } = useStore();
+function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
+  const { addDifficulty, addPerson } = useStore();
   const handleClick = () => {
     handleModal(false);
   };
@@ -19,6 +19,9 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
       role: "it",
     });
     addDifficulty(event.target.innerText);
+    addPerson({ person: socket.id, role: "it" });
+    handleItCount((prev) => prev + 1);
+
     handleModal(false);
   };
 
@@ -64,7 +67,11 @@ const Content = styled.div`
 
   .description {
     margin-top: ${(props) =>
-      props.modalTitle === "난이도 선택" ? "30px" : "4px"};
+      props.modalTitle === "난이도 선택"
+        ? "30px"
+        : props.modalTitle === "알려드립니다"
+        ? "70px"
+        : "4px"};
     line-height: 50px;
   }
 
