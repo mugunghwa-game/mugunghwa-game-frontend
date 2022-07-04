@@ -20,18 +20,16 @@ function Main() {
         <img src={main} alt={main} />
       </Sentence>
       <WrapButton>
-        <a href="/waitingRoom">
-          <Button>게임참여하기</Button>
-        </a>
+        <Button>게임참여하기</Button>
       </WrapButton>
     </DefaultPage>
   );
 }
 
 const Sentence = styled.div`
-  margin-left: 150px;
   text-align: left;
   font-size: 65px;
+  margin-left: 150px;
 
   .flower {
     color: #f47676;
@@ -45,8 +43,8 @@ const Sentence = styled.div`
   img {
     position: relative;
     width: 570px;
-    margin-right: 100px;
     float: right;
+    margin-right: 100px;
   }
 `;
 
