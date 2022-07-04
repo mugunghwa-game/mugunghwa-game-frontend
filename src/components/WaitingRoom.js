@@ -26,8 +26,6 @@ function WaitingRoom() {
   const [participantCount, setParticipantCount] = useState(participant.length);
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
 
-  // console.log(a);
-  console.log(people);
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
   };

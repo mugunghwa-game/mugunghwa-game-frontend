@@ -1,10 +1,11 @@
+import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import Peer from "simple-peer";
 import styled from "styled-components";
 
-import useStore from "../store/store";
+import { drawKeypoints, drawSkeleton } from "../utils/posenet";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
@@ -72,6 +73,57 @@ function It() {
 
     return peer;
   }
+
+  const runPosenet = async () => {
+    const net = await posenet.load({
+      inputResolution: { width: 640, height: 480 },
+      scale: 0.5,
+    });
+
+    if (userVideo.current !== null) {
+      const temp = setInterval(() => {
+        detect(net);
+      }, 1000);
+      setTimeout(() => clearInterval(temp) & console.log("done"), 40000);
+    }
+  };
+
+  const detect = async (net) => {
+    if (
+      typeof userVideo.current !== "undefined" &&
+      userVideo.current !== null &&
+      userVideo.current.video.readyState === 4
+    ) {
+      const video = userVideo.current.video;
+      const videoWidth = userVideo.current.video.videoWidth;
+      const videoHeight = userVideo.current.video.videoHeight;
+
+      userVideo.current.video.width = videoWidth;
+      userVideo.current.video.height = videoHeight;
+
+      const pose = await net.estimateSinglePose(video);
+      drawCanvas(pose, video, videoWidth, videoHeight, canvasRef);
+    }
+  };
+
+  const drawCanvas = (pose, video, videoWidth, videoHeight, canvas) => {
+    const ctx = canvas.current.getContext("2d");
+    canvas.current.width = videoWidth;
+    canvas.current.height = videoHeight;
+
+    drawKeypoints(pose.keypoints, 0.5, ctx);
+    drawSkeleton(pose.keypoints, 0.5, ctx);
+  };
+
+  const handleStopButton = () => {};
+
+  useEffect(() => {
+    runPosenet();
+
+    return () => {
+      runPosenet();
+    };
+  }, []);
 
   return (
     <DefaultPage>
@@ -141,9 +193,13 @@ function It() {
             }}
           />
         </div>
-        <div className="stop">
-          <Button property="stop">멈춤</Button>
-        </div>
+        {itUser && itUser[0] === socket.id ? (
+          <div className="stop">
+            <Button handleClick={handleStopButton} property="stop">
+              멈춤
+            </Button>
+          </div>
+        ) : null}
       </ItsCamera>
     </DefaultPage>
   );
