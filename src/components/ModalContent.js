@@ -68,9 +68,9 @@ const Content = styled.div`
 
   .description {
     margin-top: ${(props) =>
-      props.modalTitle === "난이도 선택"
-        ? "30px"
-        : props.modalTitle === "알려드립니다"
+    props.modalTitle === "난이도 선택"
+      ? "30px"
+      : props.modalTitle === "알려드립니다"
         ? "70px"
         : "4px"};
     line-height: 50px;
