@@ -19,10 +19,10 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
       id: socket.id,
       role: "it",
     });
+
     addDifficulty(event.target.innerText);
     addPerson({ person: socket.id, role: "it" });
     handleItCount((prev) => prev + 1);
-
     handleModal(false);
   };
 

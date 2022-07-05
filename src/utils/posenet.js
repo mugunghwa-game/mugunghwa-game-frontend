@@ -172,4 +172,22 @@ function drawPoints(ctx, points, radius, color) {
   }
 }
 
-export function videoReference(video) {}
+export function videoReference(video) {
+  const eachVideo = video.current.video;
+  const eachVideoWidth = video.current.video.videoWidth;
+  const eachVideoHeight = video.current.video.videoHeight;
+  video.current.video.width = eachVideoWidth;
+  video.current.video.height = eachVideoHeight;
+
+  return eachVideo;
+}
+
+export function drawCanvas(pose, video, videoWidth, videoHeight, canvas) {
+  const ctx = canvas.current.getContext("2d");
+
+  canvas.current.width = videoWidth;
+  canvas.current.height = videoHeight;
+
+  drawKeypoints(pose.keypoints, 0.6, ctx);
+  drawSkeleton(pose.keypoints, 0.7, ctx);
+}

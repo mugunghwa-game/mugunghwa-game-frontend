@@ -9,7 +9,7 @@ import Button from "./Button";
 function NotFound() {
   const navigate = useNavigate();
 
-  const handleNavigate = () => {
+  const handleGoHome = () => {
     navigate("/");
   };
 
@@ -21,7 +21,7 @@ function NotFound() {
         4<img className="flower" src={notfoundflower} alt={notfoundflower} />4
       </span>
       <ButtonWarp>
-        <Button handleClick={handleNavigate}>처음으로 돌아가기</Button>
+        <Button handleClick={handleGoHome}>처음으로 돌아가기</Button>
       </ButtonWarp>
     </Background>
   );

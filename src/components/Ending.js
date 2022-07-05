@@ -29,15 +29,15 @@ function Ending() {
 }
 
 const Result = styled.div`
+  margin-top: 40px;
   font-size: 70px;
   text-align: center;
-  margin-top: 40px;
 `;
 
 const Winner = styled.div`
+  margin-top: 100px;
   font-size: 45px;
   text-align: center;
-  margin-top: 100px;
 
   .win {
     color: #f47676;
@@ -45,8 +45,8 @@ const Winner = styled.div`
 `;
 
 const ButtonWarp = styled.div`
-  text-align: center;
   margin-top: 80px;
+  text-align: center;
 `;
 
 export default Ending;
