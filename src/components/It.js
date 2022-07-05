@@ -17,10 +17,15 @@ function It() {
   const userVideo = useRef();
   const peersRef = useRef([]);
   const canvasRef = useRef(null);
+  const canvasRef0 = useRef(null);
+  const participantRef = useRef(null);
+  const participantRef0 = useRef(null);
   const [itUser, setItUser] = useState(null);
   const { people, participant } = useStore();
   const [participantUser, setParticipantUser] = useState(null);
   const [itCount, setItCount] = useState(5);
+  const [hasMotion, setHasMotion] = useState(false);
+  const [Winner, setWinner] = useState(null);
   let userInfo;
 
   useEffect(() => {
@@ -34,31 +39,30 @@ function It() {
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
+        if (userVideo.current !== null) {
+          const peers = [];
 
-        const peers = [];
-
-        userInfo.participant.forEach((user) => {
-          const peer = createPeer(user, socket.id, userVideo.current.srcObject);
-          peersRef.current.push({
-            peerID: user,
-            peer,
+          userInfo.participant.forEach((user) => {
+            const peer = createPeer(user, socket.id, stream);
+            peersRef.current.push({
+              peerID: user,
+              peer,
+            });
+            peers.push(peer);
           });
+          setPeers(peers);
 
-          peers.push(peer);
-        });
-        setPeers(peers);
-
-        socket.on("receiving returned signal", (payload) => {
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
-          item.peer.signal(payload.signal);
-        });
+          socket.on("receiving returned signal", (payload) => {
+            const item = peersRef.current.find((p) => p.peerID === payload.id);
+            item.peer.signal(payload.signal);
+          });
+        }
       });
 
     return () => {
       socket.off("user");
     };
-  }, [socket]);
+  }, []);
 
   function createPeer(userToSignal, callerID, stream) {
     const peer = new Peer({
@@ -80,11 +84,11 @@ function It() {
 
   const runPosenet = async () => {
     const net = await posenet.load({
-      inputResolution: { width: 400, height: 220 },
-      scale: 0.5,
+      inputResolution: { width: 640, height: 480 },
+      scale: 0.8,
     });
 
-    if (userVideo.current !== null) {
+    if (participantRef.current !== null) {
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
@@ -94,37 +98,102 @@ function It() {
 
   const detect = async (net) => {
     if (
-      typeof userVideo.current !== "undefined" &&
-      userVideo.current !== null &&
-      userVideo.current.video.readyState === 4
+      typeof participantRef.current !== "undefined" &&
+      participantRef.current !== null &&
+      participantRef.current.video.readyState === 4
     ) {
-      const video = userVideo.current.video;
-      const videoWidth = userVideo.current.video.videoWidth;
-      const videoHeight = userVideo.current.video.videoHeight;
+      const firstVideo = participantRef.current.video;
+      const firstVideoWidth = participantRef.current.video.videoWidth;
+      const firstVideoHeight = participantRef.current.video.videoHeight;
+      participantRef.current.video.width = firstVideoWidth;
+      participantRef.current.video.height = firstVideoHeight;
 
-      const pose = await net.estimateSinglePose(video);
-      drawCanvas(pose, video, videoWidth, videoHeight, canvasRef);
+      const secondVideo = participantRef0.current.video;
+      const secondVideoWidth = participantRef0.current.video.videoWidth;
+      const secondVideoHeight = participantRef0.current.video.videoHeight;
+      participantRef0.current.video.width = secondVideoWidth;
+      participantRef0.current.video.height = secondVideoHeight;
+
+      const firstVideoPose = await net.estimateSinglePose(firstVideo);
+      const secondVideoPose = await net.estimateSinglePose(secondVideo);
+
+      drawCanvas(
+        firstVideoPose,
+        firstVideo,
+        firstVideoWidth,
+        firstVideoHeight,
+        canvasRef
+      );
+      drawCanvas(
+        secondVideoPose,
+        secondVideo,
+        secondVideoWidth,
+        secondVideoHeight,
+        canvasRef0
+      );
     }
   };
 
   const drawCanvas = (pose, video, videoWidth, videoHeight, canvas) => {
     const ctx = canvas.current.getContext("2d");
 
-    drawKeypoints(pose.keypoints, 0.5, ctx);
-    drawSkeleton(pose.keypoints, 0.5, ctx);
+    canvas.current.width = videoWidth;
+    canvas.current.height = videoHeight;
+
+    drawKeypoints(pose.keypoints, 0.6, ctx);
+    drawSkeleton(pose.keypoints, 0.7, ctx);
   };
 
   const handleStopButton = () => {
-    setItCount((prev) => prev - 1);
+    if (itCount > 0) {
+      setItCount((prev) => prev - 1);
+      socket.emit("motion-start", true);
+    }
   };
 
   useEffect(() => {
-    runPosenet();
+    socket.on("start", (data) => {
+      if (data) {
+        runPosenet();
+        setItCount((prev) => prev - 1);
+      }
+    });
+
+    if (hasMotion) {
+      socket.emit("hasMotion", socket.id);
+    }
+
+    socket.on("remaining-opportunity", (data) => {
+      setParticipantUser(data);
+    });
+
+    socket.on("game-end", (data) => {
+      if (data) {
+        setWinner("it");
+        navigate("/ending");
+      }
+    });
 
     return () => {
-      runPosenet();
+      socket.off("start");
+      socket.off("remaining-opportunity");
+      socket.off("game-end");
     };
   }, []);
+
+  if (itCount === 0) {
+    const reaminingUser = participantUser.filter(
+      (item) => item.opportunity > 0
+    );
+    if (itCount === 0 && reaminingUser.length > 0) {
+      setWinner(reaminingUser);
+      navigate("/ending");
+    }
+    if (itCount === 0 && reaminingUser.length === 0) {
+      setWinner("it");
+      navigate("/ending");
+    }
+  }
 
   return (
     <DefaultPage>
@@ -155,14 +224,15 @@ function It() {
             {participantUser[index].id && (
               <span>
                 {participantUser[index].id === socket.id ? (
-                  <span>나</span>
+                  <span>나 </span>
                 ) : null}
-                남은 기회의 수 {participantUser[index].opportunity}
+                {index}남은 기회의 수 {participantUser[index].opportunity}
                 <>
                   <div className="participant">
                     <Webcam
                       key={index}
                       peer={peer}
+                      ref={index === 0 ? participantRef : participantRef0}
                       style={{
                         position: "absolute",
                         zindex: 9,
@@ -172,7 +242,7 @@ function It() {
                       }}
                     />
                     <canvas
-                      ref={canvasRef}
+                      ref={index === 0 ? canvasRef : canvasRef0}
                       style={{
                         position: "absolute",
                         zindex: 9,
@@ -189,9 +259,12 @@ function It() {
         ))}
       </Participant>
       <ItsCamera>
-        {itUser && itUser[0] === socket.id && (
+        {itUser && (
           <>
-            <div className="opportunity"> 나 남은기회의 수{itCount}</div>
+            <div className="opportunity">
+              {itUser[0] === socket.id && <span>나 </span>}남은기회의 수
+              {itCount}
+            </div>
             <div className="it">
               <Webcam
                 muted

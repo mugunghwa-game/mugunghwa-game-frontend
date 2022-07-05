@@ -16,7 +16,6 @@ function WaitingRoom() {
   const { addPerson, people, removeAll, addParticipant, participant } =
     useStore();
 
-  // const a = useStore((state) => state.participant);
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -44,7 +43,6 @@ function WaitingRoom() {
   };
 
   const handleRole = () => {
-    // removeAll();
     if (participantCount < 2) {
       socket.emit(SOCKET.USER_COUNT, {
         id: socket.id,
