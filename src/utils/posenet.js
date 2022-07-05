@@ -171,3 +171,5 @@ function drawPoints(ctx, points, radius, color) {
     }
   }
 }
+
+export function videoReference(video) {}

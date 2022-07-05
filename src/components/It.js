@@ -21,11 +21,10 @@ function It() {
   const participantRef = useRef(null);
   const participantRef0 = useRef(null);
   const [itUser, setItUser] = useState(null);
-  const { people, participant } = useStore();
+  const { addWinner, difficulty } = useStore();
   const [participantUser, setParticipantUser] = useState(null);
   const [itCount, setItCount] = useState(5);
   const [hasMotion, setHasMotion] = useState(false);
-  const [Winner, setWinner] = useState(null);
   let userInfo;
 
   useEffect(() => {
@@ -92,7 +91,7 @@ function It() {
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
-      setTimeout(() => clearInterval(temp) & console.log("done"), 40000);
+      setTimeout(() => clearInterval(temp) & console.log("done"), 1000);
     }
   };
 
@@ -156,20 +155,34 @@ function It() {
       if (data) {
         runPosenet();
         setItCount((prev) => prev - 1);
+        setTimeout(() => setHasMotion(true), 10000);
       }
     });
 
     if (hasMotion) {
       socket.emit("hasMotion", socket.id);
+      setHasMotion(false);
     }
 
     socket.on("remaining-opportunity", (data) => {
+      console.log("remaining", data);
+      setParticipantUser(data);
+    });
+
+    socket.on("participant-remaining-count", (data) => {
       setParticipantUser(data);
     });
 
     socket.on("game-end", (data) => {
       if (data) {
-        setWinner("it");
+        addWinner("술래");
+        navigate("/ending");
+      }
+    });
+
+    socket.on("another-user-end", (data) => {
+      if (data) {
+        addWinner("술래");
         navigate("/ending");
       }
     });
@@ -178,22 +191,28 @@ function It() {
       socket.off("start");
       socket.off("remaining-opportunity");
       socket.off("game-end");
+      socket.off("another-user-end");
+      socket.off("participant-remaining-count");
     };
-  }, []);
+  }, [hasMotion]);
 
-  if (itCount === 0) {
-    const reaminingUser = participantUser.filter(
-      (item) => item.opportunity > 0
-    );
-    if (itCount === 0 && reaminingUser.length > 0) {
-      setWinner(reaminingUser);
-      navigate("/ending");
+  useEffect(() => {
+    if (itCount === 0) {
+      const reaminingUser = participantUser.filter(
+        (item) => item.opportunity > 0
+      );
+
+      if (reaminingUser.length > 0) {
+        addWinner("참가자");
+        navigate("/ending");
+      }
+
+      if (reaminingUser.length === 0) {
+        addWinner("술래");
+        navigate("/ending");
+      }
     }
-    if (itCount === 0 && reaminingUser.length === 0) {
-      setWinner("it");
-      navigate("/ending");
-    }
-  }
+  }, [itCount]);
 
   return (
     <DefaultPage>

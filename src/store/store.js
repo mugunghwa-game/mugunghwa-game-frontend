@@ -6,6 +6,7 @@ const useStore = create(
     people: [],
     participant: [],
     difficulty: "",
+    winner: "",
 
     addPerson: (item) =>
       set((state) => ({
@@ -29,6 +30,10 @@ const useStore = create(
             each.opportunity -= 1;
           }
         }),
+      })),
+    addWinner: (item) =>
+      set((state) => ({
+        winner: item,
       })),
     removeAll: () =>
       set(() => ({
