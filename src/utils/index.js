@@ -1,5 +1,8 @@
 import Peer from "simple-peer";
 
+import { SOCKET } from "../constants/constants";
+import { socket } from "./socket";
+
 export function createPeer(userToSignal, callerID, stream) {
   const peer = new Peer({
     initiator: true,
@@ -8,7 +11,7 @@ export function createPeer(userToSignal, callerID, stream) {
   });
 
   peer.on("signal", (signal) => {
-    socket.emit("sending signal", {
+    socket.emit(SOCKET.SENDING_SIGNAL, {
       userToSignal,
       callerID,
       signal,

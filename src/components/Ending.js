@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import useStore from "../store/store";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 
 function Ending() {
   const navigate = useNavigate();
-  const winner = useStore((state) => state.winner);
+  const { removeAll, winner } = useStore();
+
+  useEffect(() => {
+    socket.emit("infoInitialization", true);
+
+    removeAll();
+  }, []);
 
   const goHome = () => {
     navigate("/");
@@ -18,7 +25,8 @@ function Ending() {
     <DefaultPage>
       <Result>게임 결과</Result>
       <Winner>
-        <span className="win">{winner}</span>의<span className="win">승리</span>
+        <span className="win">{winner}</span>의
+        <span className="win"> 승리</span>
         입니다
       </Winner>
       <ButtonWarp>

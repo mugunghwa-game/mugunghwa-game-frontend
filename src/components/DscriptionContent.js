@@ -18,7 +18,8 @@ function DescriptionContent({ user }) {
       {!user && (
         <>
           <div>
-            술래가 무궁화 꽃이 피었습니다를 외치면
+            술래가 <span className="color">무궁화 꽃이 피었습니다</span>를
+            외치면
             <span className="color"> 3초</span>간 동작을 멈춰야합니다
           </div>
         </>

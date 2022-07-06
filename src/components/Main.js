@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import main from "../asset/main.gif";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 
@@ -24,7 +25,7 @@ function Main() {
           이
           <br /> 피었습니다
         </p>
-        <img src={main} alt={main} />
+        <img src={main} alt={main} loop="infinite" />
       </Sentence>
       <WrapButton>
         <Button handleClick={handleGowaitingRoom}>게임참여하기</Button>

@@ -13,8 +13,7 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
-  const { addPerson, people, removeAll, addParticipant, participant } =
-    useStore();
+  const { addPerson, people, addParticipant, participant } = useStore();
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -40,7 +39,6 @@ function WaitingRoom() {
   };
 
   const handleRole = () => {
-    // removeAll();
     if (participantCount < 2) {
       socket.emit(SOCKET.USER_COUNT, {
         id: socket.id,
@@ -79,7 +77,7 @@ function WaitingRoom() {
       socket.off(SOCKET.ROLE_COUNTS);
       socket.off(SOCKET.START);
     };
-  }, []);
+  }, [participant, people]);
 
   return (
     <DefaultPage>

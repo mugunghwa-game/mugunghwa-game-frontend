@@ -1,7 +1,6 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Webcam from "react-webcam";
 import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
@@ -9,9 +8,10 @@ import useStore from "../store/store";
 import { createPeer } from "../utils";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
-import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 import DescriptionContent from "./DscriptionContent";
+import EachParticipant from "./EachParticipant";
+import It from "./It";
 
 function Game() {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function Game() {
 
           setPeers(peers);
 
-          socket.on("receiving returned signal", (payload) => {
+          socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
             const item = peersRef.current.find((p) => p.peerID === payload.id);
             item.peer.signal(payload.signal);
           });
@@ -63,6 +63,7 @@ function Game() {
 
     return () => {
       socket.off(SOCKET.USER);
+      socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
     };
   }, []);
 
@@ -75,7 +76,7 @@ function Game() {
     if (firstParticipantRef.current !== null) {
       const temp = setInterval(() => {
         detect(net);
-      }, 1000);
+      }, 800);
       setTimeout(() => clearInterval(temp) & console.log("done"), 10000);
     }
   };
@@ -106,13 +107,6 @@ function Game() {
         secondVideo.height,
         secondCanvas
       );
-    }
-  };
-
-  const handleStopButton = () => {
-    if (itCount > 0) {
-      setItCount((prev) => prev - 1);
-      socket.emit(SOCKET.MOTION_START, true);
     }
   };
 
@@ -187,75 +181,22 @@ function Game() {
         )}
       </Description>
       <Participant>
-        {peers.map((peer, index) => (
-          <span key={index}>
-            {participantUser[index].id && (
-              <span>
-                {participantUser[index].id === socket.id ? (
-                  <span>나 </span>
-                ) : null}
-                {index}남은 기회의 수 {participantUser[index].opportunity}
-                <>
-                  <div className="participant">
-                    <Webcam
-                      key={index}
-                      peer={peer}
-                      ref={
-                        index === 0 ? firstParticipantRef : secondParticipantRef
-                      }
-                      style={{
-                        position: "absolute",
-                        zindex: 9,
-                        width: "400px",
-                        height: "250px",
-                        objectFit: "fill",
-                      }}
-                    />
-                    <canvas
-                      ref={index === 0 ? firstCanvas : secondCanvas}
-                      style={{
-                        position: "absolute",
-                        zindex: 9,
-                        width: "400px",
-                        height: "250px",
-                        objectFit: "fill",
-                      }}
-                    />
-                  </div>
-                </>
-              </span>
-            )}
-          </span>
-        ))}
+        <EachParticipant
+          peers={peers}
+          participantUser={participantUser}
+          firstParticipantRef={firstParticipantRef}
+          secondParticipantRef={secondParticipantRef}
+          firstCanvas={firstCanvas}
+          secondCanvas={secondCanvas}
+        />
       </Participant>
       <ItsCamera>
-        {itUser && (
-          <>
-            <div className="opportunity">
-              {itUser[0] === socket.id && <span>나 </span>}남은기회의 수
-              {itCount}
-            </div>
-            <div className="it">
-              <Webcam
-                muted
-                ref={userVideo}
-                autoPlay
-                style={{
-                  width: "200px",
-                  height: "160px",
-                  objectFit: "fill",
-                }}
-              />
-            </div>
-          </>
-        )}
-        {itUser && itUser[0] === socket.id && (
-          <div className="stop">
-            <Button handleClick={handleStopButton} property="stop">
-              멈춤
-            </Button>
-          </div>
-        )}
+        <It
+          user={itUser}
+          itCount={itCount}
+          handleCount={setItCount}
+          userVideo={userVideo}
+        />
       </ItsCamera>
     </DefaultPage>
   );
@@ -273,21 +214,28 @@ const Description = styled.div`
 
 const Participant = styled.div`
   display: grid;
-  grid-template-columns: 400px 400px;
+  grid-template-columns: 420px 420px;
   grid-template-rows: 280px;
-  margin-top: 10px;
+  margin-top: 15px;
   justify-content: space-around;
 
   .participant {
     background-color: white;
   }
+  .one {
+    position: absolute;
+    z-index: 9;
+    width: 400px;
+    height: 250px;
+    object-fit: fill;
+  }
 `;
 
 const ItsCamera = styled.div`
-  margin-top: 25px;
+  margin-top: 35px;
   display: grid;
   grid-template-columns: 200px 200px 200px;
-  grid-template-rows: 160px;
+  grid-template-rows: 140px;
   justify-content: center;
   column-gap: 120px;
 
@@ -303,7 +251,14 @@ const ItsCamera = styled.div`
   .stop {
     align-self: center;
   }
+
+  .itCam {
+    width: 200px;
+    height: 140px;
+    object-fit: fill;
+  }
 `;
+
 const videoConstraints = {
   height: window.innerHeight / 2,
   width: window.innerWidth / 2,

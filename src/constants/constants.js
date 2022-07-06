@@ -28,13 +28,15 @@ export const SOCKET = {
   READY: "ready",
   START: "start",
   ENTER: "enter",
-  USER: "user",
+  USER: "all-info",
   MOTION_START: "motion-start",
   MOVED: "moved",
   PARTICIPANT_REMAINING_OPPORTUNITY: "remaining-opportunity",
   PARTICIPANT_REMAINING_COUNT: "participant-remaining-count",
   GAME_END: "game-end",
   ANOTHER_USER_END: "another-user-end",
+  RECEIVING_RETURNED_SIGNAL: "receiving-returned-signal",
+  SENDING_SIGNAL: "sending-signal",
 };
 
 export const GAME = {

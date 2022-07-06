@@ -40,7 +40,6 @@ const useStore = create(
         people: [],
         participant: [],
         difficulty: "",
-        winner: "",
       })),
   }))
 );
