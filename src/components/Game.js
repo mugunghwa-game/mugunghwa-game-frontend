@@ -29,7 +29,9 @@ function Game() {
     addWinner,
     difficulty,
     firstParticipantPose,
+    secondParticipantPose,
     addFirstParticipantPose,
+    addSecondParticipantPose,
   } = useStore();
   let userInfo;
 
@@ -111,6 +113,7 @@ function Game() {
       );
 
       addFirstParticipantPose(firstVideoPose);
+      addSecondParticipantPose(secondVideoPose);
     }
   };
 
@@ -126,6 +129,20 @@ function Game() {
 
       if (moved === true) {
         socket.emit(SOCKET.MOVED, participantUser[0].id);
+      }
+    }
+
+    if (
+      secondParticipantPose.length === 3 &&
+      participantUser[1].id === socket.id
+    ) {
+      const moved = moveDetection(
+        secondParticipantPose[0],
+        secondParticipantPose[2][2]
+      );
+
+      if (moved === true) {
+        socket.emit(SOCKET.MOVED, participantUser[1].id);
       }
     }
   }, [firstParticipantPose]);
