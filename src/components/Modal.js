@@ -34,8 +34,8 @@ const ModalBody = styled.div`
     props.property === "difficulty"
       ? "400px"
       : props.property === "info"
-      ? "400px"
-      : "600px"};
+        ? "400px"
+        : "600px"};
   border-radius: 7px;
   background-color: white;
 

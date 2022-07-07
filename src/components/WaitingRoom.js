@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { RULE_DESCRIPTION } from "../constants/constants";
+import { GAME, RULE_DESCRIPTION } from "../constants/constants";
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
@@ -13,8 +13,7 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
-  const { addPerson, people, removeAll, addParticipant, participant } =
-    useStore();
+  const { addPerson, people, addParticipant, participant } = useStore();
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -29,11 +28,9 @@ function WaitingRoom() {
   };
 
   const handleDifficultyChoice = () => {
-    if (itCount === 1) {
-      setShouldDisplayInfoModal(true);
-    } else {
-      setShouldDisplayDifficultyModal(true);
-    }
+    itCount === 1
+      ? setShouldDisplayInfoModal(true)
+      : setShouldDisplayDifficultyModal(true);
   };
 
   const handleGame = () => {
@@ -56,24 +53,22 @@ function WaitingRoom() {
 
   useEffect(() => {
     socket.emit(SOCKET.JOIN_ROOM, SOCKET.ROOM_NAME);
-    socket.on(SOCKET.SOCKET_ID, (id) => {
-      setSocketId(id);
+    socket.on(SOCKET.SOCKET_ID, (payload) => {
+      setSocketId(payload);
     });
 
-    socket.on(SOCKET.ROLE_COUNT, (data) => {
-      setItCount(data.it);
-      setParticipantCount(data.participant);
+    socket.on(SOCKET.ROLE_COUNT, (payload) => {
+      setItCount(payload.it);
+      setParticipantCount(payload.participant);
     });
 
-    socket.on(SOCKET.ROLE_COUNTS, (data) => {
-      setItCount(data.it);
-      setParticipantCount(data.participant);
+    socket.on(SOCKET.ROLE_COUNTS, (payload) => {
+      setItCount(payload.it);
+      setParticipantCount(payload.participant);
     });
 
-    socket.on(SOCKET.START, (data) => {
-      if (data) {
-        navigate("/countdown");
-      }
+    socket.on(SOCKET.START, (payload) => {
+      payload ? navigate("/countdown") : null;
     });
 
     return () => {
@@ -82,7 +77,7 @@ function WaitingRoom() {
       socket.off(SOCKET.ROLE_COUNTS);
       socket.off(SOCKET.START);
     };
-  }, []);
+  }, [participant, people]);
 
   return (
     <DefaultPage>
@@ -90,7 +85,7 @@ function WaitingRoom() {
         {shouldDisplayModal && (
           <Modal>
             <ModalContent
-              modalTitle="게임 규칙"
+              modalTitle={GAME.RULE}
               modalText={RULE_DESCRIPTION}
               handleModal={setShouldDisplayModal}
             />
@@ -100,10 +95,8 @@ function WaitingRoom() {
           <Modal property="difficulty">
             <ModalContent
               handleItCount={setItCount}
-              modalTitle="난이도 선택"
-              modalText={
-                "난이도 선택은 술래만 할 수 있으며 한 번 선택하면 바꿀 수없습니다."
-              }
+              modalTitle={GAME.DIFFICULTY_CHOICE}
+              modalText={GAME.DIFFICULTY_CHOICE_DESCRIPTION}
               handleModal={setShouldDisplayDifficultyModal}
             />
           </Modal>
@@ -112,8 +105,8 @@ function WaitingRoom() {
           <Modal property="info">
             <ModalContent
               handleModal={setShouldDisplayInfoModal}
-              modalTitle="알려드립니다"
-              modalText="인원이 다 찼습니다"
+              modalTitle={GAME.INFO_MODAL_TITLE}
+              modalText={GAME.INFO_MODAL_TEXT}
             />
           </Modal>
         )}
@@ -160,13 +153,13 @@ const Content = styled.div`
 
   .it,
   .participant {
-    background-color: #fdf3ef;
     width: 80%;
     height: 80px;
-    font-size: 30px;
     margin-top: 60px;
     margin-inline: auto;
     border-radius: 20px;
+    font-size: 30px;
+    background-color: #fdf3ef;
     cursor: pointer;
 
     .choice {
@@ -191,8 +184,8 @@ const Content = styled.div`
 `;
 
 const ButtonWrap = styled.div`
-  margin-top: 40px;
   bottom: 10px;
+  margin-top: 40px;
   text-align: center;
 `;
 

@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import main from "../asset/main.gif";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 
 function Main() {
+  const navigate = useNavigate();
+
+  const handleGowaitingRoom = () => {
+    navigate("/waitingRoom");
+  };
+
   return (
     <DefaultPage>
       <Sentence>
@@ -20,7 +28,7 @@ function Main() {
         <img src={main} alt={main} />
       </Sentence>
       <WrapButton>
-        <Button>게임참여하기</Button>
+        <Button handleClick={handleGowaitingRoom}>게임참여하기</Button>
       </WrapButton>
     </DefaultPage>
   );
