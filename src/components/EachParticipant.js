@@ -2,6 +2,7 @@ import React from "react";
 import Webcam from "react-webcam";
 
 import { socket } from "../utils/socket";
+import Button from "./Button";
 
 function EachParticipant({
   peers,
@@ -10,6 +11,7 @@ function EachParticipant({
   secondParticipantRef,
   firstCanvas,
   secondCanvas,
+  touchDown,
 }) {
   return (
     <>
@@ -41,6 +43,7 @@ function EachParticipant({
           )}
         </span>
       ))}
+      {touchDown && <Button />}
     </>
   );
 }

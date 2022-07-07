@@ -5,7 +5,8 @@ import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { createPeer, moveDetection } from "../utils/index";
+import { createPeer } from "../utils/index";
+import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
 import DefaultPage from "./DefaultPage";
@@ -15,6 +16,7 @@ import It from "./It";
 
 function Game() {
   const navigate = useNavigate();
+  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [peers, setPeers] = useState([]);
   const [participantUser, setParticipantUser] = useState(null);
   const [itCount, setItCount] = useState(5);
@@ -82,7 +84,7 @@ function Game() {
     const temp = setInterval(() => {
       detect(net);
     }, 1000);
-    setTimeout(() => clearInterval(temp) & console.log("done"), 3000);
+    setTimeout(() => clearInterval(temp) & console.log("done"), 5000);
   };
 
   const detect = async (net) => {
@@ -127,7 +129,13 @@ function Game() {
         firstParticipantPose[2]
       );
 
-      if (moved === true) {
+      const result = visibleButton(firstParticipantPose[0]);
+
+      if (result) {
+        setHasTouchDownButton(true);
+      }
+
+      if (moved) {
         socket.emit(SOCKET.MOVED, participantUser[0].id);
       }
     }
@@ -138,10 +146,14 @@ function Game() {
     ) {
       const moved = moveDetection(
         secondParticipantPose[0],
-        secondParticipantPose[2][2]
+        secondParticipantPose[2]
       );
 
-      if (moved === true) {
+      const result = visibleButton(firstParticipantPose[0]);
+      if (result) {
+        setHasTouchDownButton(true);
+      }
+      if (moved) {
         socket.emit(SOCKET.MOVED, participantUser[1].id);
       }
     }
@@ -219,6 +231,7 @@ function Game() {
           secondParticipantRef={secondParticipantRef}
           firstCanvas={firstCanvas}
           secondCanvas={secondCanvas}
+          touchDown={hasTouchDownButton}
         />
       </Participant>
       <ItsCamera>
@@ -259,6 +272,7 @@ const Participant = styled.div`
     width: 400px;
     height: 250px;
     object-fit: fill;
+    transform: rotateY(180deg);
   }
 `;
 
@@ -287,6 +301,7 @@ const ItsCamera = styled.div`
     width: 200px;
     height: 140px;
     object-fit: fill;
+    transform: rotateY(180deg);
   }
 `;
 

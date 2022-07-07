@@ -57,6 +57,7 @@ const useStore = create(
         participant: [],
         difficulty: "",
         firstParticipantPose: [],
+        secondParticipantPose: [],
       })),
   }))
 );
