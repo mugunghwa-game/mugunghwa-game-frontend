@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { createPeer } from "../utils";
+import { createPeer, moveDetection } from "../utils/index";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
 import DefaultPage from "./DefaultPage";
@@ -19,14 +19,18 @@ function Game() {
   const [participantUser, setParticipantUser] = useState(null);
   const [itCount, setItCount] = useState(5);
   const [itUser, setItUser] = useState(null);
-  const [hasMotion, setHasMotion] = useState(false);
   const userVideo = useRef();
   const peersRef = useRef([]);
   const firstCanvas = useRef(null);
   const secondCanvas = useRef(null);
   const firstParticipantRef = useRef(null);
   const secondParticipantRef = useRef(null);
-  const { addWinner, difficulty } = useStore();
+  const {
+    addWinner,
+    difficulty,
+    firstParticipantPose,
+    addFirstParticipantPose,
+  } = useStore();
   let userInfo;
 
   useEffect(() => {
@@ -73,12 +77,10 @@ function Game() {
       scale: 0.8,
     });
 
-    if (firstParticipantRef.current !== null) {
-      const temp = setInterval(() => {
-        detect(net);
-      }, 800);
-      setTimeout(() => clearInterval(temp) & console.log("done"), 10000);
-    }
+    const temp = setInterval(() => {
+      detect(net);
+    }, 1000);
+    setTimeout(() => clearInterval(temp) & console.log("done"), 3000);
   };
 
   const detect = async (net) => {
@@ -107,22 +109,34 @@ function Game() {
         secondVideo.height,
         secondCanvas
       );
+
+      addFirstParticipantPose(firstVideoPose);
     }
   };
+
+  useEffect(() => {
+    if (
+      firstParticipantPose.length === 3 &&
+      participantUser[0].id === socket.id
+    ) {
+      const moved = moveDetection(
+        firstParticipantPose[0],
+        firstParticipantPose[2]
+      );
+
+      if (moved === true) {
+        socket.emit(SOCKET.MOVED, participantUser[0].id);
+      }
+    }
+  }, [firstParticipantPose]);
 
   useEffect(() => {
     socket.on(SOCKET.START, (payload) => {
       if (payload) {
         runPosenet();
         setItCount((prev) => prev - 1);
-        setTimeout(() => setHasMotion(true), 20000);
       }
     });
-
-    if (hasMotion) {
-      socket.emit(SOCKET.MOVED, socket.id);
-      setHasMotion(false);
-    }
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
       setParticipantUser(payload);
@@ -153,7 +167,7 @@ function Game() {
       socket.off(SOCKET.GAME_END);
       socket.off(SOCKET.ANOTHER_USER_END);
     };
-  }, [hasMotion]);
+  }, []);
 
   useEffect(() => {
     if (itCount === 0) {

@@ -25,7 +25,7 @@ function Main() {
           이
           <br /> 피었습니다
         </p>
-        <img src={main} alt={main} loop="infinite" />
+        <img src={main} alt={main} />
       </Sentence>
       <WrapButton>
         <Button handleClick={handleGowaitingRoom}>게임참여하기</Button>

@@ -13,7 +13,6 @@ function Ending() {
 
   useEffect(() => {
     socket.emit("infoInitialization", true);
-
     removeAll();
   }, []);
 

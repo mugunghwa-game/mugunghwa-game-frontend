@@ -7,6 +7,7 @@ const useStore = create(
     participant: [],
     difficulty: "",
     winner: "",
+    firstParticipantPose: [],
 
     addPerson: (item) =>
       set((state) => ({
@@ -31,6 +32,13 @@ const useStore = create(
           }
         }),
       })),
+    addFirstParticipantPose: (item) =>
+      set((state) => ({
+        firstParticipantPose:
+          state.firstParticipantPose.length === 3
+            ? [item]
+            : [...state.firstParticipantPose, item],
+      })),
     addWinner: (item) =>
       set((state) => ({
         winner: item,
@@ -40,6 +48,7 @@ const useStore = create(
         people: [],
         participant: [],
         difficulty: "",
+        firstParticipantPose: [],
       })),
   }))
 );
