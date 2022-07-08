@@ -12,7 +12,11 @@ function EachParticipant({
   firstCanvas,
   secondCanvas,
   touchDown,
+  wildCard,
 }) {
+  const handleIt = () => {
+    wildCard(true);
+  };
   return (
     <>
       {peers.map((peer, index) => (
@@ -43,7 +47,7 @@ function EachParticipant({
           )}
         </span>
       ))}
-      {touchDown && <Button />}
+      {touchDown && <Button handleClick={handleIt}>술래 등 때리기</Button>}
     </>
   );
 }

@@ -7,7 +7,10 @@ export function moveDetection(firstPose, secondPose) {
   const secondResult = helpDetection(secondPose);
   const shoulderLength = sholuderLengthinScreen(firstPose);
 
+  console.log(firstResult, secondResult, shoulderLength);
+  //가장가까울때, 중간일때, 가장 멀때를 체크해주고 함수를만들어 넘겨줌
   if (shoulderLength > 26) {
+    console.log("26");
     const rightShoulderElbowResult = differenceAngle(
       firstResult.rightShoulderElbow,
       secondResult.rightShoulderElbow,
@@ -42,7 +45,10 @@ export function moveDetection(firstPose, secondPose) {
     ) {
       return true;
     }
-  } else if (shoulderLength <= 26 && shoulderLength > 5) {
+  } else if (5 < shoulderLength <= 26) {
+    //중간정도일때
+    console.log("5~26");
+
     const rightShoulderElbowResult = differenceAngle(
       firstResult.rightShoulderElbow,
       secondResult.rightShoulderElbow,
@@ -78,6 +84,10 @@ export function moveDetection(firstPose, secondPose) {
       return true;
     }
   } else if (shoulderLength <= 5) {
+    //가장멀때
+    console.log("5");
+
+    //각도 차 20일때 움직임이라고 체크하기
     const rightShoulderElbowResult = differenceAngle(
       firstResult.rightShoulderElbow,
       secondResult.rightShoulderElbow,
@@ -114,12 +124,18 @@ export function moveDetection(firstPose, secondPose) {
     }
   }
   return false;
+  //두 포즈의 값이 들어왔고 이제 이걸 비교해야함.
+  //두 각도의 차가 20이상이면(3m거리일때) 움직임이라고 체크하기
+  //중간거리쯤에있을때는 4정도차이나면 움직인거라고하기
 }
 
 export function differenceAngle(first, second, distance) {
   if (first && second) {
     const difference = Math.abs(second - first);
-    if (difference > distance) {
+    if (distance === 1 && difference > 0.5) {
+      return true;
+    }
+    if (distance !== 1 && difference > distance) {
       return true;
     }
   }
@@ -142,61 +158,29 @@ export function helpDetection(pose) {
   const leftKnee = keyword(pose, "leftKnee");
   const rightKnee = keyword(pose, "rightKnee");
 
-  let leftHipKnee;
-  let rightHipKnee;
-  let leftShoulderElbow;
-  let rightShoulderElbow;
-  let rightleftEye;
-
-  if (
-    rightKnee.score > 0.5 &&
-    rightHip.score > 0.5 &&
-    leftKnee.score > 0.5 &&
-    leftHip.score > 0.5
-  ) {
-    leftHipKnee = getAngle(
-      leftHip.position.y,
-      leftKnee.position.y,
-      leftHip.position.x,
-      leftKnee.position.x
-    );
-    rightHipKnee = getAngle(
-      rightHip.position.y,
-      rightHip.position.y,
-      rightHip.position.x,
-      rightKnee.position.x
-    );
+  function help(firstPoint, secondPoint) {
+    if (firstPoint.score > 0.5 && secondPoint.score > 0.5) {
+      const result = getAngle(
+        firstPoint.position.y,
+        secondPoint.position.y,
+        firstPoint.position.x,
+        secondPoint.position.x
+      );
+      return result;
+    }
   }
 
-  if (
-    rightShoulder.score > 0.5 &&
-    rightElbow.score > 0.5 &&
-    leftShoulder.score > 0.5 &&
-    leftElbow.score > 0.5
-  ) {
-    leftShoulderElbow = getAngle(
-      leftShoulder.position.y,
-      leftElbow.position.y,
-      leftShoulder.position.x,
-      leftElbow.position.x
-    );
+  const leftHipKnee = help(leftHip, leftKnee);
+  const rightHipKnee = help(rightHip, rightKnee);
+  const leftShoulderElbow = help(leftShoulder, leftElbow);
+  const rightShoulderElbow = help(rightShoulder, rightElbow);
+  const rightleftEye = help(rightEye, leftEye);
 
-    rightShoulderElbow = getAngle(
-      rightShoulder.position.y,
-      rightElbow.position.y,
-      rightShoulder.position.x,
-      rightElbow.position.x
-    );
-  }
-
-  if (rightEye.score > 0.5 && leftEye.score > 0.5) {
-    rightleftEye = getAngle(
-      rightEye.position.y,
-      leftEye.position.y,
-      rightEye.position.x,
-      leftEye.position.x
-    );
-  }
+  //왼쪽 엉덩이(sholuder), 무릎(elbow) 각도
+  //오른쪽 엉덩이, 무릎 각도
+  //왼쪽 어깨, 팔꿈치 각도
+  //오른쪽 어깨, 팔꿈치 각도
+  //오른쪽 왼쪽 눈 각도
 
   return {
     leftHipKnee: leftHipKnee,
@@ -205,6 +189,8 @@ export function helpDetection(pose) {
     rightShoulderElbow: rightShoulderElbow,
     rightleftEye: rightleftEye,
   };
+  //각각의 각도를 구해서 왼쪽은 왼쪽끼리
+  //오른쪽은 오른쪽끼리
 }
 
 export function getAngle(y1, y2, x1, x2) {
@@ -231,7 +217,7 @@ export function sholuderLengthinScreen(pose) {
 export function visibleButton(video) {
   const shoulderLength = sholuderLengthinScreen(video);
 
-  if (shoulderLength >= 18) {
+  if (shoulderLength >= 8) {
     return true;
   }
 }

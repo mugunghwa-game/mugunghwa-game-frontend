@@ -17,6 +17,7 @@ import It from "./It";
 function Game() {
   const navigate = useNavigate();
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
+  const [isItLoser, setIsItLoser] = useState(false);
   const [peers, setPeers] = useState([]);
   const [participantUser, setParticipantUser] = useState(null);
   const [itCount, setItCount] = useState(5);
@@ -84,7 +85,7 @@ function Game() {
     const temp = setInterval(() => {
       detect(net);
     }, 1000);
-    setTimeout(() => clearInterval(temp) & console.log("done"), 5000);
+    setTimeout(() => clearInterval(temp) & console.log("done"), 3000);
   };
 
   const detect = async (net) => {
@@ -139,7 +140,6 @@ function Game() {
         socket.emit(SOCKET.MOVED, participantUser[0].id);
       }
     }
-
     if (
       secondParticipantPose.length === 3 &&
       participantUser[1].id === socket.id
@@ -149,11 +149,13 @@ function Game() {
         secondParticipantPose[2]
       );
 
-      const result = visibleButton(firstParticipantPose[0]);
+      const result = visibleButton(secondParticipantPose[0]);
+
       if (result) {
         setHasTouchDownButton(true);
       }
       if (moved) {
+        console.log("moved");
         socket.emit(SOCKET.MOVED, participantUser[1].id);
       }
     }
@@ -212,7 +214,23 @@ function Game() {
         navigate("/ending");
       }
     }
-  }, [itCount]);
+    if (isItLoser) {
+      socket.emit("itLoser", true);
+      addWinner("참가자");
+      navigate("/ending");
+    }
+
+    socket.on("itLoser-gameEnd", (payload) => {
+      if (payload) {
+        addWinner("참가자");
+        navigate("/ending");
+      }
+    });
+
+    return () => {
+      socket.off("itLoser-gameEnd");
+    };
+  }, [itCount, isItLoser]);
 
   return (
     <DefaultPage>
@@ -232,6 +250,7 @@ function Game() {
           firstCanvas={firstCanvas}
           secondCanvas={secondCanvas}
           touchDown={hasTouchDownButton}
+          wildCard={setIsItLoser}
         />
       </Participant>
       <ItsCamera>
