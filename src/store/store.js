@@ -7,8 +7,14 @@ const useStore = create(
     participant: [],
     difficulty: "",
     winner: "",
+    preStartFirstParticipantPose: [],
+    preStartSecondparticipantPose: [],
     firstParticipantPose: [],
     secondParticipantPose: [],
+    isChildFirstParticipant: false,
+    isChildSecondParticipant: false,
+    fistParticipantPreparation: false,
+    secondParticipantPreparation: false,
 
     addPerson: (item) =>
       set((state) => ({
@@ -25,13 +31,27 @@ const useStore = create(
       set((state) => ({
         participant: [...state.participant, { id: item, opportunity: 3 }],
       })),
-    upadateParticipant: (item) =>
+    updateParticipant: (item) =>
       set((state) => ({
         participant: state.participant.filter((each) => {
           if (each.id === item) {
             each.opportunity -= 1;
           }
         }),
+      })),
+    addPreStartFirstParticipantPose: (item) =>
+      set((state) => ({
+        preStartFirstParticipantPose:
+          state.preStartFirstParticipantPose.length === 3
+            ? [item]
+            : [...state.preStartFirstParticipantPose, item],
+      })),
+    addPreStartSecondparticipantPose: (item) =>
+      set((state) => ({
+        preStartSecondparticipantPose:
+          state.preStartSecondparticipantPose.length === 3
+            ? [item]
+            : [...state.preStartSecondparticipantPose, item],
       })),
     addFirstParticipantPose: (item) =>
       set((state) => ({
@@ -47,6 +67,22 @@ const useStore = create(
             ? [item]
             : [...state.secondParticipantPose, item],
       })),
+    updateFirstChildParticipant: (item) =>
+      set((state) => ({
+        isChildFirstParticipant: true,
+      })),
+    updateSecondChildParticipant: (item) =>
+      set((state) => ({
+        isChildSecondParticipant: true,
+      })),
+    updateFirstParticipantPreparation: (item) =>
+      set((state) => ({
+        fistParticipantPreparation: true,
+      })),
+    updateSecondParticipantPreparation: (item) =>
+      set((state) => ({
+        secondParticipantPreparation: true,
+      })),
     addWinner: (item) =>
       set((state) => ({
         winner: item,
@@ -58,6 +94,12 @@ const useStore = create(
         difficulty: "",
         firstParticipantPose: [],
         secondParticipantPose: [],
+        preStartFirstParticipantPose: [],
+        preStartSecondparticipantPose: [],
+        isChildFirstParticipant: false,
+        isChildSecondParticipant: false,
+        fistParticipantPreparation: false,
+        secondParticipantPreparation: false,
       })),
   }))
 );

@@ -35,7 +35,7 @@ function WaitingRoom() {
 
   const handleGame = () => {
     socket.emit(SOCKET.READY, true);
-    navigate("/countdown");
+    navigate("/prepare");
   };
 
   const handleRole = () => {
@@ -68,7 +68,7 @@ function WaitingRoom() {
     });
 
     socket.on(SOCKET.START, (payload) => {
-      payload ? navigate("/countdown") : null;
+      payload ? navigate("/prepare") : null;
     });
 
     return () => {

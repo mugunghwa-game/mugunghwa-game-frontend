@@ -163,7 +163,7 @@ function drawPoints(ctx, points, radius, color) {
     const pointY = data[i];
     const pointX = data[i + 1];
 
-    if (pointX !== 0 && pointY !== 0) {
+    if (pointX !== 0 && pointY !== 0 && ctx !== null) {
       ctx.beginPath();
       ctx.arc(pointX, pointY, radius, 0, 2 * Math.PI);
       ctx.fillStyle = color;
@@ -183,11 +183,13 @@ export function videoReference(video) {
 }
 
 export function drawCanvas(pose, video, videoWidth, videoHeight, canvas) {
-  const ctx = canvas.current.getContext("2d");
+  if (canvas.current !== null && video !== null) {
+    const ctx = canvas.current.getContext("2d");
 
-  canvas.current.width = videoWidth;
-  canvas.current.height = videoHeight;
+    canvas.current.width = videoWidth;
+    canvas.current.height = videoHeight;
 
-  drawKeypoints(pose.keypoints, 0.6, ctx);
-  drawSkeleton(pose.keypoints, 0.7, ctx);
+    drawKeypoints(pose.keypoints, 0.6, ctx);
+    drawSkeleton(pose.keypoints, 0.7, ctx);
+  }
 }

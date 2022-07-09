@@ -14,7 +14,8 @@ function Button({ children, handleClick, property }) {
 }
 
 const ButtonBody = styled.button`
-  width: ${(props) => (props.property === "stop" ? "150px" : "300px")};
+  width: ${(props) =>
+    props.property === "stop" || props.children === "멈춤" ? "150px" : "300px"};
   height: 70px;
   background-color: #fbe6ce;
   color: ${(props) => (props.property === "disabled" ? "#808080" : "#199816")};

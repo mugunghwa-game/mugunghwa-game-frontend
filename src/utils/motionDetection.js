@@ -1,4 +1,4 @@
-export function moveDetection(firstPose, secondPose) {
+export function moveDetection(firstPose, secondPose, difficult, isChild) {
   if (firstPose.score < 0.2 || secondPose.score < 0.2) {
     return true;
   }
@@ -9,120 +9,246 @@ export function moveDetection(firstPose, secondPose) {
 
   console.log(firstResult, secondResult, shoulderLength);
   //가장가까울때, 중간일때, 가장 멀때를 체크해주고 함수를만들어 넘겨줌
-  if (shoulderLength > 26) {
-    console.log("26");
-    const rightShoulderElbowResult = differenceAngle(
-      firstResult.rightShoulderElbow,
-      secondResult.rightShoulderElbow,
-      1
-    );
-    const leftShoulderElbowResult = differenceAngle(
-      firstResult.leftShoulderElbow,
-      secondResult.leftShoulderElbow,
-      1
-    );
-    const rightLeftEyeResult = differenceAngle(
-      firstResult.rightleftEye,
-      secondResult.rightleftEye,
-      1
-    );
-    const leftHipKneeResult = differenceAngle(
-      firstResult.leftHipKnee,
-      secondResult.leftHipKnee,
-      1
-    );
-    const rightHipKneeResult = differenceAngle(
-      firstResult.rightHipKnee,
-      secondResult.rightHipKnee,
-      1
-    );
-    if (
-      rightShoulderElbowResult ||
-      leftShoulderElbowResult ||
-      rightLeftEyeResult ||
-      leftHipKneeResult ||
-      rightHipKneeResult
-    ) {
-      return true;
-    }
-  } else if (5 < shoulderLength <= 26) {
-    //중간정도일때
-    console.log("5~26");
 
-    const rightShoulderElbowResult = differenceAngle(
-      firstResult.rightShoulderElbow,
-      secondResult.rightShoulderElbow,
-      4
-    );
-    const leftShoulderElbowResult = differenceAngle(
-      firstResult.leftShoulderElbow,
-      secondResult.leftShoulderElbow,
-      4
-    );
-    const rightLeftEyeResult = differenceAngle(
-      firstResult.rightleftEye,
-      secondResult.rightleftEye,
-      4
-    );
-    const leftHipKneeResult = differenceAngle(
-      firstResult.leftHipKnee,
-      secondResult.leftHipKnee,
-      4
-    );
-    const rightHipKneeResult = differenceAngle(
-      firstResult.rightHipKnee,
-      secondResult.rightHipKnee,
-      4
-    );
-    if (
-      rightShoulderElbowResult ||
-      leftShoulderElbowResult ||
-      rightLeftEyeResult ||
-      leftHipKneeResult ||
-      rightHipKneeResult
-    ) {
-      return true;
-    }
-  } else if (shoulderLength <= 5) {
-    //가장멀때
-    console.log("5");
+  //아이가 아니고 difficulty가 어려움이라면 이거의 0.8배 적용
 
-    //각도 차 20일때 움직임이라고 체크하기
-    const rightShoulderElbowResult = differenceAngle(
-      firstResult.rightShoulderElbow,
-      secondResult.rightShoulderElbow,
-      20
-    );
-    const leftShoulderElbowResult = differenceAngle(
-      firstResult.leftShoulderElbow,
-      secondResult.leftShoulderElbow,
-      20
-    );
-    const rightLeftEyeResult = differenceAngle(
-      firstResult.rightleftEye,
-      secondResult.rightleftEye,
-      20
-    );
-    const leftHipKneeResult = differenceAngle(
-      firstResult.leftHipKnee,
-      secondResult.leftHipKnee,
-      20
-    );
-    const rightHipKneeResult = differenceAngle(
-      firstResult.rightHipKnee,
-      secondResult.rightHipKnee,
-      20
-    );
-    if (
-      rightShoulderElbowResult ||
-      leftShoulderElbowResult ||
-      rightLeftEyeResult ||
-      leftHipKneeResult ||
-      rightHipKneeResult
-    ) {
-      return true;
+  //아이일때는 이거 적용
+
+  if (!isChild && difficult === "어려움") {
+    if (shoulderLength > 26) {
+      console.log("26");
+      const rightShoulderElbowResult = differenceAngle(
+        firstResult.rightShoulderElbow,
+        secondResult.rightShoulderElbow,
+        0.8
+      );
+      const leftShoulderElbowResult = differenceAngle(
+        firstResult.leftShoulderElbow,
+        secondResult.leftShoulderElbow,
+        0.8
+      );
+      const rightLeftEyeResult = differenceAngle(
+        firstResult.rightleftEye,
+        secondResult.rightleftEye,
+        0.8
+      );
+      const leftHipKneeResult = differenceAngle(
+        firstResult.leftHipKnee,
+        secondResult.leftHipKnee,
+        0.8
+      );
+      const rightHipKneeResult = differenceAngle(
+        firstResult.rightHipKnee,
+        secondResult.rightHipKnee,
+        0.8
+      );
+      if (
+        rightShoulderElbowResult ||
+        leftShoulderElbowResult ||
+        rightLeftEyeResult ||
+        leftHipKneeResult ||
+        rightHipKneeResult
+      ) {
+        return true;
+      }
+    } else if (5 < shoulderLength <= 26) {
+      //중간정도일때
+      console.log("5~26");
+
+      const rightShoulderElbowResult = differenceAngle(
+        firstResult.rightShoulderElbow,
+        secondResult.rightShoulderElbow,
+        4
+      );
+      const leftShoulderElbowResult = differenceAngle(
+        firstResult.leftShoulderElbow,
+        secondResult.leftShoulderElbow,
+        4
+      );
+      const rightLeftEyeResult = differenceAngle(
+        firstResult.rightleftEye,
+        secondResult.rightleftEye,
+        4
+      );
+      const leftHipKneeResult = differenceAngle(
+        firstResult.leftHipKnee,
+        secondResult.leftHipKnee,
+        4
+      );
+      const rightHipKneeResult = differenceAngle(
+        firstResult.rightHipKnee,
+        secondResult.rightHipKnee,
+        4
+      );
+      if (
+        rightShoulderElbowResult ||
+        leftShoulderElbowResult ||
+        rightLeftEyeResult ||
+        leftHipKneeResult ||
+        rightHipKneeResult
+      ) {
+        return true;
+      }
+    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
+      //가장멀때
+      console.log("5");
+
+      //각도 차 20일때 움직임이라고 체크하기
+      const rightShoulderElbowResult = differenceAngle(
+        firstResult.rightShoulderElbow,
+        secondResult.rightShoulderElbow,
+        16
+      );
+      const leftShoulderElbowResult = differenceAngle(
+        firstResult.leftShoulderElbow,
+        secondResult.leftShoulderElbow,
+        16
+      );
+      const rightLeftEyeResult = differenceAngle(
+        firstResult.rightleftEye,
+        secondResult.rightleftEye,
+        16
+      );
+      const leftHipKneeResult = differenceAngle(
+        firstResult.leftHipKnee,
+        secondResult.leftHipKnee,
+        16
+      );
+      const rightHipKneeResult = differenceAngle(
+        firstResult.rightHipKnee,
+        secondResult.rightHipKnee,
+        16
+      );
+      if (
+        rightShoulderElbowResult ||
+        leftShoulderElbowResult ||
+        rightLeftEyeResult ||
+        leftHipKneeResult ||
+        rightHipKneeResult
+      ) {
+        return true;
+      }
     }
   }
+
+  if (isChild || difficult === "쉬움")
+    if ((isChild && shoulderLength > 16) || shoulderLength > 26) {
+      console.log("26");
+      const rightShoulderElbowResult = differenceAngle(
+        firstResult.rightShoulderElbow,
+        secondResult.rightShoulderElbow,
+        1
+      );
+      const leftShoulderElbowResult = differenceAngle(
+        firstResult.leftShoulderElbow,
+        secondResult.leftShoulderElbow,
+        1
+      );
+      const rightLeftEyeResult = differenceAngle(
+        firstResult.rightleftEye,
+        secondResult.rightleftEye,
+        1
+      );
+      const leftHipKneeResult = differenceAngle(
+        firstResult.leftHipKnee,
+        secondResult.leftHipKnee,
+        1
+      );
+      const rightHipKneeResult = differenceAngle(
+        firstResult.rightHipKnee,
+        secondResult.rightHipKnee,
+        1
+      );
+      if (
+        rightShoulderElbowResult ||
+        leftShoulderElbowResult ||
+        rightLeftEyeResult ||
+        leftHipKneeResult ||
+        rightHipKneeResult
+      ) {
+        return true;
+      }
+    } else if (
+      (isChild && 3 < shoulderLength <= 16) ||
+      5 < shoulderLength <= 26
+    ) {
+      //중간정도일때
+      console.log("5~26");
+
+      const rightShoulderElbowResult = differenceAngle(
+        firstResult.rightShoulderElbow,
+        secondResult.rightShoulderElbow,
+        3
+      );
+      const leftShoulderElbowResult = differenceAngle(
+        firstResult.leftShoulderElbow,
+        secondResult.leftShoulderElbow,
+        3
+      );
+      const rightLeftEyeResult = differenceAngle(
+        firstResult.rightleftEye,
+        secondResult.rightleftEye,
+        3
+      );
+      const leftHipKneeResult = differenceAngle(
+        firstResult.leftHipKnee,
+        secondResult.leftHipKnee,
+        3
+      );
+      const rightHipKneeResult = differenceAngle(
+        firstResult.rightHipKnee,
+        secondResult.rightHipKnee,
+        3
+      );
+      if (
+        rightShoulderElbowResult ||
+        leftShoulderElbowResult ||
+        rightLeftEyeResult ||
+        leftHipKneeResult ||
+        rightHipKneeResult
+      ) {
+        return true;
+      }
+    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
+      //가장멀때
+      console.log("5");
+
+      //각도 차 20일때 움직임이라고 체크하기
+      const rightShoulderElbowResult = differenceAngle(
+        firstResult.rightShoulderElbow,
+        secondResult.rightShoulderElbow,
+        20
+      );
+      const leftShoulderElbowResult = differenceAngle(
+        firstResult.leftShoulderElbow,
+        secondResult.leftShoulderElbow,
+        20
+      );
+      const rightLeftEyeResult = differenceAngle(
+        firstResult.rightleftEye,
+        secondResult.rightleftEye,
+        20
+      );
+      const leftHipKneeResult = differenceAngle(
+        firstResult.leftHipKnee,
+        secondResult.leftHipKnee,
+        20
+      );
+      const rightHipKneeResult = differenceAngle(
+        firstResult.rightHipKnee,
+        secondResult.rightHipKnee,
+        20
+      );
+      if (
+        rightShoulderElbowResult ||
+        leftShoulderElbowResult ||
+        rightLeftEyeResult ||
+        leftHipKneeResult ||
+        rightHipKneeResult
+      ) {
+        return true;
+      }
+    }
   return false;
   //두 포즈의 값이 들어왔고 이제 이걸 비교해야함.
   //두 각도의 차가 20이상이면(3m거리일때) 움직임이라고 체크하기
@@ -220,4 +346,20 @@ export function visibleButton(video) {
   if (shoulderLength >= 8) {
     return true;
   }
+}
+
+export function divisionChildAndAdult(video) {
+  //왼쪽어깨x-오른쪽 어깨x X 왼쪽어깨y -왼쪽힙
+  const leftShoulder = keyword(video, "leftShoulder");
+  const rightShoulder = keyword(video, "rightShoulder");
+  const leftHip = keyword(video, "leftHip");
+  const childStandardBodyWidth = 6000;
+
+  const result1 = sholuderLengthinScreen(video);
+
+  const result =
+    Math.abs(leftShoulder.position.x - rightShoulder.position.x) *
+    Math.abs(leftShoulder.position.y - leftHip.position.y);
+  console.log(result1, result);
+  result1 <= 4 && result < childStandardBodyWidth ? true : false;
 }

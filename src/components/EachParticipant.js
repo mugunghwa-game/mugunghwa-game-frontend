@@ -13,6 +13,7 @@ function EachParticipant({
   secondCanvas,
   touchDown,
   wildCard,
+  isReady,
 }) {
   const handleIt = () => {
     wildCard(true);
@@ -24,9 +25,18 @@ function EachParticipant({
           {participantUser[index].id && (
             <span>
               {participantUser[index].id === socket.id ? (
-                <span>나 </span>
-              ) : null}
-              {index}남은 기회의 수 {participantUser[index].opportunity}
+                <div>
+                  참가자
+                  <span>나 </span>
+                </div>
+              ) : (
+                <div>참가자</div>
+              )}
+              {isReady === false ? null : (
+                <span>
+                  {index}남은 기회의 수 {participantUser[index].opportunity}
+                </span>
+              )}
               <>
                 <div className="participant">
                   <Webcam

@@ -35,7 +35,14 @@ function Game() {
     secondParticipantPose,
     addFirstParticipantPose,
     addSecondParticipantPose,
+    isChildFirstParticipant,
+    isChildSecondParticipant,
   } = useStore();
+
+  const videoConstraints = {
+    height: window.innerHeight / 2,
+    width: window.innerWidth / 2,
+  };
   let userInfo;
 
   useEffect(() => {
@@ -85,6 +92,7 @@ function Game() {
     const temp = setInterval(() => {
       detect(net);
     }, 1000);
+
     setTimeout(() => clearInterval(temp) & console.log("done"), 3000);
   };
 
@@ -127,7 +135,9 @@ function Game() {
     ) {
       const moved = moveDetection(
         firstParticipantPose[0],
-        firstParticipantPose[2]
+        firstParticipantPose[2],
+        difficulty,
+        isChildFirstParticipant
       );
 
       const result = visibleButton(firstParticipantPose[0]);
@@ -146,7 +156,9 @@ function Game() {
     ) {
       const moved = moveDetection(
         secondParticipantPose[0],
-        secondParticipantPose[2]
+        secondParticipantPose[2],
+        difficulty,
+        isChildSecondParticipant
       );
 
       const result = visibleButton(secondParticipantPose[0]);
@@ -155,7 +167,6 @@ function Game() {
         setHasTouchDownButton(true);
       }
       if (moved) {
-        console.log("moved");
         socket.emit(SOCKET.MOVED, participantUser[1].id);
       }
     }
@@ -235,10 +246,8 @@ function Game() {
   return (
     <DefaultPage>
       <Description>
-        {itUser && itUser[0] === socket.id ? (
-          <DescriptionContent user={itUser} />
-        ) : (
-          <DescriptionContent />
+        {participantUser && (
+          <DescriptionContent user={itUser} participantUser={participantUser} />
         )}
       </Description>
       <Participant>
@@ -323,10 +332,5 @@ const ItsCamera = styled.div`
     transform: rotateY(180deg);
   }
 `;
-
-const videoConstraints = {
-  height: window.innerHeight / 2,
-  width: window.innerWidth / 2,
-};
 
 export default Game;
