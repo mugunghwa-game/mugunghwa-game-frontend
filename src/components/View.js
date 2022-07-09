@@ -27,6 +27,7 @@ function View({
   setHasStop,
   touchDown,
   handleLoser,
+  handleClickCount,
 }) {
   const [peers, setPeers] = useState([]);
   const [itUser, setItUser] = useState(null);
@@ -66,17 +67,18 @@ function View({
     });
 
     if (mode === "game") {
-      console.log(mode);
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
 
-      setTimeout(() => clearInterval(temp) && console.log("done"), 3000);
+      setTimeout(() => {
+        clearInterval(temp),
+          handleClickCount((prev) => prev + 1),
+          console.log("done");
+      }, 3000);
     }
 
     if (mode === "prepare") {
-      console.log(mode);
-
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
@@ -198,6 +200,7 @@ function View({
           itCount={mode === "preapre" ? null : itCount}
           handleCount={mode === "preapre" ? null : setItCount}
           userVideo={userVideo}
+          // clickCount={clickCount}
         />
       </ItsCamera>
     </DefaultPage>

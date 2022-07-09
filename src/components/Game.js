@@ -14,7 +14,8 @@ function Game() {
   const [isItLoser, setIsItLoser] = useState(false);
   const [participantUser, setParticipantUser] = useState(null);
   const [itCount, setItCount] = useState(5);
-
+  const [clickCount, setClickCount] = useState(0);
+  const [isGameEnd, setIsGameEnd] = useState(false);
   const {
     addWinner,
     difficulty,
@@ -76,8 +77,17 @@ function Game() {
       }
     });
 
+    if (clickCount === 5) {
+      socket.emit("count-end", true);
+    }
+
+    socket.on("it-end", (payload) => {
+      if (payload) {
+        setIsGameEnd(true);
+      }
+    });
+
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      console.log("moved");
       setParticipantUser(payload);
     });
 
@@ -104,12 +114,13 @@ function Game() {
       socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
       socket.off(SOCKET.PARTICIPANT_REMAINING_COUNT);
       socket.off(SOCKET.GAME_END);
+      socket.off("it-end");
       socket.off(SOCKET.ANOTHER_USER_END);
     };
-  }, []);
+  }, [clickCount, isGameEnd]);
 
   useEffect(() => {
-    if (itCount === 0) {
+    if ((itCount === 0 && clickCount === 5) || (isGameEnd && itCount === 0)) {
       const reaminingUser = participantUser.filter(
         (item) => item.opportunity > 0
       );
@@ -122,6 +133,7 @@ function Game() {
         navigate("/ending");
       }
     }
+
     if (isItLoser) {
       socket.emit("itLoser", true);
       addWinner("참가자");
@@ -138,7 +150,7 @@ function Game() {
     return () => {
       socket.off("itLoser-gameEnd");
     };
-  }, [itCount, isItLoser]);
+  }, [clickCount, isItLoser, isGameEnd]);
 
   return (
     <View
@@ -151,6 +163,8 @@ function Game() {
       setHasStop={setHasStop}
       touchDown={hasTouchDownButton}
       handleLoser={setIsItLoser}
+      handleClickCount={setClickCount}
+      clickCount={clickCount}
     />
   );
 }

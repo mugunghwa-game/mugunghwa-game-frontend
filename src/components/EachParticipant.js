@@ -1,6 +1,7 @@
 import React from "react";
 import Webcam from "react-webcam";
 
+import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 
@@ -13,9 +14,11 @@ function EachParticipant({
   secondCanvas,
   touchDown,
   wildCard,
-  isReady,
   handleLoser,
 }) {
+  const { fistParticipantPreparation, secondParticipantPreparation } =
+    useStore();
+
   const handleIt = () => {
     wildCard(true);
     handleLoser(true);
@@ -35,11 +38,11 @@ function EachParticipant({
               ) : (
                 <div>참가자</div>
               )}
-              {isReady === false ? null : (
+              {fistParticipantPreparation && secondParticipantPreparation ? (
                 <span>
                   {index}남은 기회의 수 {participantUser[index].opportunity}
                 </span>
-              )}
+              ) : null}
               <>
                 <div className="participant">
                   <Webcam

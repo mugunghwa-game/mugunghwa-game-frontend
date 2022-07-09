@@ -355,11 +355,11 @@ export function divisionChildAndAdult(video) {
   const leftHip = keyword(video, "leftHip");
   const childStandardBodyWidth = 6000;
 
-  const result1 = sholuderLengthinScreen(video);
+  const sholuderLength = sholuderLengthinScreen(video);
 
-  const result =
+  const userBodyWidth =
     Math.abs(leftShoulder.position.x - rightShoulder.position.x) *
     Math.abs(leftShoulder.position.y - leftHip.position.y);
-  console.log(result1, result);
-  result1 <= 4 && result < childStandardBodyWidth ? true : false;
+
+  sholuderLength <= 4 && userBodyWidth < childStandardBodyWidth ? true : false;
 }
