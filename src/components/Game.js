@@ -78,10 +78,10 @@ function Game() {
     });
 
     if (clickCount === 5) {
-      socket.emit("count-end", true);
+      socket.emit(SOCKET.COUNT_END, true);
     }
 
-    socket.on("it-end", (payload) => {
+    socket.on(SOCKET.IT_END, (payload) => {
       if (payload) {
         setIsGameEnd(true);
       }
@@ -135,12 +135,12 @@ function Game() {
     }
 
     if (isItLoser) {
-      socket.emit("itLoser", true);
+      socket.emit(SOCKET.IT_LOSER, true);
       addWinner("참가자");
       navigate("/ending");
     }
 
-    socket.on("itLoser-gameEnd", (payload) => {
+    socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
       if (payload) {
         addWinner("참가자");
         navigate("/ending");
@@ -148,7 +148,7 @@ function Game() {
     });
 
     return () => {
-      socket.off("itLoser-gameEnd");
+      socket.off(SOCKET.IT_LOSER_GAME_END);
     };
   }, [clickCount, isItLoser, isGameEnd]);
 

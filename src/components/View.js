@@ -1,15 +1,10 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { createPeer } from "../utils/index";
-import {
-  divisionChildAndAdult,
-  sholuderLengthinScreen,
-} from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
 import DefaultPage from "./DefaultPage";
@@ -31,23 +26,16 @@ function View({
 }) {
   const [peers, setPeers] = useState([]);
   const [itUser, setItUser] = useState(null);
-  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [isItLoser, setIsItLoser] = useState(false);
-  // const [itCount, setItCount] = useState(5);
+  const [countDownStart, setCountDownStart] = useState(false);
 
   let userInfo;
   const {
-    preStartFirstParticipantPose,
-    preStartSecondparticipantPose,
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
 
     addFirstParticipantPose,
     addSecondParticipantPose,
-    updateFirstChildParticipant,
-    updateSecondChildParticipant,
-    updateFirstParticipantPreparation,
-    updateSecondParticipantPreparation,
   } = useStore();
   const userVideo = useRef();
   const peersRef = useRef([]);
@@ -91,6 +79,7 @@ function View({
     }
     if (mode === "game" && hasStop) {
       runPosenet();
+      setCountDownStart(true);
       setHasStop(false);
     }
   }, [hasStop]);
@@ -192,6 +181,8 @@ function View({
           touchDown={mode === "preapre" ? null : touchDown}
           wildCard={mode === "preapre" ? null : setIsItLoser}
           handleLoser={mode === "preapre" ? null : handleLoser}
+          countDownStart={countDownStart}
+          handleCountDownStart={setCountDownStart}
         />
       </Participant>
       <ItsCamera>
@@ -200,7 +191,6 @@ function View({
           itCount={mode === "preapre" ? null : itCount}
           handleCount={mode === "preapre" ? null : setItCount}
           userVideo={userVideo}
-          // clickCount={clickCount}
         />
       </ItsCamera>
     </DefaultPage>
@@ -226,6 +216,7 @@ const Participant = styled.div`
   .participant {
     background-color: white;
   }
+
   .one {
     position: absolute;
     z-index: 9;
@@ -233,6 +224,33 @@ const Participant = styled.div`
     height: 250px;
     object-fit: fill;
     transform: rotateY(180deg);
+  }
+
+  .me {
+    color: #f47676;
+    margin-right: 10px;
+    font-size: 20px;
+  }
+
+  .count {
+    color: #f47676;
+    margin-left: 10px;
+    font-size: 20px;
+  }
+
+  .opportunity {
+    margin-left: 20px;
+  }
+
+  .countDown {
+    z-index: 300;
+    position: absolute;
+    place-self: center;
+    font-size: 100px;
+  }
+
+  .countDown {
+    color: #f47676;
   }
 `;
 
@@ -255,6 +273,21 @@ const ItsCamera = styled.div`
 
   .stop {
     align-self: center;
+  }
+
+  .me {
+    color: #f47676;
+    font-size: 20px;
+  }
+
+  .count {
+    color: #f47676;
+    margin-left: 10px;
+    font-size: 20px;
+  }
+
+  .opportunity {
+    margin-left: 20px;
   }
 
   .itCam {

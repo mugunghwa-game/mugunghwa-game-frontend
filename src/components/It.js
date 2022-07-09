@@ -24,13 +24,15 @@ function It({ user, itCount, handleCount, userVideo }) {
           <div className="opportunity">
             {user[0] === socket.id ? (
               <div>
-                나 <span>술래</span>
+                <span className="me"> 나</span> 술래
               </div>
             ) : (
               <span>술래</span>
             )}
             {fistParticipantPreparation && secondParticipantPreparation && (
-              <span> 남은기회의 수{itCount}</span>
+              <span className="opportunity">
+                남은기회의 수<span className="count">{itCount}</span>
+              </span>
             )}
           </div>
           <div className="it">
