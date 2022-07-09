@@ -4,26 +4,8 @@ import useStore from "../store/store";
 import { socket } from "../utils/socket";
 
 function DescriptionContent({ user, participantUser }) {
-  const {
-    addWinner,
-    difficulty,
-    firstParticipantPose,
-    secondParticipantPose,
-    preStartFirstParticipantPose,
-    preStartSecondparticipantPose,
-    addFirstParticipantPose,
-    addSecondParticipantPose,
-    addPreStartFirstParticipantPose,
-    addPreStartSecondparticipantPose,
-    updateFirstChildParticipant,
-    updateSecondChildParticipant,
-    isChildFirstParticipant,
-    isChildSecondParticipant,
-    updateFirstParticipantPreparation,
-    updateSecondParticipantPreparation,
-    fistParticipantPreparation,
-    secondParticipantPreparation,
-  } = useStore();
+  const { fistParticipantPreparation, secondParticipantPreparation } =
+    useStore();
 
   return (
     <div>

@@ -29,7 +29,6 @@ function Countdown() {
     <DefaultPage>
       <Content>
         <div>잠시 후 게임이 시작됩니다</div>
-        <div>뒤로 물러나 바르게 서주세요</div>
       </Content>
       <Img>
         {flower.map((eachFlower) => (

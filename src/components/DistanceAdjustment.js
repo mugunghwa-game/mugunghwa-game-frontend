@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import {
   divisionChildAndAdult,
@@ -39,7 +40,7 @@ function DistanceAdjustment() {
           preStartFirstParticipantPose[0].score > 0.8
         ) {
           isItChild ? updateFirstChildParticipant() : null;
-          socket.emit("isReady", true);
+          socket.emit(SOCKET.IS_READY, true);
         }
       }
       if (
@@ -54,11 +55,11 @@ function DistanceAdjustment() {
           preStartSecondparticipantPose[0].score > 0.8
         ) {
           isItChild ? updateSecondChildParticipant() : null;
-          socket.emit("isReady", true);
+          socket.emit(SOCKET.IS_READY, true);
         }
       }
 
-      socket.on("prepared-game", (payload) => {
+      socket.on(SOCKET.PREPARED_GAME, (payload) => {
         if (payload) {
           updateFirstParticipantPreparation();
           updateSecondParticipantPreparation();
@@ -67,7 +68,7 @@ function DistanceAdjustment() {
       });
     }
 
-    socket.on("prepared", (payload) => {
+    socket.on(SOCKET.PREPARED, (payload) => {
       if (payload) {
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
@@ -76,8 +77,8 @@ function DistanceAdjustment() {
     });
 
     return () => {
-      socket.off("prepared-game");
-      socket.off("prepared");
+      socket.off(SOCKET.PREPARED_GAME);
+      socket.off(SOCKET.PREPARED);
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
 

@@ -29,6 +29,9 @@ export const SOCKET = {
   START: "start",
   ENTER: "enter",
   USER: "all-info",
+  IS_READY: "isReady",
+  PREPARED_GAME: "prepared-game",
+  PREPARED: "prepared",
   MOTION_START: "motion-start",
   MOVED: "moved",
   PARTICIPANT_REMAINING_OPPORTUNITY: "remaining-opportunity",
@@ -37,6 +40,7 @@ export const SOCKET = {
   ANOTHER_USER_END: "another-user-end",
   RECEIVING_RETURNED_SIGNAL: "receiving-returned-signal",
   SENDING_SIGNAL: "sending-signal",
+  INFO_INITIALIZATION: "infoInitialization",
 };
 
 export const GAME = {
