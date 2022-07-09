@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { createPeer, getMedia } from "../utils/index";
+import { createPeer } from "../utils/index";
 import {
   divisionChildAndAdult,
   sholuderLengthinScreen,
@@ -17,12 +17,22 @@ import DescriptionContent from "./DscriptionContent";
 import EachParticipant from "./EachParticipant";
 import It from "./It";
 
-function View({ mode, setParticipantUser, participant }) {
+function View({
+  mode,
+  setParticipantUser,
+  participant,
+  itCount,
+  setItCount,
+  hasStop,
+  setHasStop,
+  touchDown,
+  handleLoser,
+}) {
   const [peers, setPeers] = useState([]);
   const [itUser, setItUser] = useState(null);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [isItLoser, setIsItLoser] = useState(false);
-  const [itCount, setItCount] = useState(5);
+  // const [itCount, setItCount] = useState(5);
 
   let userInfo;
   const {
@@ -30,6 +40,9 @@ function View({ mode, setParticipantUser, participant }) {
     preStartSecondparticipantPose,
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
+
+    addFirstParticipantPose,
+    addSecondParticipantPose,
     updateFirstChildParticipant,
     updateSecondChildParticipant,
     updateFirstParticipantPreparation,
@@ -52,13 +65,18 @@ function View({ mode, setParticipantUser, participant }) {
       scale: 0.8,
     });
 
-    if (mode !== "prepare") {
+    if (mode === "game") {
+      console.log(mode);
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
 
       setTimeout(() => clearInterval(temp) && console.log("done"), 3000);
-    } else {
+    }
+
+    if (mode === "prepare") {
+      console.log(mode);
+
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
@@ -66,8 +84,14 @@ function View({ mode, setParticipantUser, participant }) {
   };
 
   useEffect(() => {
-    runPosenet();
-  }, []);
+    if (mode === "prepare") {
+      runPosenet();
+    }
+    if (mode === "game" && hasStop) {
+      runPosenet();
+      setHasStop(false);
+    }
+  }, [hasStop]);
 
   const detect = async (net) => {
     if (
@@ -96,11 +120,20 @@ function View({ mode, setParticipantUser, participant }) {
           secondVideo.height,
           secondCanvas
         );
-        addPreStartFirstParticipantPose(firstVideoPose);
-        addPreStartSecondparticipantPose(secondVideoPose);
+
+        if (mode === "prepare") {
+          addPreStartFirstParticipantPose(firstVideoPose);
+          addPreStartSecondparticipantPose(secondVideoPose);
+        }
+
+        if (mode === "game") {
+          addFirstParticipantPose(firstVideoPose);
+          addSecondParticipantPose(secondVideoPose);
+        }
       }
     }
   };
+
   useEffect(() => {
     socket.emit(SOCKET.ENTER, true);
     socket.on(SOCKET.USER, (payload) => {
@@ -154,8 +187,9 @@ function View({ mode, setParticipantUser, participant }) {
           secondParticipantRef={secondParticipantRef}
           firstCanvas={firstCanvas}
           secondCanvas={secondCanvas}
-          touchDown={mode === "preapre" ? null : hasTouchDownButton}
+          touchDown={mode === "preapre" ? null : touchDown}
           wildCard={mode === "preapre" ? null : setIsItLoser}
+          handleLoser={mode === "preapre" ? null : handleLoser}
         />
       </Participant>
       <ItsCamera>

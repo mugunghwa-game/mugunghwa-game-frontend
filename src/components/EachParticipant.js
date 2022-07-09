@@ -14,10 +14,13 @@ function EachParticipant({
   touchDown,
   wildCard,
   isReady,
+  handleLoser,
 }) {
   const handleIt = () => {
     wildCard(true);
+    handleLoser(true);
   };
+
   return (
     <>
       {peers.map((peer, index) => (

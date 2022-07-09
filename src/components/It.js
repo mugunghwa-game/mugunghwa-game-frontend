@@ -42,10 +42,10 @@ function It({ user, itCount, handleCount, userVideo }) {
         user[0] === socket.id &&
         fistParticipantPreparation &&
         secondParticipantPreparation && (
-        <div className="stop">
-          <Button handleClick={handleStopButton}>멈춤</Button>
-        </div>
-      )}
+          <div className="stop">
+            <Button handleClick={handleStopButton}>멈춤</Button>
+          </div>
+        )}
     </>
   );
 }
