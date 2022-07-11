@@ -13,7 +13,8 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
-  const { addPerson, people, addParticipant, participant } = useStore();
+  const { addPerson, people, addParticipant, participant, addParticipantList } =
+    useStore();
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -34,8 +35,7 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    socket.emit(SOCKET.READY, true);
-    navigate("/countdown");
+    navigate("/countDown");
   };
 
   const handleRole = () => {
@@ -44,8 +44,10 @@ function WaitingRoom() {
         id: socket.id,
         role: "participant",
       });
+      console.log(socket.id);
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
+      addParticipantList(socket.id);
     } else {
       setShouldDisplayInfoModal(true);
     }
@@ -65,10 +67,6 @@ function WaitingRoom() {
     socket.on(SOCKET.ROLE_COUNTS, (payload) => {
       setItCount(payload.it);
       setParticipantCount(payload.participant);
-    });
-
-    socket.on(SOCKET.START, (payload) => {
-      payload ? navigate("/countdown") : null;
     });
 
     return () => {

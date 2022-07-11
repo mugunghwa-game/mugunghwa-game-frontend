@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import main from "../asset/main.gif";
-import { socket } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 

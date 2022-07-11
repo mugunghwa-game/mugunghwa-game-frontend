@@ -1,46 +1,46 @@
-import React from "react";
-import Webcam from "react-webcam";
+import React, { useEffect, useRef, useState } from "react";
 
-import { socket } from "../utils/socket";
+import Button from "./Button";
 
 function EachParticipant({
-  peers,
   participantUser,
-  firstParticipantRef,
-  secondParticipantRef,
-  firstCanvas,
-  secondCanvas,
+  touchDown,
+  wildCard,
+  handleLoser,
+  countDownStart,
+  handleCountDownStart,
 }) {
+  const [countDown, setCounDown] = useState(3);
+
+  const handleIt = () => {
+    wildCard(true);
+    handleLoser(true);
+  };
+  useEffect(() => {
+    let interval;
+    if (countDownStart) {
+      if (countDown > 1) {
+        interval = setInterval(() => {
+          setCounDown((prev) => prev - 1);
+        }, 1000);
+      }
+    }
+
+    setTimeout(() => {
+      clearInterval(interval);
+      setCounDown(3);
+      handleCountDownStart(false);
+    }, 3000);
+  }, [countDownStart]);
+
   return (
     <>
-      {peers.map((peer, index) => (
-        <span key={index}>
-          {participantUser[index].id && (
-            <span>
-              {participantUser[index].id === socket.id ? (
-                <span>나 </span>
-              ) : null}
-              {index}남은 기회의 수 {participantUser[index].opportunity}
-              <>
-                <div className="participant">
-                  <Webcam
-                    className="one"
-                    key={index}
-                    peer={peer}
-                    ref={
-                      index === 0 ? firstParticipantRef : secondParticipantRef
-                    }
-                  />
-                  <canvas
-                    ref={index === 0 ? firstCanvas : secondCanvas}
-                    className="one"
-                  />
-                </div>
-              </>
-            </span>
-          )}
-        </span>
-      ))}
+      {touchDown && (
+        <Button property="alram" handleClick={handleIt}>
+          술래 등 때리기
+        </Button>
+      )}
+      {countDownStart && <div className="countDown">{countDown}</div>}
     </>
   );
 }

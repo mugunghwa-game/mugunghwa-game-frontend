@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
@@ -12,7 +13,7 @@ function Ending() {
   const { removeAll, winner } = useStore();
 
   useEffect(() => {
-    socket.emit("infoInitialization", true);
+    socket.emit(SOCKET.INFO_INITIALIZATION, true);
     removeAll();
   }, []);
 

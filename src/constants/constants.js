@@ -29,14 +29,22 @@ export const SOCKET = {
   START: "start",
   ENTER: "enter",
   USER: "all-info",
+  IS_READY: "isReady",
+  PREPARED_GAME: "prepared-game",
+  PREPARED: "prepared",
   MOTION_START: "motion-start",
   MOVED: "moved",
+  COUNT_END: "count-end",
+  IT_END: "it-end",
   PARTICIPANT_REMAINING_OPPORTUNITY: "remaining-opportunity",
   PARTICIPANT_REMAINING_COUNT: "participant-remaining-count",
   GAME_END: "game-end",
   ANOTHER_USER_END: "another-user-end",
   RECEIVING_RETURNED_SIGNAL: "receiving-returned-signal",
   SENDING_SIGNAL: "sending-signal",
+  IT_LOSER: "itLoser",
+  IT_LOSER_GAME_END: "itLoser-gameEnd",
+  INFO_INITIALIZATION: "infoInitialization",
 };
 
 export const GAME = {
