@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Webcam from "react-webcam";
 
 import { SOCKET } from "../constants/constants";
@@ -6,7 +6,7 @@ import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function It({ user, itCount, handleCount, userVideo }) {
+function It({ user, itCount, handleCount, userVideo, isAllGameEnd }) {
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
@@ -34,9 +34,6 @@ function It({ user, itCount, handleCount, userVideo }) {
                 남은기회의 수<span className="count">{itCount}</span>
               </span>
             )}
-          </div>
-          <div className="it">
-            <Webcam className="itCam" muted ref={userVideo} />
           </div>
         </>
       )}

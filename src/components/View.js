@@ -1,48 +1,66 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Peer from "simple-peer";
 import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { createPeer } from "../utils/index";
+import { addPeer, createPeer } from "../utils/index";
+import {
+  divisionChildAndAdult,
+  moveDetection,
+  sholuderLengthinScreen,
+  visibleButton,
+} from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
+import Camera from "./Camera";
 import DefaultPage from "./DefaultPage";
 import DescriptionContent from "./DscriptionContent";
 import EachParticipant from "./EachParticipant";
 import It from "./It";
 
-function View({
-  mode,
-  setParticipantUser,
-  participant,
-  itCount,
-  setItCount,
-  hasStop,
-  setHasStop,
-  touchDown,
-  handleLoser,
-  handleClickCount,
-}) {
+function View() {
   const [peers, setPeers] = useState([]);
   const [itUser, setItUser] = useState(null);
   const [isItLoser, setIsItLoser] = useState(false);
+  const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
-
+  const userCanvas = useRef(null);
   let userInfo;
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
-
     addFirstParticipantPose,
     addSecondParticipantPose,
+    fistParticipantPreparation,
+    secondParticipantPreparation,
+    preStartFirstParticipantPose,
+    preStartSecondparticipantPose,
+    participantList,
+    updateFirstChildParticipant,
+    updateSecondChildParticipant,
+    updateFirstParticipantPreparation,
+    updateSecondParticipantPreparation,
+    addWinner,
+    difficulty,
+    firstParticipantPose,
+    secondParticipantPose,
+    isChildFirstParticipant,
+    isChildSecondParticipant,
   } = useStore();
-  const userVideo = useRef();
+  const navigate = useNavigate();
   const peersRef = useRef([]);
-  const firstCanvas = useRef(null);
-  const secondCanvas = useRef(null);
-  const firstParticipantRef = useRef(null);
-  const secondParticipantRef = useRef(null);
+  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [isGameEnd, setIsGameEnd] = useState(false);
+  const userVideo = useRef(null);
+  const [itCount, setItCount] = useState(5);
+  const [isAllGameEnd, setIsAllGameEnd] = useState(false);
+  const [participantUser, setParticipantUser] = useState(null);
+  const [mode, setMode] = useState("prepare");
+  const [anotherUser, setAnotherUser] = useState([]);
   const videoConstraints = {
     height: window.innerHeight / 2,
     width: window.innerWidth / 2,
@@ -61,7 +79,7 @@ function View({
 
       setTimeout(() => {
         clearInterval(temp),
-          handleClickCount((prev) => prev + 1),
+          setClickCount((prev) => prev + 1),
           console.log("done");
       }, 3000);
     }
@@ -70,6 +88,8 @@ function View({
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
+
+      setTimeout(() => clearInterval(temp) && console.log("done"), 20000);
     }
   };
 
@@ -86,40 +106,32 @@ function View({
 
   const detect = async (net) => {
     if (
-      typeof firstParticipantRef.current !== "undefined" &&
-      firstParticipantRef.current !== null &&
-      firstParticipantRef.current.video.readyState === 4
+      typeof userVideo.current !== "undefined" &&
+      userVideo.current !== null &&
+      userVideo.current.video.readyState === 4 &&
+      userCanvas
     ) {
-      const firstVideo = videoReference(firstParticipantRef);
-      const secondVideo = videoReference(secondParticipantRef);
+      const video = videoReference(userVideo);
+      const pose = await net.estimateSinglePose(video);
+      // console.log(pose);
 
-      const firstVideoPose = await net.estimateSinglePose(firstVideo);
-      const secondVideoPose = await net.estimateSinglePose(secondVideo);
-
-      if (firstVideo !== null && secondVideo !== null) {
-        drawCanvas(
-          firstVideoPose,
-          firstVideo,
-          firstVideo.width,
-          firstVideo.height,
-          firstCanvas
-        );
-        drawCanvas(
-          secondVideoPose,
-          secondVideo,
-          secondVideo.width,
-          secondVideo.height,
-          secondCanvas
-        );
-
+      if (pose !== null && userCanvas.current !== null) {
+        drawCanvas(pose, video, video.width, video.height, userCanvas);
+        console.log("mode", mode);
         if (mode === "prepare") {
-          addPreStartFirstParticipantPose(firstVideoPose);
-          addPreStartSecondparticipantPose(secondVideoPose);
+          //인덱스에 따라 다르게 저장.
+          if (participantList[0] === socket.id) {
+            addPreStartFirstParticipantPose(pose);
+          } else {
+            addPreStartSecondparticipantPose(pose);
+          }
         }
-
         if (mode === "game") {
-          addFirstParticipantPose(firstVideoPose);
-          addSecondParticipantPose(secondVideoPose);
+          if (participantList[0] === socket.id) {
+            addFirstParticipantPose(pose);
+          } else {
+            addSecondParticipantPose(pose);
+          }
         }
       }
     }
@@ -127,72 +139,306 @@ function View({
 
   useEffect(() => {
     socket.emit(SOCKET.ENTER, true);
+
     socket.on(SOCKET.USER, (payload) => {
-      userInfo = payload;
+      userInfo = payload.socketInRoom;
+      setAnotherUser(payload.socketInRoom);
       setItUser(payload.room.it);
       setParticipantUser(payload.participant);
     });
 
+    return () => {
+      socket.off(SOCKET.USER);
+    };
+  }, []);
+
+  useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({
+        video: videoConstraints,
+        audio: true,
+      })
       .then((stream) => {
-        if (userVideo.current !== null) {
-          const peers = [];
+        const peers = [];
 
-          userInfo.participant.forEach((user) => {
-            const peer = createPeer(user, socket.id, stream);
-            peersRef.current.push({
-              peerID: user,
-              peer,
+        userVideo.current.srcObject = stream;
+        //나말고 이미 들어와있던 사람들에게 내가 들어왔다고 알림
+        userInfo.forEach((user) => {
+          const peer = new Peer({
+            initiator: true,
+            trickle: false,
+            stream,
+          });
+          peer.on("signal", (signal) => {
+            socket.emit("sending signal", {
+              userToSignal: user,
+              callerID: socket.id,
+              signal: signal,
             });
-            peers.push(peer);
           });
 
-          setPeers(peers);
-
-          socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
-            const item = peersRef.current.find((p) => p.peerID === payload.id);
-            item.peer.signal(payload.signal);
+          peersRef.current.push({
+            peerID: user,
+            peer,
           });
-        }
+          peers.push(peer);
+        });
+
+        setPeers(peers);
+        socket.on("user joined", (payload) => {
+          const peer = addPeer(payload.signal, payload.callerID);
+          peersRef.current.push({
+            peerID: payload.callerID,
+            peer,
+          });
+
+          setPeers((users) => [...users, peer]);
+        });
+
+        socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
+          console.log("returning signal", payload);
+          const item = peersRef.current.find((p) => p.peerID === payload.id);
+          item.peer.signal(payload.signal);
+        });
       });
 
     return () => {
+      userVideo.current = null;
+
       socket.off(SOCKET.USER);
       socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
+      socket.off("user joined");
     };
   }, []);
+  console.log(peers);
+
+  useEffect(() => {
+    if (participantUser) {
+      if (
+        preStartFirstParticipantPose.length !== 0 &&
+        participantUser[0].id === socket.id
+      ) {
+        const sholuderLength = sholuderLengthinScreen(
+          preStartFirstParticipantPose[0]
+        );
+        const isItChild = divisionChildAndAdult(
+          preStartFirstParticipantPose[0]
+        );
+        // console.log(isItChild, sholuderLength);
+        if (
+          0 < sholuderLength < 5 &&
+          preStartFirstParticipantPose[0].score > 0.7
+        ) {
+          console.log("heelllll here is one");
+          isItChild ? updateFirstChildParticipant() : null;
+          socket.emit(SOCKET.IS_READY, true);
+        }
+      }
+
+      if (
+        preStartSecondparticipantPose.length !== 0 &&
+        participantUser[1].id === socket.id
+      ) {
+        const isItChild = divisionChildAndAdult(
+          preStartSecondparticipantPose[0]
+        );
+        if (
+          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
+          preStartSecondparticipantPose[0].score > 0.7
+        ) {
+          console.log("heelllll here is two");
+
+          isItChild ? updateSecondChildParticipant() : null;
+          socket.emit(SOCKET.IS_READY, true);
+        }
+      }
+    }
+
+    socket.on(SOCKET.PREPARED_GAME, (payload) => {
+      if (payload) {
+        console.log("prepare");
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        setMode("game");
+      }
+    });
+
+    socket.on(SOCKET.PREPARED, (payload) => {
+      if (payload) {
+        console.log("prepare");
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        setMode("game");
+      }
+    });
+
+    return () => {
+      socket.off(SOCKET.PREPARED_GAME);
+      socket.off(SOCKET.PREPARED);
+    };
+  }, [preStartFirstParticipantPose, preStartSecondparticipantPose, mode]);
+
+  useEffect(() => {
+    if (
+      firstParticipantPose.length === 3 &&
+      participantUser[0].id === socket.id
+    ) {
+      const moved = moveDetection(
+        firstParticipantPose[0],
+        firstParticipantPose[2],
+        difficulty,
+        isChildFirstParticipant
+      );
+
+      const result = visibleButton(firstParticipantPose[0]);
+
+      if (result) {
+        setHasTouchDownButton(true);
+      }
+
+      if (moved) {
+        socket.emit(SOCKET.MOVED, participantUser[0].id);
+      }
+    }
+    if (
+      secondParticipantPose.length === 3 &&
+      participantUser[1].id === socket.id
+    ) {
+      const moved = moveDetection(
+        secondParticipantPose[0],
+        secondParticipantPose[2],
+        difficulty,
+        isChildSecondParticipant
+      );
+
+      const result = visibleButton(secondParticipantPose[0]);
+
+      if (result) {
+        setHasTouchDownButton(true);
+      }
+      if (moved) {
+        socket.emit(SOCKET.MOVED, participantUser[1].id);
+      }
+    }
+  }, [firstParticipantPose, secondParticipantPose]);
+
+  useEffect(() => {
+    socket.on(SOCKET.START, (payload) => {
+      if (payload) {
+        setHasStop(true);
+        setItCount((prev) => prev - 1);
+      }
+    });
+
+    if (clickCount === 5) {
+      socket.emit(SOCKET.COUNT_END, true);
+    }
+
+    socket.on(SOCKET.IT_END, (payload) => {
+      if (payload) {
+        setIsGameEnd(true);
+      }
+    });
+
+    socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
+      setParticipantUser(payload);
+    });
+
+    socket.on(SOCKET.PARTICIPANT_REMAINING_COUNT, (payload) => {
+      setParticipantUser(payload);
+    });
+
+    socket.on(SOCKET.GAME_END, (payload) => {
+      if (payload) {
+        addWinner("술래");
+        navigate("/ending");
+      }
+    });
+
+    socket.on(SOCKET.ANOTHER_USER_END, (payload) => {
+      if (payload) {
+        addWinner("술래");
+        navigate("/ending");
+      }
+    });
+
+    return () => {
+      socket.off(SOCKET.START);
+      socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
+      socket.off(SOCKET.PARTICIPANT_REMAINING_COUNT);
+      socket.off(SOCKET.GAME_END);
+      socket.off(SOCKET.IT_END);
+      socket.off(SOCKET.ANOTHER_USER_END);
+    };
+  }, [clickCount, isGameEnd]);
+
+  useEffect(() => {
+    if ((itCount === 0 && clickCount === 5) || (isGameEnd && itCount === 0)) {
+      const reaminingUser = participantUser.filter(
+        (item) => item.opportunity > 0
+      );
+
+      if (reaminingUser.length === 0) {
+        addWinner("술래");
+      } else {
+        addWinner("참가자");
+      }
+      navigate("/ending");
+    }
+
+    if (isItLoser) {
+      setIsAllGameEnd(true);
+
+      socket.emit(SOCKET.IT_LOSER, true);
+      addWinner("참가자");
+      navigate("/ending");
+    }
+
+    socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
+      if (payload) {
+        addWinner("참가자");
+        navigate("/ending");
+      }
+    });
+
+    return () => {
+      socket.off(SOCKET.IT_LOSER_GAME_END);
+    };
+  }, [clickCount, isItLoser, isGameEnd]);
 
   return (
     <DefaultPage>
       <Description>
-        {participant && (
-          <DescriptionContent user={itUser} participantUser={participant} />
+        {itUser && participantUser && (
+          <DescriptionContent
+            itUser={itUser}
+            participantUser={participantUser}
+          />
         )}
       </Description>
-      <Participant>
-        <EachParticipant
-          peers={peers}
-          participantUser={participant}
-          firstParticipantRef={firstParticipantRef}
-          secondParticipantRef={secondParticipantRef}
-          firstCanvas={firstCanvas}
-          secondCanvas={secondCanvas}
-          touchDown={mode === "preapre" ? null : touchDown}
-          wildCard={mode === "preapre" ? null : setIsItLoser}
-          handleLoser={mode === "preapre" ? null : handleLoser}
-          countDownStart={countDownStart}
-          handleCountDownStart={setCountDownStart}
-        />
-      </Participant>
-      <ItsCamera>
-        <It
-          user={itUser}
-          itCount={mode === "preapre" ? null : itCount}
-          handleCount={mode === "preapre" ? null : setItCount}
+      <UserView>
+        <Camera
           userVideo={userVideo}
+          userCanvas={userCanvas}
+          itUser={itUser}
+          peers={peers}
         />
-      </ItsCamera>
+      </UserView>
+      <EachParticipant
+        peers={peers}
+        participantUser={participantUser}
+        touchDown={mode === "preapre" ? null : hasTouchDownButton}
+        wildCard={mode === "preapre" ? null : setIsItLoser}
+        handleLoser={mode === "preapre" ? null : setIsItLoser}
+        countDownStart={countDownStart}
+        handleCountDownStart={setCountDownStart}
+      />
+      <It
+        user={itUser}
+        itCount={itCount}
+        handleCount={setItCount}
+        isAllGameEnd={isAllGameEnd}
+      />
     </DefaultPage>
   );
 }
@@ -206,17 +452,13 @@ const Description = styled.div`
   }
 `;
 
-const Participant = styled.div`
+const UserView = styled.div`
   display: grid;
   grid-template-columns: 420px 420px;
-  grid-template-rows: 280px;
+  grid-template-rows: 280px 280px;
   margin-top: 15px;
   justify-content: space-around;
-
-  .participant {
-    background-color: white;
-  }
-
+  row-gap: 20px;
   .one {
     position: absolute;
     z-index: 9;
@@ -226,75 +468,15 @@ const Participant = styled.div`
     transform: rotateY(180deg);
   }
 
-  .me {
-    color: #f47676;
-    margin-right: 10px;
-    font-size: 20px;
-  }
-
-  .count {
-    color: #f47676;
-    margin-left: 10px;
-    font-size: 20px;
-  }
-
-  .opportunity {
-    margin-left: 20px;
-  }
-
-  .countDown {
-    z-index: 300;
-    position: absolute;
-    place-self: center;
-    font-size: 100px;
-  }
-
-  .countDown {
-    color: #f47676;
-  }
-`;
-
-const ItsCamera = styled.div`
-  margin-top: 35px;
-  display: grid;
-  grid-template-columns: 200px 200px 200px;
-  grid-template-rows: 140px;
-  justify-content: center;
-  column-gap: 120px;
-
-  .opportunity {
-    align-self: center;
-    text-align: -webkit-center;
-  }
-
-  .it {
-    background-color: white;
-  }
-
-  .stop {
-    align-self: center;
-  }
-
-  .me {
-    color: #f47676;
-    font-size: 20px;
-  }
-
-  .count {
-    color: #f47676;
-    margin-left: 10px;
-    font-size: 20px;
-  }
-
-  .opportunity {
-    margin-left: 20px;
-  }
-
-  .itCam {
-    width: 200px;
-    height: 140px;
+  .two {
+    height: 250px;
+    width: 380px;
     object-fit: fill;
-    transform: rotateY(180deg);
+
+    background-color: aliceblue;
+
+    justify-items: stretch;
   }
 `;
+
 export default View;

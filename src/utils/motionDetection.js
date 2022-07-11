@@ -9,26 +9,21 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
 
   console.log(firstResult, secondResult, shoulderLength);
   //가장가까울때, 중간일때, 가장 멀때를 체크해주고 함수를만들어 넘겨줌
-
-  //아이가 아니고 difficulty가 어려움이라면 이거의 0.8배 적용
-
+  //아이가 아니고 difficulty가 어려움이라면 이거의 1.8배 높게 적용
   //아이일때는 이거 적용
 
   if (!isChild && difficult === "어려움") {
     if (shoulderLength > 26) {
       console.log("26");
-      const result = compareAngle(firstResult, secondResult, 0.8);
-      return result;
+      return compareAngle(firstResult, secondResult, 0.8);
     } else if (5 < shoulderLength <= 26) {
       //중간정도일때
       console.log("5~26");
-      const result = compareAngle(firstResult, secondResult, 4);
-      return result;
-    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
+      return compareAngle(firstResult, secondResult, 4);
+    } else if (shoulderLength <= 5) {
       //가장멀때
       console.log("5");
-      const result = compareAngle(firstResult, secondResult, 16);
-      return result;
+      return compareAngle(firstResult, secondResult, 16);
       //각도 차 20일때 움직임이라고 체크하기
     }
   }
@@ -36,21 +31,18 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
   if (isChild || difficult === "쉬움")
     if ((isChild && shoulderLength > 16) || shoulderLength > 26) {
       console.log("26");
-      const result = compareAngle(firstResult, secondResult, 1);
-      return result;
+      return compareAngle(firstResult, secondResult, 1);
     } else if (
       (isChild && 3 < shoulderLength <= 16) ||
       5 < shoulderLength <= 26
     ) {
       //중간정도일때
       console.log("5~26");
-      const result = compareAngle(firstResult, secondResult, 3);
-      return result;
+      return compareAngle(firstResult, secondResult, 7);
     } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
       //가장멀때
       console.log("5");
-      const result = compareAngle(firstResult, secondResult, 20);
-      return result;
+      return compareAngle(firstResult, secondResult, 20);
     }
   //두 포즈의 값이 들어왔고 이제 이걸 비교해야함.
   //두 각도의 차가 20이상이면(3m거리일때) 움직임이라고 체크하기
@@ -60,6 +52,7 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
 export function differenceAngle(first, second, distance) {
   if (first && second) {
     const difference = Math.abs(second - first);
+
     if (distance === 1 && difference > 0.5) {
       return true;
     }

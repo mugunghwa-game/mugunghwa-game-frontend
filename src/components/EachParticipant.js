@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { partChannels } from "@tensorflow-models/posenet";
+import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 import useStore from "../store/store";
@@ -6,17 +7,15 @@ import { socket } from "../utils/socket";
 import Button from "./Button";
 
 function EachParticipant({
-  peers,
   participantUser,
-  firstParticipantRef,
-  secondParticipantRef,
-  firstCanvas,
-  secondCanvas,
   touchDown,
   wildCard,
   handleLoser,
   countDownStart,
   handleCountDownStart,
+  userVideo,
+  // Video,
+  userCanvas,
 }) {
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
@@ -26,7 +25,6 @@ function EachParticipant({
     wildCard(true);
     handleLoser(true);
   };
-
   useEffect(() => {
     let interval;
     if (countDownStart) {
@@ -52,46 +50,30 @@ function EachParticipant({
         </Button>
       )}
       {countDownStart && <div className="countDown">{countDown}</div>}
-      {peers.map((peer, index) => (
-        <span key={index}>
-          {participantUser[index].id && (
-            <span>
-              {participantUser[index].id === socket.id ? (
+      <span>
+        {participantUser && participantUser[0] && (
+          <span>
+            {participantUser[0].id === socket.id ||
+            participantUser[1].id === socket.id ? (
+              <div>
+                참가자
+                <span>나 </span>
+              </div>
+            ) : (
+              <div>참가자</div>
+            )}
+            {fistParticipantPreparation &&
+              secondParticipantPreparation &&
+              participantUser.map((item, index) => (
                 <span>
-                  <span className="me">나 </span>
-                  참가자
+                  {index}남은 기회의 수 {participantUser[index].opportunity}
                 </span>
-              ) : (
-                <span>참가자</span>
-              )}
-              {fistParticipantPreparation && secondParticipantPreparation ? (
-                <span className="opportunity">
-                  남은 기회의 수
-                  <span className="count">
-                    {participantUser[index].opportunity}
-                  </span>
-                </span>
-              ) : null}
-              <>
-                <div className="participant">
-                  <Webcam
-                    className="one"
-                    key={index}
-                    peer={peer}
-                    ref={
-                      index === 0 ? firstParticipantRef : secondParticipantRef
-                    }
-                  />
-                  <canvas
-                    ref={index === 0 ? firstCanvas : secondCanvas}
-                    className="one"
-                  />
-                </div>
-              </>
-            </span>
-          )}
-        </span>
-      ))}
+              ))}
+            <></>
+          </span>
+        )}
+      </span>
+      {touchDown && <Button handleClick={handleIt}>술래 등 때리기</Button>}
     </>
   );
 }

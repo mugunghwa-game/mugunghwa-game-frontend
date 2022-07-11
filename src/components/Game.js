@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
+import { stopStreamVideo } from "../utils";
 import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { socket } from "../utils/socket";
 import View from "./View";
@@ -16,15 +17,19 @@ function Game() {
   const [itCount, setItCount] = useState(5);
   const [clickCount, setClickCount] = useState(0);
   const [isGameEnd, setIsGameEnd] = useState(false);
+  const [isAllGameEnd, setIsAllGameEnd] = useState(false);
   const {
     addWinner,
     difficulty,
+    allUserVideo,
     firstParticipantPose,
     secondParticipantPose,
     isChildFirstParticipant,
     isChildSecondParticipant,
+    updateShowVideo,
+    showVideo,
   } = useStore();
-
+  console.log("im here game");
   useEffect(() => {
     if (
       firstParticipantPose.length === 3 &&
@@ -84,6 +89,7 @@ function Game() {
     socket.on(SOCKET.IT_END, (payload) => {
       if (payload) {
         setIsGameEnd(true);
+        updateShowVideo();
       }
     });
 
@@ -114,7 +120,7 @@ function Game() {
       socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
       socket.off(SOCKET.PARTICIPANT_REMAINING_COUNT);
       socket.off(SOCKET.GAME_END);
-      socket.off("it-end");
+      socket.off(SOCKET.IT_END);
       socket.off(SOCKET.ANOTHER_USER_END);
     };
   }, [clickCount, isGameEnd]);
@@ -135,6 +141,8 @@ function Game() {
     }
 
     if (isItLoser) {
+      setIsAllGameEnd(true);
+
       socket.emit(SOCKET.IT_LOSER, true);
       addWinner("참가자");
       navigate("/ending");
@@ -151,7 +159,6 @@ function Game() {
       socket.off(SOCKET.IT_LOSER_GAME_END);
     };
   }, [clickCount, isItLoser, isGameEnd]);
-
   return (
     <View
       setParticipantUser={setParticipantUser}
@@ -165,6 +172,7 @@ function Game() {
       handleLoser={setIsItLoser}
       handleClickCount={setClickCount}
       clickCount={clickCount}
+      isAllGameEnd={isAllGameEnd}
     />
   );
 }

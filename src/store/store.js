@@ -5,6 +5,8 @@ const useStore = create(
   persist((set) => ({
     people: [],
     participant: [],
+    it: [],
+    participantList: [],
     difficulty: "",
     winner: "",
     preStartFirstParticipantPose: [],
@@ -15,6 +17,8 @@ const useStore = create(
     isChildSecondParticipant: false,
     fistParticipantPreparation: false,
     secondParticipantPreparation: false,
+    showVideo: true,
+    allUserVideo: [],
 
     addPerson: (item) =>
       set((state) => ({
@@ -23,6 +27,14 @@ const useStore = create(
           { person: item.person, role: item.role },
         ],
       })),
+    addIt: (item) =>
+      set((state) => ({
+        it: [item],
+      })),
+    updateShowVideo: (item) =>
+      set((state) => ({
+        showVideo: false,
+      })),
     addDifficulty: (item) =>
       set((state) => ({
         difficulty: item,
@@ -30,6 +42,14 @@ const useStore = create(
     addParticipant: (item) =>
       set((state) => ({
         participant: [...state.participant, { id: item, opportunity: 3 }],
+      })),
+    addParticipantList: (item) =>
+      set((state) => ({
+        participantList: [...state.participantList, item],
+      })),
+    addUserVideo: (item) =>
+      set((state) => ({
+        allUserVideo: [...state.allUserVideo, item],
       })),
     updateParticipant: (item) =>
       set((state) => ({
@@ -91,7 +111,10 @@ const useStore = create(
       set(() => ({
         people: [],
         participant: [],
+        participantList: [],
+        it: [],
         difficulty: "",
+        allUserVideo: [],
         firstParticipantPose: [],
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],
@@ -100,6 +123,7 @@ const useStore = create(
         isChildSecondParticipant: false,
         fistParticipantPreparation: false,
         secondParticipantPreparation: false,
+        showVideo: true,
       })),
   }))
 );
