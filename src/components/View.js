@@ -421,29 +421,31 @@ function View() {
           userVideo={userVideo}
           userCanvas={userCanvas}
           itUser={itUser}
+          itCount={itCount}
           peers={peers}
+          participantUser={participantUser}
+        />
+        <It
+          user={itUser}
+          itCount={itCount}
+          handleCount={setItCount}
+          isAllGameEnd={isAllGameEnd}
+        />
+        <EachParticipant
+          peers={peers}
+          participantUser={participantUser}
+          touchDown={mode === "preapre" ? null : hasTouchDownButton}
+          wildCard={mode === "preapre" ? null : setIsItLoser}
+          handleLoser={mode === "preapre" ? null : setIsItLoser}
+          countDownStart={countDownStart}
+          handleCountDownStart={setCountDownStart}
         />
       </UserView>
-      <EachParticipant
-        peers={peers}
-        participantUser={participantUser}
-        touchDown={mode === "preapre" ? null : hasTouchDownButton}
-        wildCard={mode === "preapre" ? null : setIsItLoser}
-        handleLoser={mode === "preapre" ? null : setIsItLoser}
-        countDownStart={countDownStart}
-        handleCountDownStart={setCountDownStart}
-      />
-      <It
-        user={itUser}
-        itCount={itCount}
-        handleCount={setItCount}
-        isAllGameEnd={isAllGameEnd}
-      />
     </DefaultPage>
   );
 }
 const Description = styled.div`
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
   font-size: 20px;
 
@@ -454,28 +456,51 @@ const Description = styled.div`
 
 const UserView = styled.div`
   display: grid;
-  grid-template-columns: 420px 420px;
+  grid-template-columns: 400px 400px;
   grid-template-rows: 280px 280px;
   margin-top: 15px;
-  justify-content: space-around;
-  row-gap: 20px;
+  justify-content: space-evenly;
+  row-gap: 30px;
+  font-size: 30px;
+
+  .opportunity {
+    position: absolute;
+  }
+
   .one {
     position: absolute;
     z-index: 9;
     width: 400px;
-    height: 250px;
+    height: 300px;
     object-fit: fill;
     transform: rotateY(180deg);
   }
 
   .two {
-    height: 250px;
+    height: 220px;
     width: 380px;
     object-fit: fill;
-
     background-color: aliceblue;
-
     justify-items: stretch;
+  }
+  .it {
+    text-align: center;
+  }
+
+  .me {
+    color: #f47676;
+    font-size: 30px;
+  }
+  .stop {
+    margin-top: 60px;
+  }
+
+  .countDown {
+    z-index: 300;
+    position: absolute;
+    place-self: center;
+    font-size: 100px;
+    color: #f47676;
   }
 `;
 

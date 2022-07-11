@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-import Webcam from "react-webcam";
+import React from "react";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function It({ user, itCount, handleCount, userVideo, isAllGameEnd }) {
+function It({ user, itCount, handleCount, isAllGameEnd }) {
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
@@ -19,24 +18,6 @@ function It({ user, itCount, handleCount, userVideo, isAllGameEnd }) {
 
   return (
     <>
-      {user && (
-        <>
-          <div className="opportunity">
-            {user[0] === socket.id ? (
-              <div>
-                <span className="me"> 나</span> 술래
-              </div>
-            ) : (
-              <span>술래</span>
-            )}
-            {fistParticipantPreparation && secondParticipantPreparation && (
-              <span className="opportunity">
-                남은기회의 수<span className="count">{itCount}</span>
-              </span>
-            )}
-          </div>
-        </>
-      )}
       {user &&
         user[0] === socket.id &&
         fistParticipantPreparation &&
