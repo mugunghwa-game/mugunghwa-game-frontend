@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
@@ -7,7 +6,7 @@ import {
   divisionChildAndAdult,
   sholuderLengthinScreen,
 } from "../utils/motionDetection";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import View from "./View";
 
 function DistanceAdjustment() {
@@ -18,7 +17,6 @@ function DistanceAdjustment() {
     updateSecondChildParticipant,
     updateFirstParticipantPreparation,
     updateSecondParticipantPreparation,
-    participantList,
   } = useStore();
 
   const [participantUser, setParticipantUser] = useState(null);
@@ -41,7 +39,7 @@ function DistanceAdjustment() {
           preStartFirstParticipantPose[0].score > 0.7
         ) {
           isItChild ? updateFirstChildParticipant() : null;
-          socket.emit(SOCKET.IS_READY, true);
+          socketApi.isReady(true);
         }
       }
 
@@ -57,7 +55,7 @@ function DistanceAdjustment() {
           preStartSecondparticipantPose[0].score > 0.7
         ) {
           isItChild ? updateSecondChildParticipant() : null;
-          socket.emit(SOCKET.IS_READY, true);
+          socketApi.isReady(true);
         }
       }
     }
