@@ -113,13 +113,11 @@ function View() {
     ) {
       const video = videoReference(userVideo);
       const pose = await net.estimateSinglePose(video);
-      // console.log(pose);
 
       if (pose !== null && userCanvas.current !== null) {
         drawCanvas(pose, video, video.width, video.height, userCanvas);
-        console.log("mode", mode);
+
         if (mode === "prepare") {
-          //인덱스에 따라 다르게 저장.
           if (participantList[0] === socket.id) {
             addPreStartFirstParticipantPose(pose);
           } else {
@@ -162,7 +160,7 @@ function View() {
         const peers = [];
 
         userVideo.current.srcObject = stream;
-        //나말고 이미 들어와있던 사람들에게 내가 들어왔다고 알림
+
         userInfo.forEach((user) => {
           const peer = new Peer({
             initiator: true,
@@ -206,7 +204,6 @@ function View() {
       socket.off("user joined");
     };
   }, []);
-  console.log(peers);
 
   useEffect(() => {
     if (participantUser) {
@@ -220,7 +217,6 @@ function View() {
         const isItChild = divisionChildAndAdult(
           preStartFirstParticipantPose[0]
         );
-        // console.log(isItChild, sholuderLength);
         if (
           0 < sholuderLength < 5 &&
           preStartFirstParticipantPose[0].score > 0.7

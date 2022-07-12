@@ -29,7 +29,7 @@ function Game() {
     updateShowVideo,
     showVideo,
   } = useStore();
-  console.log("im here game");
+
   useEffect(() => {
     if (
       firstParticipantPose.length === 3 &&
