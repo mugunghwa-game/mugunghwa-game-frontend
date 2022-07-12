@@ -14,7 +14,7 @@ import {
   visibleButton,
 } from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import Camera from "./Camera";
 import DefaultPage from "./DefaultPage";
 import DescriptionContent from "./DscriptionContent";
@@ -138,7 +138,7 @@ function View() {
   };
 
   useEffect(() => {
-    socket.emit(SOCKET.ENTER, true);
+    socketApi.enterGameRoom(true);
 
     socket.on(SOCKET.USER, (payload) => {
       userInfo = payload.socketInRoom;
@@ -170,11 +170,7 @@ function View() {
             stream,
           });
           peer.on("signal", (signal) => {
-            socket.emit("sending signal", {
-              userToSignal: user,
-              callerID: socket.id,
-              signal: signal,
-            });
+            socketApi.sendSignalAnotherUser(user, socket.id, signal);
           });
 
           peersRef.current.push({
@@ -231,7 +227,7 @@ function View() {
         ) {
           console.log("heelllll here is one");
           isItChild ? updateFirstChildParticipant() : null;
-          socket.emit(SOCKET.IS_READY, true);
+          socketApi.isReady(true);
         }
       }
 
@@ -249,7 +245,7 @@ function View() {
           console.log("heelllll here is two");
 
           isItChild ? updateSecondChildParticipant() : null;
-          socket.emit(SOCKET.IS_READY, true);
+          socketApi.isReady(true);
         }
       }
     }
@@ -297,7 +293,7 @@ function View() {
       }
 
       if (moved) {
-        socket.emit(SOCKET.MOVED, participantUser[0].id);
+        socketApi.userMoved(participantUser[0].id);
       }
     }
     if (
@@ -317,7 +313,7 @@ function View() {
         setHasTouchDownButton(true);
       }
       if (moved) {
-        socket.emit(SOCKET.MOVED, participantUser[1].id);
+        socketApi.userMoved(participantUser[1].id);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
@@ -331,7 +327,7 @@ function View() {
     });
 
     if (clickCount === 5) {
-      socket.emit(SOCKET.COUNT_END, true);
+      socketApi.countEnd(true);
     }
 
     socket.on(SOCKET.IT_END, (payload) => {
@@ -387,9 +383,8 @@ function View() {
     }
 
     if (isItLoser) {
+      socketApi.itLoser(true);
       setIsAllGameEnd(true);
-
-      socket.emit(SOCKET.IT_LOSER, true);
       addWinner("참가자");
       navigate("/ending");
     }

@@ -19,6 +19,12 @@ const useStore = create(
     secondParticipantPreparation: false,
     showVideo: true,
     allUserVideo: [],
+    count: 0,
+
+    addCount: (item) =>
+      set((state) => ({
+        count: state.count + 1,
+      })),
 
     addPerson: (item) =>
       set((state) => ({
@@ -124,6 +130,7 @@ const useStore = create(
         fistParticipantPreparation: false,
         secondParticipantPreparation: false,
         showVideo: true,
+        count: 0,
       })),
   }))
 );
