@@ -14,15 +14,8 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
-  const {
-    count,
-    addPerson,
-    people,
-    addParticipant,
-    participant,
-    addParticipantList,
-    addCount,
-  } = useStore();
+  const { addPerson, people, addParticipant, participant, addParticipantList } =
+    useStore();
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -33,8 +26,6 @@ function WaitingRoom() {
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
 
   const handleRuleModal = () => {
-    addCount();
-
     setShouldDisplayModal(true);
   };
 
@@ -62,6 +53,7 @@ function WaitingRoom() {
   useEffect(() => {
     socketApi.joinRoom("gameRoom");
     socket.on(SOCKET.SOCKET_ID, (payload) => {
+      console.log(socket.id);
       setSocketId(payload);
     });
 
@@ -86,7 +78,6 @@ function WaitingRoom() {
   return (
     <DefaultPage>
       <Content>
-        {count}
         {shouldDisplayModal && (
           <Modal>
             <ModalContent

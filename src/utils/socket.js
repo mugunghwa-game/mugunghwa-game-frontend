@@ -1,7 +1,10 @@
 import io from "socket.io-client";
 
 import { SOCKET } from "../constants/constants";
-export const socket = io.connect(process.env.REACT_APP_URL);
+
+export const socket = io.connect("http://localhost:8080");
+console.log(process.env.REACT_APP_URL);
+
 export const socketApi = {
   userCount: (id, role) => {
     socket.emit(SOCKET.USER_COUNT, {
