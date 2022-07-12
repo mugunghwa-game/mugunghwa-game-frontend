@@ -20,16 +20,12 @@ function DistanceAdjustment() {
     updateSecondParticipantPreparation,
     participantList,
   } = useStore();
-  // console.log(preStartFirstParticipantPose);
 
-  const navigate = useNavigate();
   const [participantUser, setParticipantUser] = useState(null);
   const [mode, setMode] = useState("prepare");
 
   useEffect(() => {
     if (participantUser) {
-      console.log(preStartFirstParticipantPose, preStartSecondparticipantPose);
-
       if (
         preStartFirstParticipantPose.length !== 0 &&
         participantUser[0].id === socket.id
@@ -40,12 +36,10 @@ function DistanceAdjustment() {
         const isItChild = divisionChildAndAdult(
           preStartFirstParticipantPose[0]
         );
-        console.log(isItChild, sholuderLength);
         if (
           0 < sholuderLength < 5 &&
           preStartFirstParticipantPose[0].score > 0.7
         ) {
-          console.log("heelllll here is one");
           isItChild ? updateFirstChildParticipant() : null;
           socket.emit(SOCKET.IS_READY, true);
         }
@@ -62,8 +56,6 @@ function DistanceAdjustment() {
           0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
           preStartSecondparticipantPose[0].score > 0.7
         ) {
-          console.log("heelllll here is two");
-
           isItChild ? updateSecondChildParticipant() : null;
           socket.emit(SOCKET.IS_READY, true);
         }
@@ -71,21 +63,16 @@ function DistanceAdjustment() {
     }
     socket.on(SOCKET.PREPARED_GAME, (payload) => {
       if (payload) {
-        console.log("prepare");
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
         setMode("game");
-        // navigate("/countdown");
       }
     });
     socket.on(SOCKET.PREPARED, (payload) => {
       if (payload) {
-        console.log("prepare");
-
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
         setMode("game");
-        // navigate("/countdown");
       }
     });
 

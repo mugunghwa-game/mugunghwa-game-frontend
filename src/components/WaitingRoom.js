@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { MdAddCircleOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { GAME, RULE_DESCRIPTION } from "../constants/constants";
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 import Modal from "./Modal";
@@ -13,8 +14,15 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
-  const { addPerson, people, addParticipant, participant, addParticipantList } =
-    useStore();
+  const {
+    count,
+    addPerson,
+    people,
+    addParticipant,
+    participant,
+    addParticipantList,
+    addCount,
+  } = useStore();
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -25,6 +33,8 @@ function WaitingRoom() {
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
 
   const handleRuleModal = () => {
+    addCount();
+
     setShouldDisplayModal(true);
   };
 
@@ -40,11 +50,7 @@ function WaitingRoom() {
 
   const handleRole = () => {
     if (participantCount < 2) {
-      socket.emit(SOCKET.USER_COUNT, {
-        id: socket.id,
-        role: "participant",
-      });
-      console.log(socket.id);
+      socketApi.userCount(socket.id, "participant");
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
       addParticipantList(socket.id);
@@ -54,7 +60,7 @@ function WaitingRoom() {
   };
 
   useEffect(() => {
-    socket.emit(SOCKET.JOIN_ROOM, SOCKET.ROOM_NAME);
+    socketApi.joinRoom("gameRoom");
     socket.on(SOCKET.SOCKET_ID, (payload) => {
       setSocketId(payload);
     });
@@ -80,6 +86,7 @@ function WaitingRoom() {
   return (
     <DefaultPage>
       <Content>
+        {count}
         {shouldDisplayModal && (
           <Modal>
             <ModalContent
