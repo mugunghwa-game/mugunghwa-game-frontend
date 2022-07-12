@@ -3,32 +3,30 @@ import { useNavigate } from "react-router-dom";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { stopStreamVideo } from "../utils";
 import { moveDetection, visibleButton } from "../utils/motionDetection";
+import { socketApi } from "../utils/socket";
 import { socket } from "../utils/socket";
-import View from "./View";
 
-function Game() {
-  const navigate = useNavigate();
-  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
-  const [hasStop, setHasStop] = useState(false);
-  const [isItLoser, setIsItLoser] = useState(false);
-  const [participantUser, setParticipantUser] = useState(null);
-  const [itCount, setItCount] = useState(5);
-  const [clickCount, setClickCount] = useState(0);
+function Game({
+  participantUser,
+  handleTouchDown,
+  handleItCount,
+  handleParticipantUser,
+  handleStop,
+  clickCount,
+}) {
+  // const [clickCount, setClickCount] = useState(0);
   const [isGameEnd, setIsGameEnd] = useState(false);
-  const [isAllGameEnd, setIsAllGameEnd] = useState(false);
   const {
-    addWinner,
-    difficulty,
-    allUserVideo,
     firstParticipantPose,
     secondParticipantPose,
+    difficulty,
     isChildFirstParticipant,
     isChildSecondParticipant,
-    updateShowVideo,
-    showVideo,
+    addWinner,
   } = useStore();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (
@@ -45,11 +43,11 @@ function Game() {
       const result = visibleButton(firstParticipantPose[0]);
 
       if (result) {
-        setHasTouchDownButton(true);
+        handleTouchDown(true);
       }
 
       if (moved) {
-        socket.emit(SOCKET.MOVED, participantUser[0].id);
+        socketApi.userMoved(participantUser[0].id);
       }
     }
     if (
@@ -66,39 +64,38 @@ function Game() {
       const result = visibleButton(secondParticipantPose[0]);
 
       if (result) {
-        setHasTouchDownButton(true);
+        handleTouchDown(true);
       }
       if (moved) {
-        socket.emit(SOCKET.MOVED, participantUser[1].id);
+        socketApi.userMoved(participantUser[1].id);
       }
     }
-  }, [firstParticipantPose]);
+  }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
     socket.on(SOCKET.START, (payload) => {
       if (payload) {
-        setHasStop(true);
-        setItCount((prev) => prev - 1);
+        handleStop(true);
+        handleItCount((prev) => prev - 1);
       }
     });
 
     if (clickCount === 5) {
-      socket.emit(SOCKET.COUNT_END, true);
+      socketApi.countEnd(true);
     }
 
     socket.on(SOCKET.IT_END, (payload) => {
       if (payload) {
         setIsGameEnd(true);
-        updateShowVideo();
       }
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      setParticipantUser(payload);
+      handleParticipantUser(payload);
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_COUNT, (payload) => {
-      setParticipantUser(payload);
+      handleParticipantUser(payload);
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
@@ -133,17 +130,15 @@ function Game() {
 
       if (reaminingUser.length === 0) {
         addWinner("술래");
-        navigate("/ending");
       } else {
         addWinner("참가자");
-        navigate("/ending");
       }
+      navigate("/ending");
     }
 
     if (isItLoser) {
-      setIsAllGameEnd(true);
-
-      socket.emit(SOCKET.IT_LOSER, true);
+      socketApi.itLoser(true);
+      // setIsAllGameEnd(true);
       addWinner("참가자");
       navigate("/ending");
     }
@@ -159,22 +154,8 @@ function Game() {
       socket.off(SOCKET.IT_LOSER_GAME_END);
     };
   }, [clickCount, isItLoser, isGameEnd]);
-  return (
-    <View
-      setParticipantUser={setParticipantUser}
-      participant={participantUser}
-      mode="game"
-      setItCount={setItCount}
-      itCount={itCount}
-      hasStop={hasStop}
-      setHasStop={setHasStop}
-      touchDown={hasTouchDownButton}
-      handleLoser={setIsItLoser}
-      handleClickCount={setClickCount}
-      clickCount={clickCount}
-      isAllGameEnd={isAllGameEnd}
-    />
-  );
+
+  return <></>;
 }
 
 export default Game;

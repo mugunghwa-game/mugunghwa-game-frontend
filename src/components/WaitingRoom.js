@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MdAddCircleOutline } from "react-icons/md";
+import { MdRoom } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -14,15 +14,24 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
-  const { addPerson, people, addParticipant, participant, addParticipantList } =
-    useStore();
+  const {
+    addPerson,
+    people,
+    addParticipant,
+    participantList,
+    addParticipantList,
+    participant,
+    updatePerson,
+  } = useStore();
   const hasIt = people.filter((item) => item.role === "it");
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
   const [socketId, setSocketId] = useState(null);
   const [itCount, setItCount] = useState(hasIt.length);
-  const [participantCount, setParticipantCount] = useState(participant.length);
+  const [participantCount, setParticipantCount] = useState(
+    participantList.length
+  );
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
 
   const handleRuleModal = () => {
@@ -53,27 +62,39 @@ function WaitingRoom() {
   useEffect(() => {
     socketApi.joinRoom("gameRoom");
     socket.on(SOCKET.SOCKET_ID, (payload) => {
-      console.log(socket.id);
-      setSocketId(payload);
+      console.log(socket.id, payload);
+      setSocketId(payload.id);
+
+      setItCount(payload.it);
+
+      setParticipantCount(payload.participant);
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
+      console.log(payload);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
     });
 
-    socket.on(SOCKET.ROLE_COUNTS, (payload) => {
-      setItCount(payload.it);
-      setParticipantCount(payload.participant);
+    socket.on("updateUser", (payload) => {
+      console.log("update", payload);
+      setParticipantCount(payload.participant.length);
+      setItCount(payload.it.length);
     });
 
     return () => {
       socket.off(SOCKET.SOCKET_ID);
       socket.off(SOCKET.ROLE_COUNT);
-      socket.off(SOCKET.ROLE_COUNTS);
-      socket.off(SOCKET.START);
+      socket.off("updateUser");
     };
-  }, [participant, people]);
+  }, [participant, people, itCount]);
+
+  useEffect(() => {
+    return () => {
+      socket.emit("leaveRoom", socket.id);
+      updatePerson(socket.id);
+    };
+  }, []);
 
   return (
     <DefaultPage>
