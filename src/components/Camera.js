@@ -13,6 +13,8 @@ function Camera({
   itCount,
 }) {
   const anotherUserRef = useRef(null);
+  const { fistParticipantPreparation, secondParticipantPreparation } =
+    useStore();
 
   const Video = (props) => {
     useEffect(() => {
@@ -23,7 +25,12 @@ function Camera({
 
     return (
       <>
-        <Webcam className="two" playsInline autoPlay ref={anotherUserRef} />
+        <Webcam
+          className="anotherUser"
+          playsInline
+          autoPlay
+          ref={anotherUserRef}
+        />
       </>
     );
   };
@@ -37,21 +44,26 @@ function Camera({
               <div key={index}>
                 <span className="me">나 </span>
                 참가자
-                <span>
-                  {index}남은 기회의 수 {participantUser[index].opportunity}
-                </span>
+                {fistParticipantPreparation && secondParticipantPreparation && (
+                  <span>
+                    {index}남은 기회의 수 {participantUser[index].opportunity}
+                  </span>
+                )}
               </div>
             ) : null
           )}
         {itUser && itUser[0] === socket.id && (
           <div>
             <span className="me">나 </span>
-            술래 남은기회의 수<span className="count">{itCount}</span>
+            <span> 술래</span>
+            {fistParticipantPreparation && secondParticipantPreparation ? (
+              <span className="count">남은기회의 수{itCount}</span>
+            ) : null}
           </div>
         )}
-        <Webcam className="one" ref={userVideo} autoPlay playsInline />
+        <Webcam className="user" ref={userVideo} autoPlay playsInline />
         {itUser && socket.id !== itUser[0] && (
-          <canvas className="one" ref={userCanvas} />
+          <canvas className="user" ref={userCanvas} />
         )}
       </div>
       <div>

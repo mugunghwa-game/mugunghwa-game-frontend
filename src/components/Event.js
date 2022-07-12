@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Button from "./Button";
 
-function EachParticipant({
+function Event({
   participantUser,
   touchDown,
   wildCard,
@@ -16,6 +16,7 @@ function EachParticipant({
     wildCard(true);
     handleLoser(true);
   };
+
   useEffect(() => {
     let interval;
     if (countDownStart) {
@@ -45,4 +46,4 @@ function EachParticipant({
   );
 }
 
-export default EachParticipant;
+export default Event;
