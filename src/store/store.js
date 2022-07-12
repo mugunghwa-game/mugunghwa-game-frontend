@@ -18,7 +18,6 @@ const useStore = create(
     fistParticipantPreparation: false,
     secondParticipantPreparation: false,
     showVideo: true,
-    allUserVideo: [],
     count: 0,
 
     addCount: (item) =>
@@ -32,6 +31,13 @@ const useStore = create(
           ...state.people.filter((person) => person.person !== item.person),
           { person: item.person, role: item.role },
         ],
+      })),
+    updatePerson: (id) =>
+      set((state) => ({
+        people: state.people.filter((person) => person.person !== id),
+        participant: state.participant.filter((person) => person.id !== id),
+        it: state.it.filter((itUser) => itUser !== id),
+        participantList: state.participantList.filter((user) => user !== id),
       })),
     addIt: (item) =>
       set((state) => ({
@@ -120,7 +126,6 @@ const useStore = create(
         participantList: [],
         it: [],
         difficulty: "",
-        allUserVideo: [],
         firstParticipantPose: [],
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],
