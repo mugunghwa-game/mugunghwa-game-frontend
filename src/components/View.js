@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { addPeer, createPeer } from "../utils/index";
+import { addPeer } from "../utils/index";
 import {
   divisionChildAndAdult,
   moveDetection,
@@ -18,8 +18,9 @@ import { socket, socketApi } from "../utils/socket";
 import Camera from "./Camera";
 import DefaultPage from "./DefaultPage";
 import DescriptionContent from "./DscriptionContent";
-import EachParticipant from "./EachParticipant";
+import Event from "./Event";
 import It from "./It";
+import PrepareGame from "./PrepareGame";
 
 function View() {
   const [peers, setPeers] = useState([]);
@@ -205,70 +206,70 @@ function View() {
     };
   }, []);
 
-  useEffect(() => {
-    if (participantUser) {
-      if (
-        preStartFirstParticipantPose.length !== 0 &&
-        participantUser[0].id === socket.id
-      ) {
-        const sholuderLength = sholuderLengthinScreen(
-          preStartFirstParticipantPose[0]
-        );
-        const isItChild = divisionChildAndAdult(
-          preStartFirstParticipantPose[0]
-        );
-        if (
-          0 < sholuderLength < 5 &&
-          preStartFirstParticipantPose[0].score > 0.7
-        ) {
-          console.log("heelllll here is one");
-          isItChild ? updateFirstChildParticipant() : null;
-          socketApi.isReady(true);
-        }
-      }
+  // useEffect(() => {
+  //   if (participantUser) {
+  //     if (
+  //       preStartFirstParticipantPose.length !== 0 &&
+  //       participantUser[0].id === socket.id
+  //     ) {
+  //       const sholuderLength = sholuderLengthinScreen(
+  //         preStartFirstParticipantPose[0]
+  //       );
+  //       const isItChild = divisionChildAndAdult(
+  //         preStartFirstParticipantPose[0]
+  //       );
+  //       if (
+  //         0 < sholuderLength < 5 &&
+  //         preStartFirstParticipantPose[0].score > 0.7
+  //       ) {
+  //         console.log("heelllll here is one");
+  //         isItChild ? updateFirstChildParticipant() : null;
+  //         socketApi.isReady(true);
+  //       }
+  //     }
 
-      if (
-        preStartSecondparticipantPose.length !== 0 &&
-        participantUser[1].id === socket.id
-      ) {
-        const isItChild = divisionChildAndAdult(
-          preStartSecondparticipantPose[0]
-        );
-        if (
-          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
-          preStartSecondparticipantPose[0].score > 0.7
-        ) {
-          console.log("heelllll here is two");
+  //     if (
+  //       preStartSecondparticipantPose.length !== 0 &&
+  //       participantUser[1].id === socket.id
+  //     ) {
+  //       const isItChild = divisionChildAndAdult(
+  //         preStartSecondparticipantPose[0]
+  //       );
+  //       if (
+  //         0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
+  //         preStartSecondparticipantPose[0].score > 0.7
+  //       ) {
+  //         console.log("heelllll here is two");
 
-          isItChild ? updateSecondChildParticipant() : null;
-          socketApi.isReady(true);
-        }
-      }
-    }
+  //         isItChild ? updateSecondChildParticipant() : null;
+  //         socketApi.isReady(true);
+  //       }
+  //     }
+  //   }
 
-    socket.on(SOCKET.PREPARED_GAME, (payload) => {
-      if (payload) {
-        console.log("prepare");
-        updateFirstParticipantPreparation();
-        updateSecondParticipantPreparation();
-        setMode("game");
-      }
-    });
+  //   socket.on(SOCKET.PREPARED_GAME, (payload) => {
+  //     if (payload) {
+  //       console.log("prepare");
+  //       updateFirstParticipantPreparation();
+  //       updateSecondParticipantPreparation();
+  //       setMode("game");
+  //     }
+  //   });
 
-    socket.on(SOCKET.PREPARED, (payload) => {
-      if (payload) {
-        console.log("prepare");
-        updateFirstParticipantPreparation();
-        updateSecondParticipantPreparation();
-        setMode("game");
-      }
-    });
+  //   socket.on(SOCKET.PREPARED, (payload) => {
+  //     if (payload) {
+  //       console.log("prepare");
+  //       updateFirstParticipantPreparation();
+  //       updateSecondParticipantPreparation();
+  //       setMode("game");
+  //     }
+  //   });
 
-    return () => {
-      socket.off(SOCKET.PREPARED_GAME);
-      socket.off(SOCKET.PREPARED);
-    };
-  }, [preStartFirstParticipantPose, preStartSecondparticipantPose, mode]);
+  //   return () => {
+  //     socket.off(SOCKET.PREPARED_GAME);
+  //     socket.off(SOCKET.PREPARED);
+  //   };
+  // }, [preStartFirstParticipantPose, preStartSecondparticipantPose, mode]);
 
   useEffect(() => {
     if (
@@ -422,7 +423,7 @@ function View() {
           handleCount={setItCount}
           isAllGameEnd={isAllGameEnd}
         />
-        <EachParticipant
+        <Event
           peers={peers}
           participantUser={participantUser}
           touchDown={mode === "preapre" ? null : hasTouchDownButton}
@@ -430,6 +431,11 @@ function View() {
           handleLoser={mode === "preapre" ? null : setIsItLoser}
           countDownStart={countDownStart}
           handleCountDownStart={setCountDownStart}
+        />
+        <PrepareGame
+          participantUser={participantUser}
+          handleMode={setMode}
+          itUser={itUser}
         />
       </UserView>
     </DefaultPage>
@@ -458,7 +464,7 @@ const UserView = styled.div`
     position: absolute;
   }
 
-  .one {
+  .user {
     position: absolute;
     z-index: 9;
     width: 400px;
@@ -467,13 +473,14 @@ const UserView = styled.div`
     transform: rotateY(180deg);
   }
 
-  .two {
+  .anotherUser {
     height: 220px;
     width: 380px;
     object-fit: fill;
     background-color: aliceblue;
     justify-items: stretch;
   }
+
   .it {
     text-align: center;
   }
@@ -490,8 +497,8 @@ const UserView = styled.div`
     z-index: 300;
     position: absolute;
     place-self: center;
-    font-size: 100px;
-    color: #f47676;
+    font-size: 200px;
+    color: red;
   }
 `;
 

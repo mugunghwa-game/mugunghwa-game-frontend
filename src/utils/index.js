@@ -9,7 +9,6 @@ export function createPeer(userToSignal, callerID, stream) {
     trickle: false,
     stream,
   });
-  console.log(userToSignal);
 
   peer.on("signal", (signal) => {
     console.log(
