@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdRoom } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -48,6 +47,12 @@ function WaitingRoom() {
     navigate("/countDown");
   };
 
+  const handleExist = () => {
+    socket.emit("leaveRoom", socket.id);
+    updatePerson(socket.id);
+    navigate("/");
+  };
+
   const handleRole = () => {
     if (participantCount < 2) {
       socketApi.userCount(socket.id, "participant");
@@ -89,13 +94,6 @@ function WaitingRoom() {
     };
   }, [participant, people, itCount]);
 
-  useEffect(() => {
-    return () => {
-      socket.emit("leaveRoom", socket.id);
-      updatePerson(socket.id);
-    };
-  }, []);
-
   return (
     <DefaultPage>
       <Content>
@@ -127,6 +125,9 @@ function WaitingRoom() {
             />
           </Modal>
         )}
+        <div className="exit" onClick={handleExist}>
+          나가기
+        </div>
         <div className="rule" onClick={handleRuleModal}>
           규칙알아보기
         </div>
@@ -155,6 +156,11 @@ function WaitingRoom() {
 }
 
 const Content = styled.div`
+  .exit {
+    font-size: 20px;
+    cursor: pointer;
+  }
+
   .rule {
     margin-top: 20px;
     margin-right: 60px;

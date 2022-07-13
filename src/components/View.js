@@ -1,26 +1,19 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Peer from "simple-peer";
 import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { addPeer } from "../utils/index";
-import {
-  divisionChildAndAdult,
-  moveDetection,
-  sholuderLengthinScreen,
-  visibleButton,
-} from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket, socketApi } from "../utils/socket";
-import Button from "./Button";
 import Camera from "./Camera";
 import DefaultPage from "./DefaultPage";
 import DistanceAdjustment from "./DistanceAdjustment";
 import DescriptionContent from "./DscriptionContent";
 import Event from "./Event";
+import Game from "./Game";
 import It from "./It";
 
 function View() {
@@ -43,10 +36,8 @@ function View() {
   const peersRef = useRef([]);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  // const [isGameEnd, setIsGameEnd] = useState(false);
   const userVideo = useRef(null);
   const [itCount, setItCount] = useState(5);
-  const [isAllGameEnd, setIsAllGameEnd] = useState(false);
   const [participantUser, setParticipantUser] = useState(null);
   const [mode, setMode] = useState("prepare");
   const [anotherUser, setAnotherUser] = useState([]);
@@ -168,6 +159,7 @@ function View() {
         });
 
         setPeers(peers);
+
         socket.on("user joined", (payload) => {
           const peer = addPeer(payload.signal, payload.callerID);
           peersRef.current.push({
@@ -241,6 +233,8 @@ function View() {
           handleParticipantUser={setParticipantUser}
           handleStop={setHasStop}
           clickCount={clickCount}
+          isItLoser={isItLoser}
+          itCount={itCount}
         />
       )}
     </DefaultPage>

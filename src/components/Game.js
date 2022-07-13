@@ -14,8 +14,11 @@ function Game({
   handleParticipantUser,
   handleStop,
   clickCount,
+  isItLoser,
+  itCount,
 }) {
-  // const [clickCount, setClickCount] = useState(0);
+  const navigate = useNavigate();
+
   const [isGameEnd, setIsGameEnd] = useState(false);
   const {
     firstParticipantPose,
@@ -25,8 +28,6 @@ function Game({
     isChildSecondParticipant,
     addWinner,
   } = useStore();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (
