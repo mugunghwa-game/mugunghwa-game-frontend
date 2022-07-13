@@ -15,6 +15,29 @@ import Event from "./Event";
 import Game from "./Game";
 import It from "./It";
 
+const Video = (props) => {
+  const anotherUserRef = useRef(null);
+  console.log(props.peer, "props");
+
+  useEffect(() => {
+    props.peer.on("stream", (stream) => {
+      console.log("다른 사람stream", stream);
+      anotherUserRef.current.srcObject = stream;
+    });
+  }, []);
+
+  return (
+    <>
+      <Webcam
+        className="anotherUser"
+        playsInline
+        autoPlay
+        ref={anotherUserRef}
+      />
+    </>
+  );
+};
+
 function View() {
   const [peers, setPeers] = useState([]);
   const [itUser, setItUser] = useState(null);
@@ -45,29 +68,6 @@ function View() {
     width: window.innerWidth / 2,
   };
 
-  const Video = (props) => {
-    const anotherUserRef = useRef(null);
-    console.log(props, "props");
-
-    useEffect(() => {
-      props.peer.on("stream", (stream) => {
-        console.log("stream", stream);
-        anotherUserRef.current.srcObject = stream;
-      });
-    }, []);
-
-    return (
-      <>
-        <Webcam
-          className="anotherUser"
-          playsInline
-          autoPlay
-          ref={anotherUserRef}
-        />
-      </>
-    );
-  };
-
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({
@@ -76,11 +76,13 @@ function View() {
       })
       .then((stream) => {
         userVideo.current.srcObject = stream;
-        const peers = [];
+        console.log("mystream", stream);
 
         socketApi.enterGameRoom(true);
 
         socket.on("all-info", (payload) => {
+          const peers = [];
+
           console.log("원래 여기 있떤 사람들", payload);
           payload.socketInRoom.forEach((user) => {
             console.log("하나하나꺼내", user);
@@ -109,7 +111,10 @@ function View() {
         });
 
         socket.on("user joined", (payload) => {
-          console.log("새로운 애 들어왔대", payload);
+          console.log(
+            "새로운 애 들어왔대, 기존에 방에 있엇던 애들만 받아야함",
+            payload
+          );
           const peer = addPeer(payload.signal, payload.callerID, stream);
 
           peersRef.current.push({
@@ -128,11 +133,11 @@ function View() {
       });
 
     return () => {
-      userVideo.current = null;
+      // userVideo.current = null;
 
       socket.off("user joined");
-      socket.off(SOCKET.USER);
-      socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
+      socket.off("all-info");
+      socket.off("receiving-returned-signal");
     };
   }, []);
 
