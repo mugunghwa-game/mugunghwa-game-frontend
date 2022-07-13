@@ -12,13 +12,15 @@ function Camera({
   participantUser,
   itCount,
 }) {
-  const anotherUserRef = useRef(null);
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
   const Video = (props) => {
+    const anotherUserRef = useRef(null);
+    console.log(props, "props");
     useEffect(() => {
       props.peer.on("stream", (stream) => {
+        console.log("stream", stream);
         anotherUserRef.current.srcObject = stream;
       });
     }, []);
