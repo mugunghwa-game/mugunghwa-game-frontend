@@ -48,6 +48,7 @@ function View() {
   const Video = (props) => {
     const anotherUserRef = useRef(null);
     console.log(props, "props");
+
     useEffect(() => {
       props.peer.on("stream", (stream) => {
         console.log("stream", stream);
@@ -79,7 +80,7 @@ function View() {
 
         socketApi.enterGameRoom(true);
 
-        socket.on(SOCKET.USER, (payload) => {
+        socket.on("all-info", (payload) => {
           console.log("원래 여기 있떤 사람들", payload);
           payload.socketInRoom.forEach((user) => {
             console.log("하나하나꺼내", user);
@@ -92,8 +93,8 @@ function View() {
             peer.on("signal", (signal) => {
               console.log("this is signal", signal);
               socket.emit("sending signal", {
-                userToSignal,
-                callerID,
+                userToSignal: user,
+                callerID: socket.id,
                 signal,
               });
             });
@@ -107,23 +108,10 @@ function View() {
           setPeers(peers);
         });
 
-        console.log("나 있기전에 있던 사람들", peers);
-
         socket.on("user joined", (payload) => {
-          const peer = new Peer({
-            initiator: false,
-            trickle: false,
-            stream,
-          });
+          console.log("새로운 애 들어왔대", payload);
+          const peer = addPeer(payload.signal, payload.callerID, stream);
 
-          peer.on("signal", (signal) => {
-            console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
-            socket.emit("returning signal", { signal, callerID });
-          });
-
-          console.log("this is incomingSignal", incomingSignal);
-
-          peer.signal(incomingSignal);
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
@@ -148,25 +136,25 @@ function View() {
     };
   }, []);
 
-  function createPeer(userToSignal, callerID, stream) {
-    console.log(userToSignal, callerID, stream);
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
+  // function createPeer(userToSignal, callerID, stream) {
+  //   console.log(userToSignal, callerID, stream);
+  //   const peer = new Peer({
+  //     initiator: true,
+  //     trickle: false,
+  //     stream,
+  //   });
 
-    peer.on("signal", (signal) => {
-      console.log("this is signal", signal);
-      socket.emit("sending signal", {
-        userToSignal,
-        callerID,
-        signal,
-      });
-    });
+  //   peer.on("signal", (signal) => {
+  //     console.log("this is signal", signal);
+  //     socket.emit("sending signal", {
+  //       userToSignal,
+  //       callerID,
+  //       signal,
+  //     });
+  //   });
 
-    return peer;
-  }
+  //   return peer;
+  // }
 
   function addPeer(incomingSignal, callerID, stream) {
     const peer = new Peer({
