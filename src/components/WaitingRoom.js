@@ -166,7 +166,6 @@ function WaitingRoom() {
           게임시작
         </Button>
       </ButtonWrap>
-
       {isReady && <View />}
     </DefaultPage>
   );
