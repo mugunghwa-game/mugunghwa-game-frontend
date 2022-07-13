@@ -82,7 +82,21 @@ function View() {
         socket.on(SOCKET.USER, (payload) => {
           console.log("원래 여기 있떤 사람들", payload);
           payload.socketInRoom.forEach((user) => {
-            const peer = createPeer(user, socket.id, stream);
+            console.log("하나하나꺼내", user);
+            const peer = new Peer({
+              initiator: true,
+              trickle: false,
+              stream,
+            });
+
+            peer.on("signal", (signal) => {
+              console.log("this is signal", signal);
+              socket.emit("sending signal", {
+                userToSignal,
+                callerID,
+                signal,
+              });
+            });
 
             peersRef.current.push({
               peerID: user,
@@ -96,7 +110,20 @@ function View() {
         console.log("나 있기전에 있던 사람들", peers);
 
         socket.on("user joined", (payload) => {
-          const peer = addPeer(payload.signal, payload.callerID, stream);
+          const peer = new Peer({
+            initiator: false,
+            trickle: false,
+            stream,
+          });
+
+          peer.on("signal", (signal) => {
+            console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
+            socket.emit("returning signal", { signal, callerID });
+          });
+
+          console.log("this is incomingSignal", incomingSignal);
+
+          peer.signal(incomingSignal);
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
