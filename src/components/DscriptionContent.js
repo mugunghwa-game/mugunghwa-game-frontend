@@ -35,22 +35,22 @@ function DescriptionContent({ itUser, participantUser }) {
       (participantUser &&
         participantUser[1].id === socket.id &&
         secondParticipantPreparation) ? (
-        <>
-          <div>
+          <>
+            <div>
             술래가 <span className="color">무궁화 꽃이 피었습니다</span>를
             외치면
-            <span className="color"> 3초</span>간 동작을 멈춰야합니다
-          </div>
-        </>
-      ) : null}
+              <span className="color"> 3초</span>간 동작을 멈춰야합니다
+            </div>
+          </>
+        ) : null}
       {(participantUser &&
         participantUser[0].id === socket.id &&
         !fistParticipantPreparation) ||
       (participantUser &&
         participantUser[1].id === socket.id &&
         !secondParticipantPreparation) ? (
-        <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
-      ) : null}
+          <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
+        ) : null}
     </>
   );
 }
