@@ -15,28 +15,6 @@ import Event from "./Event";
 import Game from "./Game";
 import It from "./It";
 
-const Video = (props) => {
-  const anotherUserRef = useRef(null);
-  console.log(props, "props");
-  useEffect(() => {
-    props.peer.on("stream", (stream) => {
-      console.log("stream", stream);
-      anotherUserRef.current.srcObject = stream;
-    });
-  }, []);
-
-  return (
-    <>
-      <Webcam
-        className="anotherUser"
-        playsInline
-        autoPlay
-        ref={anotherUserRef}
-      />
-    </>
-  );
-};
-
 function View() {
   const [peers, setPeers] = useState([]);
   const [itUser, setItUser] = useState(null);
@@ -66,6 +44,119 @@ function View() {
     height: window.innerHeight / 2,
     width: window.innerWidth / 2,
   };
+
+  const Video = (props) => {
+    const anotherUserRef = useRef(null);
+    console.log(props, "props");
+    useEffect(() => {
+      props.peer.on("stream", (stream) => {
+        console.log("stream", stream);
+        anotherUserRef.current.srcObject = stream;
+      });
+    }, []);
+
+    return (
+      <>
+        <Webcam
+          className="anotherUser"
+          playsInline
+          autoPlay
+          ref={anotherUserRef}
+        />
+      </>
+    );
+  };
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: videoConstraints,
+        audio: true,
+      })
+      .then((stream) => {
+        userVideo.current.srcObject = stream;
+        const peers = [];
+
+        socketApi.enterGameRoom(true);
+
+        socket.on(SOCKET.USER, (payload) => {
+          console.log("원래 여기 있떤 사람들", payload);
+          payload.socketInRoom.forEach((user) => {
+            const peer = createPeer(user, socket.id, stream);
+
+            peersRef.current.push({
+              peerID: user,
+              peer,
+            });
+            peers.push(peer);
+          });
+          setPeers(peers);
+        });
+
+        console.log("나 있기전에 있던 사람들", peers);
+
+        socket.on("user joined", (payload) => {
+          const peer = addPeer(payload.signal, payload.callerID, stream);
+          peersRef.current.push({
+            peerID: payload.callerID,
+            peer,
+          });
+
+          setPeers((users) => [...users, peer]);
+        });
+
+        socket.on("receiving-returned-signal", (payload) => {
+          console.log("signal돌려받음", payload);
+          const item = peersRef.current.find((p) => p.peerID === payload.id);
+          item.peer.signal(payload.signal);
+        });
+      });
+
+    return () => {
+      userVideo.current = null;
+
+      socket.off("user joined");
+      socket.off(SOCKET.USER);
+      socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
+    };
+  }, []);
+
+  function createPeer(userToSignal, callerID, stream) {
+    console.log(userToSignal, callerID, stream);
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (signal) => {
+      console.log("this is signal", signal);
+      socket.emit("sending signal", {
+        userToSignal,
+        callerID,
+        signal,
+      });
+    });
+
+    return peer;
+  }
+
+  function addPeer(incomingSignal, callerID, stream) {
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (signal) => {
+      console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
+      socket.emit("returning signal", { signal, callerID });
+    });
+    console.log("this is incomingSignal", incomingSignal);
+    peer.signal(incomingSignal);
+
+    return peer;
+  }
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -149,97 +240,6 @@ function View() {
     };
   }, []);
 
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({
-        video: videoConstraints,
-        audio: true,
-      })
-      .then((stream) => {
-        const peers = [];
-        userVideo.current.srcObject = stream;
-
-        socketApi.enterGameRoom(true);
-
-        socket.on(SOCKET.USER, (payload) => {
-          console.log("원래 여기 있떤 사람들", payload);
-          payload.socketInRoom.forEach((user) => {
-            const peer = createPeer(user, socket.id, stream);
-
-            peersRef.current.push({
-              peerID: user,
-              peer,
-            });
-            peers.push(peer);
-          });
-          setPeers(peers);
-        });
-
-        console.log("나 있기전에 있던 사람들", peers);
-
-        socket.on("user joined", (payload) => {
-          const peer = addPeer(payload.signal, payload.callerID, stream);
-          peersRef.current.push({
-            peerID: payload.callerID,
-            peer,
-          });
-
-          setPeers((users) => [...users, peer]);
-        });
-
-        socket.on("receiving-returned-signal", (payload) => {
-          console.log("signal돌려받음", payload);
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
-          item.peer.signal(payload.signal);
-        });
-      });
-
-    return () => {
-      userVideo.current = null;
-
-      socket.off("user joined");
-      socket.off(SOCKET.USER);
-      socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
-    };
-  }, []);
-
-  function createPeer(userToSignal, callerID, stream) {
-    console.log(userToSignal, callerID, stream);
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-    });
-
-    peer.on("signal", (signal) => {
-      console.log("this is signal", signal);
-      socket.emit("sending signal", {
-        userToSignal,
-        callerID,
-        signal,
-      });
-    });
-
-    return peer;
-  }
-
-  function addPeer(incomingSignal, callerID, stream) {
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
-
-    peer.on("signal", (signal) => {
-      console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
-      socket.emit("returning signal", { signal, callerID });
-    });
-    console.log("this is incomingSignal", incomingSignal);
-    peer.signal(incomingSignal);
-
-    return peer;
-  }
-
   return (
     <DefaultPage>
       <Description>
@@ -252,7 +252,9 @@ function View() {
       </Description>
       <UserView>
         <Webcam className="user" ref={userVideo} autoPlay playsInline />
-        {peers && peers.map((peer, index) => <Video key={index} peer={peer} />)}
+        {peers.map((peer, index) => {
+          return <Video key={index} peer={peer} />;
+        })}
         <It user={itUser} itCount={itCount} handleCount={setItCount} />
         <Event
           peers={peers}
