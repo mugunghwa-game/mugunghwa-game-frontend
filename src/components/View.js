@@ -137,17 +137,15 @@ function View() {
   };
 
   useEffect(() => {
-    socketApi.enterGameRoom(true);
-
-    socket.on(SOCKET.USER, (payload) => {
-      userInfo = payload.socketInRoom;
-      setAnotherUser(payload.socketInRoom);
-      setItUser(payload.room.it);
-      setParticipantUser(payload.participant);
-    });
+    // socket.on(SOCKET.USER, (payload) => {
+    // userInfo = payload.socketInRoom;
+    // setAnotherUser(payload.socketInRoom);
+    // setItUser(payload.room.it);
+    // setParticipantUser(payload.participant);
+    // });
 
     return () => {
-      socket.off(SOCKET.USER);
+      // socket.off(SOCKET.USER);
     };
   }, []);
 
@@ -161,18 +159,22 @@ function View() {
         const peers = [];
         userVideo.current.srcObject = stream;
 
-        console.log("원래 여기 있떤 사람들", userInfo);
-        userInfo.forEach((user) => {
-          const peer = createPeer(user, socket.id, stream);
+        socketApi.enterGameRoom(true);
 
-          peersRef.current.push({
-            peerID: user,
-            peer,
+        socket.on(SOCKET.USER, (payload) => {
+          console.log("원래 여기 있떤 사람들", payload);
+          payload.socketInRoom.forEach((user) => {
+            const peer = createPeer(user, socket.id, stream);
+
+            peersRef.current.push({
+              peerID: user,
+              peer,
+            });
+            peers.push(peer);
           });
-          peers.push(peer);
+          setPeers(peers);
         });
 
-        setPeers(peers);
         console.log("나 있기전에 있던 사람들", peers);
 
         socket.on("user joined", (payload) => {
@@ -185,8 +187,8 @@ function View() {
           setPeers((users) => [...users, peer]);
         });
 
-        socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
-          console.log("returning signal", payload);
+        socket.on("receiving-returned-signal", (payload) => {
+          console.log("signal돌려받음", payload);
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
@@ -195,9 +197,9 @@ function View() {
     return () => {
       userVideo.current = null;
 
+      socket.off("user joined");
       socket.off(SOCKET.USER);
       socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
-      socket.off("user joined");
     };
   }, []);
 
@@ -210,6 +212,7 @@ function View() {
     });
 
     peer.on("signal", (signal) => {
+      console.log("this is signal", signal);
       socket.emit("sending signal", {
         userToSignal,
         callerID,
@@ -231,7 +234,7 @@ function View() {
       console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
       socket.emit("returning signal", { signal, callerID });
     });
-
+    console.log("this is incomingSignal", incomingSignal);
     peer.signal(incomingSignal);
 
     return peer;
