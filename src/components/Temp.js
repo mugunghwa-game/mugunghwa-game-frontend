@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import Webcam from "react-webcam";
 import Peer from "simple-peer";
-import io from "socket.io-client";
 import styled from "styled-components";
 
 import { socket } from "../utils/socket";
@@ -32,7 +32,7 @@ const Video = (props) => {
 
   return (
     <>
-      <StyledVideo playsInline autoPlay ref={ref} />
+      <Webcam playsInline autoPlay ref={ref} />
       <canvas ref={canvasRef}></canvas>
     </>
   );
@@ -139,7 +139,7 @@ const Temp = (props) => {
 
   return (
     <Container>
-      <StyledVideo muted ref={userVideo} autoPlay playsInline />
+      <Webcam muted ref={userVideo} autoPlay playsInline />
       {peers.map((peer, index) => {
         console.log("peer", peer);
         return <Video key={index} peer={peer} />;
