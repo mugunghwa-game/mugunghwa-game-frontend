@@ -10,8 +10,8 @@ const videoConstraints = {
 };
 
 export default function useCamera() {
-  const userVideo = useRef();
   const [peers, setPeers] = useState([]);
+  const userVideo = useRef();
   const peersRef = useRef([]);
   console.log("hehe useCamera");
   console.log(peers);
