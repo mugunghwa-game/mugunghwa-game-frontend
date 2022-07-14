@@ -13,8 +13,6 @@ export default function useCamera() {
   const [peers, setPeers] = useState([]);
   const userVideo = useRef();
   const peersRef = useRef([]);
-  console.log("hehe useCamera");
-  console.log(peers);
 
   useEffect(() => {
     navigator.mediaDevices

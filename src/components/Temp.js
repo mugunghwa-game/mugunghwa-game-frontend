@@ -14,25 +14,19 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-const StyledVideo = styled.video`
-  height: 40%;
-  width: 50%;
-`;
-
 const Video = (props) => {
   const ref = useRef();
-  console.log(props);
   const canvasRef = useRef();
+
   useEffect(() => {
     props.peer.on("stream", (stream) => {
-      console.log(stream, "다른사람거");
       ref.current.srcObject = stream;
     });
   }, []);
 
   return (
     <>
-      <Webcam playsInline autoPlay ref={ref} />
+      <video playsInline autoPlay ref={ref} />
       <canvas ref={canvasRef}></canvas>
     </>
   );
@@ -42,9 +36,9 @@ const videoConstraints = {
   height: window.innerHeight / 2,
   width: window.innerWidth / 2,
 };
-const Temp = (props) => {
+
+const Temp = () => {
   const [peers, setPeers] = useState([]);
-  const socketRef = useRef();
   const userVideo = useRef();
   const peersRef = useRef([]);
   const roomID = "11";
@@ -53,9 +47,7 @@ const Temp = (props) => {
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {
-        console.log(stream, "mystream");
         userVideo.current.srcObject = stream;
-        // console.log(socket);
 
         socket.emit("join room", roomID);
         socket.on("all users", (users) => {
@@ -67,25 +59,20 @@ const Temp = (props) => {
               peer,
             });
             peers.push(peer);
-            console.log("1", peer);
           });
           setPeers(peers);
         });
-        console.log(peers, "2");
 
         socket.on("user joined", (payload) => {
           const peer = addPeer(payload.signal, payload.callerID, stream);
-          console.log(peer, "im here");
 
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
           });
-          console.log("3", peersRef);
 
           setPeers((users) => [...users, peer]);
         });
-        console.log(peers, "4");
 
         socket.on("receiving returned signal", (payload) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
@@ -96,13 +83,6 @@ const Temp = (props) => {
   }, []);
 
   function createPeer(userToSignal, callerID, stream) {
-    console.log(
-      userToSignal,
-      "~에게 보내줘",
-      callerID,
-      "~얘가 들어왔대",
-      stream
-    );
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -110,7 +90,6 @@ const Temp = (props) => {
     });
 
     peer.on("signal", (signal) => {
-      console.log("보낼 시그널", signal);
       socket.emit("sending signal", {
         userToSignal,
         callerID,
