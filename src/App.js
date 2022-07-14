@@ -6,6 +6,7 @@ import GameMode from "./components/GameMode";
 import Main from "./components/Main";
 import NotFound from "./components/NotFound";
 import SingleMode from "./components/SingleMode";
+import Temp from "./components/Temp";
 import View from "./components/View";
 import WaitingRoom from "./components/WaitingRoom";
 import useStore from "./store/store";
@@ -13,14 +14,16 @@ import useStore from "./store/store";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Main />} />
+      <Route path="/" element={<Temp />} />
+
+      {/* <Route path="/" element={<Main />} />
       <Route path="/ready" element={<GameMode />} />
       <Route path="/singleGame" element={<SingleMode />} />
       <Route path="/waitingRoom" element={<WaitingRoom />} />
       <Route path="/countdown" element={<Countdown />} />
       <Route path="/game" element={<View />} />
       <Route path="/ending" element={<Ending />} />
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<NotFound />} /> */}
     </Routes>
   );
 }
