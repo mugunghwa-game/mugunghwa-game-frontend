@@ -9,6 +9,7 @@ const useStore = create(
     participantList: [],
     difficulty: "",
     winner: "",
+    singleModeUserPose: [],
     preStartFirstParticipantPose: [],
     preStartSecondparticipantPose: [],
     firstParticipantPose: [],
@@ -70,6 +71,13 @@ const useStore = create(
             each.opportunity -= 1;
           }
         }),
+      })),
+    addSingleModeUserPose: (item) =>
+      set((state) => ({
+        singleModeUserPose:
+          state.singleModeUserPose.length === 3
+            ? [item]
+            : [...state.singleModeUserPose, item],
       })),
     addPreStartFirstParticipantPose: (item) =>
       set((state) => ({

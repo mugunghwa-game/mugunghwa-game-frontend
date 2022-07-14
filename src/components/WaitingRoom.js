@@ -8,10 +8,9 @@ import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
+import Game from "./Game";
 import Modal from "./Modal";
 import ModalContent from "./ModalContent";
-import NotFound from "./NotFound";
-import View from "./View";
 
 function WaitingRoom() {
   const navigate = useNavigate();
@@ -46,21 +45,8 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    setIsReady(true);
-    // navigate("/game");
+    navigate("/game");
   };
-
-  // useEffect(() => {
-  //   if (itCount === 1 && participantCount === 1) {
-  //     socket.emit("all-ready", true);
-
-  //     socket.on("goGame", (payload) => {
-  //       if (payload) {
-  //         navigate("/countDown");
-  //       }
-  //     });
-  //   }
-  // }, [itCount, participantCount]);
 
   const handleExist = () => {
     socket.emit("leaveRoom", socket.id);
@@ -160,13 +146,13 @@ function WaitingRoom() {
       </Content>
       <ButtonWrap>
         <Button
-          // property={itCount !== 1 || participantCount !== 1 ? "disabled" : null}
+          property={itCount !== 1 || participantCount !== 2 ? "disabled" : null}
           handleClick={handleGame}
         >
           게임시작
         </Button>
       </ButtonWrap>
-      {isReady && <View />}
+      {isReady && <Game />}
     </DefaultPage>
   );
 }

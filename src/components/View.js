@@ -16,10 +16,11 @@ import Game from "./Game";
 import It from "./It";
 
 const Video = (props) => {
-  const anotherUserRef = useRef(null);
+  const anotherUserRef = useRef();
   console.log(props.peer, "props");
 
   useEffect(() => {
+    console.log(props.peer.streams[0]);
     props.peer.on("stream", (stream) => {
       console.log("다른 사람stream", stream);
       anotherUserRef.current.srcObject = stream;
@@ -47,6 +48,7 @@ function View() {
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const userCanvas = useRef(null);
   let userInfo;
   const {
@@ -59,9 +61,10 @@ function View() {
     participantList,
   } = useStore();
   const peersRef = useRef([]);
+  const anotherUserRef = useRef();
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const userVideo = useRef(null);
+  const userVideo = useRef();
   const [itCount, setItCount] = useState(5);
   const [participantUser, setParticipantUser] = useState(null);
   const [mode, setMode] = useState("prepare");
@@ -78,65 +81,98 @@ function View() {
         audio: true,
       })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
-        console.log("mystream", stream);
+        if (userVideo.current) {
+          userVideo.current.srcObject = stream;
+          console.log("mystream", stream);
 
-        socketApi.enterGameRoom(true);
+          socketApi.enterGameRoom(true);
 
-        socket.on("all-info", (payload) => {
-          const peers = [];
+          socket.on("all-info", (payload) => {
+            console.log("원래 여기 있떤 사람들", payload);
+            const peers = [];
 
-          console.log("원래 여기 있떤 사람들", payload);
-          payload.socketInRoom.forEach((user) => {
-            console.log("하나하나꺼내", user);
-            const peer = new Peer({
-              initiator: true,
+            payload.player.forEach((user) => {
+              console.log("하나하나꺼내", user);
+              if (payload.it[0] === socket.id) {
+                const peer = new Peer({
+                  initiator: true,
+                  trickle: false,
+                  stream,
+                });
+                peer.on("signal", (signal) => {
+                  console.log("this is signal", signal);
+                  socket.emit("sending signal", {
+                    userToSignal: payload.participnat[0],
+                    callerID: socket.id,
+                    signal,
+                  });
+                });
+
+                socket.on("receiving-returned-signal", (payload) => {
+                  peer.signal(payload.signal);
+                });
+
+                peer.on("stream", (stream) => {
+                  anotherUserRef.current.srcObject = stream;
+                });
+              }
+            });
+
+            //   peersRef.current.push({
+            //     peerID: user,
+            //     peer,
+            //   });
+            //   peers.push(peer);
+            //   console.log(peers, peer, "here");
+            // });
+            // setPeers(peers);
+          });
+
+          socket.on("user joined", (payload) => {
+            const peer = new new Peer({
+              initiator: false,
               trickle: false,
               stream,
-            });
+            })();
 
             peer.on("signal", (signal) => {
-              console.log("this is signal", signal);
-              socket.emit("sending signal", {
-                userToSignal: user,
-                callerID: socket.id,
-                signal,
-              });
+              socket.emit("returning signal", { signal, callerID });
             });
 
-            peersRef.current.push({
-              peerID: user,
-              peer,
+            peer.signal(payload.signal);
+            peer.on("stream", (stream) => {
+              anotherUserRef.current.srcObject = stream;
             });
-            peers.push(peer);
+            //   console.log(
+            //     "새로운 애 들어왔대, 기존에 방에 있엇던 애들만 받아야함",
+            //     payload
+            //   );
+            //   const peer = addPeer(payload.signal, payload.callerID, stream);
+            //   console.log("새로운 peer", peer);
+            //   peersRef.current.push({
+            //     peerID: payload.callerID,
+            //     peer,
+            //   });
+
+            //   setPeers((users) => [...users, peer]);
+            //   setIsReady(true);
+            // });
+            // console.log(peers, peersRef, "다른유저가 들어왔을때");
+
+            // socket.on("receiving-returned-signal", (payload) => {
+            //   setIsReady(true);
+            //   console.log("signal돌려받음", payload);
+            //   const item = peersRef.current.find((p) => p.peerID === payload.id);
+            //   item.peer.signal(payload.signal);
+            // });
           });
-          setPeers(peers);
-        });
-
-        socket.on("user joined", (payload) => {
-          console.log(
-            "새로운 애 들어왔대, 기존에 방에 있엇던 애들만 받아야함",
-            payload
-          );
-          const peer = addPeer(payload.signal, payload.callerID, stream);
-
-          peersRef.current.push({
-            peerID: payload.callerID,
-            peer,
-          });
-
-          setPeers((users) => [...users, peer]);
-        });
-
-        socket.on("receiving-returned-signal", (payload) => {
-          console.log("signal돌려받음", payload);
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
-          item.peer.signal(payload.signal);
-        });
+        }
       });
 
     return () => {
       userVideo.current = null;
+      peersRef.current = null;
+      anotherUserRef.current = null;
 
       socket.off("user joined");
       socket.off("all-info");
@@ -194,8 +230,8 @@ function View() {
 
       setTimeout(() => {
         clearInterval(temp),
-          setClickCount((prev) => prev + 1),
-          console.log("done");
+        setClickCount((prev) => prev + 1),
+        console.log("done");
       }, 3000);
     }
 
@@ -265,7 +301,7 @@ function View() {
 
   return (
     <DefaultPage>
-      <Description>
+      {/* <Description>
         {itUser && participantUser && (
           <DescriptionContent
             itUser={itUser}
@@ -273,12 +309,21 @@ function View() {
           />
         )}
       </Description>
-      <UserView>
-        <Webcam className="user" ref={userVideo} autoPlay playsInline />
-        {peers.map((peer, index) => {
+      <UserView> */}
+      <Webcam className="it" ref={userVideo} autoPlay playsInline />
+      <Webcam
+        className="participant"
+        ref={anotherUserRef}
+        autoPlay
+        playsInline
+      />
+
+      {/* {isReady &&
+        peers.map((peer, index) => {
+          console.log(peers);
           return <Video key={index} peer={peer} />;
-        })}
-        <It user={itUser} itCount={itCount} handleCount={setItCount} />
+        })} */}
+      {/* <It user={itUser} itCount={itCount} handleCount={setItCount} />
         <Event
           peers={peers}
           participantUser={participantUser}
@@ -309,7 +354,7 @@ function View() {
           isItLoser={isItLoser}
           itCount={itCount}
         />
-      )}
+      )} */}
     </DefaultPage>
   );
 }

@@ -11,7 +11,12 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-function DistanceAdjustment({ participantUser, handleMode, itUser }) {
+function DistanceAdjustment({
+  handleSingleMode,
+  participantUser,
+  handleMode,
+  itUser,
+}) {
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -19,9 +24,20 @@ function DistanceAdjustment({ participantUser, handleMode, itUser }) {
     updateSecondParticipantPreparation,
     updateSecondChildParticipant,
     updateFirstChildParticipant,
+    singleModeUserPose,
   } = useStore();
 
   const [count, setCount] = useState(20);
+
+  useEffect(() => {
+    if (singleModeUserPose.length !== 0) {
+      const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
+      console.log(sholuderLength, singleModeUserPose[0].score);
+      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.7) {
+        handleSingleMode(true);
+      }
+    }
+  }, [singleModeUserPose]);
 
   useEffect(() => {
     if (participantUser) {

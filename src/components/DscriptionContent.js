@@ -3,7 +3,12 @@ import React from "react";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 
-function DescriptionContent({ itUser, participantUser }) {
+function DescriptionContent({
+  itUser,
+  participantUser,
+  isSingleMode,
+  isReadySingleMode,
+}) {
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
@@ -34,7 +39,8 @@ function DescriptionContent({ itUser, participantUser }) {
         fistParticipantPreparation) ||
       (participantUser &&
         participantUser[1].id === socket.id &&
-        secondParticipantPreparation) ? (
+        secondParticipantPreparation) ||
+      isReadySingleMode ? (
           <>
             <div>
             술래가 <span className="color">무궁화 꽃이 피었습니다</span>를
@@ -48,7 +54,8 @@ function DescriptionContent({ itUser, participantUser }) {
         !fistParticipantPreparation) ||
       (participantUser &&
         participantUser[1].id === socket.id &&
-        !secondParticipantPreparation) ? (
+        !secondParticipantPreparation) ||
+      isSingleMode ? (
           <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
         ) : null}
     </>
