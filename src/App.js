@@ -14,16 +14,14 @@ import useStore from "./store/store";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Temp />} />
-
-      {/* <Route path="/" element={<Main />} />
+      <Route path="/" element={<Main />} />
       <Route path="/ready" element={<GameMode />} />
       <Route path="/singleGame" element={<SingleMode />} />
       <Route path="/waitingRoom" element={<WaitingRoom />} />
       <Route path="/countdown" element={<Countdown />} />
       <Route path="/game" element={<View />} />
       <Route path="/ending" element={<Ending />} />
-      <Route path="*" element={<NotFound />} /> */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
