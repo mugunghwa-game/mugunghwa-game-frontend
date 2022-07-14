@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 
-import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 
 const videoConstraints = {
@@ -10,11 +9,9 @@ const videoConstraints = {
 };
 
 export default function useCamera() {
-  const { addVideoNumber, vidoeNumber, addfirstVideo } = useStore();
   const userVideo = useRef();
   const [peers, setPeers] = useState([]);
   const peersRef = useRef([]);
-  const [stream, setStream] = useState(null);
   console.log("hehe useCamera");
   console.log(peers);
 
@@ -26,9 +23,9 @@ export default function useCamera() {
       })
       .then((stream) => {
         userVideo.current.srcObject = stream;
-        addfirstVideo(stream.id);
+        // addfirstVideo(stream.id);
         console.log("mystream", stream);
-        setStream(stream);
+        // setStream(stream);
 
         socketApi.enterGameRoom(true);
         socket.on("all-info", (payload) => {
@@ -113,6 +110,5 @@ export default function useCamera() {
   return {
     peers,
     userVideo,
-    stream,
   };
 }
