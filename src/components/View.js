@@ -16,6 +16,7 @@ import Event from "./Event";
 import Game from "./Game";
 import It from "./It";
 import Video from "./Video";
+import VideoRoom from "./VideoRoom";
 
 function View() {
   const [itUser, setItUser] = useState(null);
@@ -45,11 +46,12 @@ function View() {
 
   return (
     <DefaultPage>
-      <Webcam className="it" ref={userVideo} autoPlay playsInline />
+      <VideoRoom />
+      {/* <Webcam className="it" ref={userVideo} autoPlay playsInline />
       {peers.map((peer, index) => {
         console.log(peer);
         return <Video key={index} peer={peer} stream={stream} />;
-      })}
+      })} */}
     </DefaultPage>
   );
 }
