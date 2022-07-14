@@ -1,8 +1,10 @@
+import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import Peer from "simple-peer";
 import styled from "styled-components";
 
+import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
 
 const Container = styled.div`
@@ -16,7 +18,7 @@ const Container = styled.div`
 
 const Video = (props) => {
   const ref = useRef();
-  const canvasRef = useRef();
+  const otherUserRef = useRef();
 
   useEffect(() => {
     props.peer.on("stream", (stream) => {
@@ -26,8 +28,8 @@ const Video = (props) => {
 
   return (
     <>
-      <video playsInline autoPlay ref={ref} />
-      <canvas ref={canvasRef}></canvas>
+      <video className="otherUser" playsInline autoPlay ref={ref} />
+      <canvas className="otherUser" ref={otherUserRef} />
     </>
   );
 };
@@ -39,9 +41,45 @@ const videoConstraints = {
 
 const Temp = () => {
   const [peers, setPeers] = useState([]);
+  const userCanvas = useRef();
+
   const userVideo = useRef();
   const peersRef = useRef([]);
   const roomID = "11";
+
+  const runPosenet = async () => {
+    const net = await posenet.load({
+      inputResolution: { width: 640, height: 480 },
+      scale: 0.8,
+    });
+
+    const temp = setInterval(() => {
+      detect(net);
+    }, 1000);
+
+    setTimeout(() => {
+      clearInterval(temp), console.log("done");
+    }, 30000);
+  };
+
+  const detect = async (net) => {
+    if (
+      typeof userVideo.current !== "undefined" &&
+      userVideo.current !== null &&
+      userVideo.current.video.readyState === 4
+    ) {
+      const video = videoReference(userVideo);
+      const pose = await net.estimateSinglePose(video);
+
+      if (pose !== null && userCanvas.current !== null) {
+        drawCanvas(pose, video, video.width, video.height, userCanvas);
+      }
+    }
+  };
+
+  useEffect(() => {
+    runPosenet();
+  }, []);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -118,13 +156,31 @@ const Temp = () => {
 
   return (
     <Container>
-      <Webcam muted ref={userVideo} autoPlay playsInline />
-      {peers.map((peer, index) => {
-        console.log("peer", peer);
-        return <Video key={index} peer={peer} />;
-      })}
+      <UserCamera>
+        <Webcam
+          muted
+          className="userVideo"
+          ref={userVideo}
+          autoPlay
+          playsInline
+        />
+        <canvas ref={userCanvas} className="userVideo" />
+      </UserCamera>
+      {peers.map((peer, index) => (
+        <Video key={index} peer={peer} />
+      ))}
     </Container>
   );
 };
+
+const UserCamera = styled.div`
+  .userVideo {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    align-items: center;
+    object-fit: fill;
+  }
+`;
 
 export default Temp;
