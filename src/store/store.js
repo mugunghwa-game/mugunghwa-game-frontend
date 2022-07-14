@@ -9,20 +9,36 @@ const useStore = create(
     participantList: [],
     difficulty: "",
     winner: "",
+    singleModeUserPose: [],
     preStartFirstParticipantPose: [],
     preStartSecondparticipantPose: [],
     firstParticipantPose: [],
     secondParticipantPose: [],
+    firstVideo: [],
+    secondVideo: [],
     isChildFirstParticipant: false,
     isChildSecondParticipant: false,
     fistParticipantPreparation: false,
     secondParticipantPreparation: false,
     showVideo: true,
     count: 0,
+    vidoeNumber: 0,
 
     addCount: (item) =>
       set((state) => ({
         count: state.count + 1,
+      })),
+    addVideoNumber: (item) =>
+      set((state) => ({
+        vidoeNumber: state.vidoeNumber + 1,
+      })),
+    addfirstVideo: (item) =>
+      set((state) => ({
+        firstVideo: [item],
+      })),
+    addSecondVideo: (item) =>
+      set((state) => ({
+        secondVideo: [item],
       })),
 
     addPerson: (item) =>
@@ -70,6 +86,13 @@ const useStore = create(
             each.opportunity -= 1;
           }
         }),
+      })),
+    addSingleModeUserPose: (item) =>
+      set((state) => ({
+        singleModeUserPose:
+          state.singleModeUserPose.length === 3
+            ? [item]
+            : [...state.singleModeUserPose, item],
       })),
     addPreStartFirstParticipantPose: (item) =>
       set((state) => ({
@@ -130,12 +153,15 @@ const useStore = create(
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],
         preStartSecondparticipantPose: [],
+        firstVideo: [],
+        secondVideo: [],
         isChildFirstParticipant: false,
         isChildSecondParticipant: false,
         fistParticipantPreparation: false,
         secondParticipantPreparation: false,
         showVideo: true,
         count: 0,
+        vidoeNumber: 0,
       })),
   }))
 );
