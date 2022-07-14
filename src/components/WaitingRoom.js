@@ -146,7 +146,7 @@ function WaitingRoom() {
       </Content>
       <ButtonWrap>
         <Button
-          property={itCount !== 1 || participantCount !== 2 ? "disabled" : null}
+          // property={itCount !== 1 || participantCount !== 2 ? "disabled" : null}
           handleClick={handleGame}
         >
           게임시작
