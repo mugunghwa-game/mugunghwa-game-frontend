@@ -1,22 +1,30 @@
-import React from "react";
+import React, { useRef } from "react";
 import Webcam from "react-webcam";
+import styled from "styled-components";
 
 import useCamera from "../hooks/useCamera";
-import { socket } from "../utils/socket";
 import Video from "./Video";
 
 export default function VideoRoom() {
   const { peers, userVideo } = useCamera();
-  console.log("here is video Room");
-  console.log("userVideo", userVideo);
+  const userCanvas = useRef();
+
   return (
-    <>
-      <p>{socket.id}</p>
-      <Webcam className="it" ref={userVideo} autoPlay playsInline />
+    <UserCamera>
+      <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
+      <canvas ref={userCanvas} className="userVideo" />
       {peers.map((peer, index) => {
-        console.log(peer, "here is peer in videoRoom");
         return <Video key={index} peer={peer} />;
       })}
-    </>
+    </UserCamera>
   );
 }
+const UserCamera = styled.div`
+  .userVideo {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    align-items: center;
+    object-fit: fill;
+  }
+`;

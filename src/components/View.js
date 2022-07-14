@@ -16,6 +16,7 @@ import Event from "./Event";
 import Game from "./Game";
 import It from "./It";
 import Video from "./Video";
+import VideoRoom from "./VideoRoom";
 
 function View() {
   const [itUser, setItUser] = useState(null);
@@ -24,7 +25,6 @@ function View() {
   const [countDownStart, setCountDownStart] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const userCanvas = useRef(null);
-  let userInfo;
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -39,8 +39,7 @@ function View() {
   const [itCount, setItCount] = useState(5);
   const [participantUser, setParticipantUser] = useState(null);
   const [mode, setMode] = useState("prepare");
-  const [anotherUser, setAnotherUser] = useState([]);
-  const { peers, userVideo, stream, firstVideo } = useCamera();
+  const { peers, userVideo } = useCamera();
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -126,7 +125,7 @@ function View() {
 
   return (
     <DefaultPage>
-      {/* <Description>
+      <Description>
         {itUser && participantUser && (
           <DescriptionContent
             itUser={itUser}
@@ -134,25 +133,9 @@ function View() {
           />
         )}
       </Description>
-      <UserView> */}
-      <Webcam className="it" ref={userVideo} autoPlay playsInline />
-      {peers.map((peer, index) => {
-        console.log(peer);
-        return <Video key={index} peer={peer} stream={stream} />;
-      })}
-      {/* <Webcam
-        className="participant"
-        ref={anotherUserRef}
-        autoPlay
-        playsInline
-      /> */}
-
-      {/* {isReady &&
-        peers.map((peer, index) => {
-          console.log(peers);
-          return <Video key={index} peer={peer} />;
-        })} */}
-      {/* <It user={itUser} itCount={itCount} handleCount={setItCount} />
+      <UserView>
+        <VideoRoom />
+        <It user={itUser} itCount={itCount} handleCount={setItCount} />
         <Event
           peers={peers}
           participantUser={participantUser}
@@ -183,7 +166,7 @@ function View() {
           isItLoser={isItLoser}
           itCount={itCount}
         />
-      )} */}
+      )}
     </DefaultPage>
   );
 }

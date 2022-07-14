@@ -17,20 +17,18 @@ const Container = styled.div`
 `;
 
 const Video = (props) => {
-  const ref = useRef();
   const otherUserRef = useRef();
 
   useEffect(() => {
     props.peer.on("stream", (stream) => {
-      ref.current.srcObject = stream;
+      otherUserRef.current.srcObject = stream;
     });
   }, []);
 
   return (
-    <>
-      <video className="otherUser" playsInline autoPlay ref={ref} />
-      <canvas className="otherUser" ref={otherUserRef} />
-    </>
+    <Container>
+      <video className="otherUser" playsInline autoPlay ref={otherUserRef} />
+    </Container>
   );
 };
 
