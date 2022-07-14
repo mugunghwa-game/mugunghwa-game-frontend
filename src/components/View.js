@@ -16,7 +16,6 @@ import Event from "./Event";
 import Game from "./Game";
 import It from "./It";
 import Video from "./Video";
-import VideoRoom from "./VideoRoom";
 
 function View() {
   const [itUser, setItUser] = useState(null);
@@ -42,16 +41,149 @@ function View() {
   const [mode, setMode] = useState("prepare");
   const [anotherUser, setAnotherUser] = useState([]);
   const { peers, userVideo, stream, firstVideo } = useCamera();
-  console.log("im view");
+
+  const runPosenet = async () => {
+    const net = await posenet.load({
+      inputResolution: { width: 640, height: 480 },
+      scale: 0.8,
+    });
+
+    if (mode === "game") {
+      const temp = setInterval(() => {
+        detect(net);
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(temp),
+          setClickCount((prev) => prev + 1),
+          console.log("done");
+      }, 3000);
+    }
+
+    if (mode === "prepare") {
+      const temp = setInterval(() => {
+        detect(net);
+      }, 3000);
+
+      setTimeout(() => clearInterval(temp) && console.log("done"), 20000);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === "prepare") {
+      runPosenet();
+    }
+    if (mode === "game" && hasStop) {
+      runPosenet();
+      setCountDownStart(true);
+      setHasStop(false);
+    }
+  }, [hasStop]);
+
+  const detect = async (net) => {
+    if (
+      typeof userVideo.current !== "undefined" &&
+      userVideo.current !== null &&
+      userVideo.current.video.readyState === 4 &&
+      userCanvas
+    ) {
+      const video = videoReference(userVideo);
+      const pose = await net.estimateSinglePose(video);
+
+      if (pose !== null && userCanvas.current !== null) {
+        drawCanvas(pose, video, video.width, video.height, userCanvas);
+
+        if (mode === "prepare") {
+          if (participantList[0] === socket.id) {
+            addPreStartFirstParticipantPose(pose);
+          } else {
+            addPreStartSecondparticipantPose(pose);
+          }
+        }
+        if (mode === "game") {
+          if (participantList[0] === socket.id) {
+            addFirstParticipantPose(pose);
+          } else {
+            addSecondParticipantPose(pose);
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    // socket.on(SOCKET.USER, (payload) => {
+    // userInfo = payload.socketInRoom;
+    // setAnotherUser(payload.socketInRoom);
+    // setItUser(payload.room.it);
+    // setParticipantUser(payload.participant);
+    // });
+
+    return () => {
+      // socket.off(SOCKET.USER);
+    };
+  }, []);
 
   return (
     <DefaultPage>
-      <VideoRoom />
-      {/* <Webcam className="it" ref={userVideo} autoPlay playsInline />
+      {/* <Description>
+        {itUser && participantUser && (
+          <DescriptionContent
+            itUser={itUser}
+            participantUser={participantUser}
+          />
+        )}
+      </Description>
+      <UserView> */}
+      <Webcam className="it" ref={userVideo} autoPlay playsInline />
       {peers.map((peer, index) => {
         console.log(peer);
         return <Video key={index} peer={peer} stream={stream} />;
-      })} */}
+      })}
+      {/* <Webcam
+        className="participant"
+        ref={anotherUserRef}
+        autoPlay
+        playsInline
+      /> */}
+
+      {/* {isReady &&
+        peers.map((peer, index) => {
+          console.log(peers);
+          return <Video key={index} peer={peer} />;
+        })} */}
+      {/* <It user={itUser} itCount={itCount} handleCount={setItCount} />
+        <Event
+          peers={peers}
+          participantUser={participantUser}
+          touchDown={mode === "preapre" ? null : hasTouchDownButton}
+          wildCard={mode === "preapre" ? null : setIsItLoser}
+          handleLoser={mode === "preapre" ? null : setIsItLoser}
+          countDownStart={countDownStart}
+          handleCountDownStart={setCountDownStart}
+        />
+        {!fistParticipantPreparation &&
+          participantUser &&
+          !secondParticipantPreparation && (
+            <DistanceAdjustment
+              participantUser={participantUser}
+              handleMode={setMode}
+              itUser={itUser}
+            />
+          )}
+      </UserView>
+      {fistParticipantPreparation && secondParticipantPreparation && (
+        <Game
+          participantUser={participantUser}
+          handleTouchDown={setHasTouchDownButton}
+          handleItCount={setItCount}
+          handleParticipantUser={setParticipantUser}
+          handleStop={setHasStop}
+          clickCount={clickCount}
+          isItLoser={isItLoser}
+          itCount={itCount}
+        />
+      )} */}
     </DefaultPage>
   );
 }
