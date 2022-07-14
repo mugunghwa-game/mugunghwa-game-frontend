@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 
+import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 
 const videoConstraints = {
@@ -23,16 +24,13 @@ export default function useCamera() {
       })
       .then((stream) => {
         userVideo.current.srcObject = stream;
-        // addfirstVideo(stream.id);
-        console.log("mystream", stream);
-        // setStream(stream);
 
         socketApi.enterGameRoom(true);
+
         socket.on("all-info", (payload) => {
           const peers = [];
-          console.log("here is", peers);
+
           payload.socketInRoom.forEach((user) => {
-            console.log("하나하나꺼내", user);
             const peer = new Peer({
               initiator: true,
               trickle: false,
@@ -58,12 +56,7 @@ export default function useCamera() {
         });
 
         socket.on("user joined", (payload) => {
-          console.log(
-            "새로운 애 들어왔대, 기존에 방에 있엇던 애들만 받아야함",
-            payload
-          );
           const peer = addPeer(payload.signal, payload.callerID, stream);
-
           peersRef.current.push({
             peerID: payload.callerID,
             peer,
@@ -73,21 +66,11 @@ export default function useCamera() {
         });
 
         socket.on("receiving-returned-signal", (payload) => {
-          console.log("signal돌려받음", payload);
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
       });
-    return () => {
-      // userVideo.current = null;
-      peersRef.current = [];
-      // anotherUserRef.current = null;
-      // peersRef = [];
-      // peers = [];
-      socket.off("user joined");
-      socket.off("all-info");
-      socket.off("receiving-returned-signal");
-    };
+    return () => {};
   }, []);
 
   function addPeer(incomingSignal, callerID, stream) {
