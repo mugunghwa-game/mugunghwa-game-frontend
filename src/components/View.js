@@ -1,7 +1,6 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
-import Peer from "simple-peer";
 import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
@@ -24,7 +23,8 @@ function View() {
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  const userCanvas = useRef(null);
+  const userCanvas = useRef();
+
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -33,6 +33,7 @@ function View() {
     fistParticipantPreparation,
     secondParticipantPreparation,
     participantList,
+    it,
   } = useStore();
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [clickCount, setClickCount] = useState(0);
@@ -51,7 +52,7 @@ function View() {
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
-
+      console.log("im here");
       setTimeout(() => {
         clearInterval(temp),
           setClickCount((prev) => prev + 1),
@@ -59,7 +60,7 @@ function View() {
       }, 3000);
     }
 
-    if (mode === "prepare") {
+    if (mode === "prepare" && socket.id !== it[0]) {
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
@@ -110,32 +111,30 @@ function View() {
     }
   };
 
-  useEffect(() => {
-    // socket.on(SOCKET.USER, (payload) => {
-    // userInfo = payload.socketInRoom;
-    // setAnotherUser(payload.socketInRoom);
-    // setItUser(payload.room.it);
-    // setParticipantUser(payload.participant);
-    // });
-
-    return () => {
-      // socket.off(SOCKET.USER);
-    };
-  }, []);
-
   return (
     <DefaultPage>
       <Description>
-        {itUser && participantUser && (
-          <DescriptionContent
-            itUser={itUser}
-            participantUser={participantUser}
-          />
-        )}
+        <DescriptionContent />
       </Description>
       <UserView>
-        <VideoRoom />
-        <It user={itUser} itCount={itCount} handleCount={setItCount} />
+        <UserCamera>
+          <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
+          <canvas ref={userCanvas} className="userVideo" />
+          {socket.id === it[0] ? (
+            <div className="userRole">술래</div>
+          ) : (
+            <div className="userRole">참가자</div>
+          )}
+          {socket.id === it[0] && (
+            <div className="userOpportunity">기회의 수 {itCount}</div>
+          )}
+          <div>
+            {peers.map((peer, index) => {
+              return <Video key={index} peer={peer} />;
+            })}
+          </div>
+        </UserCamera>
+        <It itCount={itCount} handleCount={setItCount} />
         <Event
           peers={peers}
           participantUser={participantUser}
@@ -145,16 +144,16 @@ function View() {
           countDownStart={countDownStart}
           handleCountDownStart={setCountDownStart}
         />
-        {!fistParticipantPreparation &&
-          participantUser &&
-          !secondParticipantPreparation && (
-            <DistanceAdjustment
-              participantUser={participantUser}
-              handleMode={setMode}
-              itUser={itUser}
-            />
-          )}
       </UserView>
+      {!fistParticipantPreparation &&
+        participantUser &&
+        !secondParticipantPreparation && (
+          <DistanceAdjustment
+            participantUser={participantUser}
+            handleMode={setMode}
+            itUser={it}
+          />
+        )}
       {fistParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}
@@ -181,14 +180,6 @@ const Description = styled.div`
 `;
 
 const UserView = styled.div`
-  display: grid;
-  grid-template-columns: 400px 400px;
-  grid-template-rows: 280px 280px;
-  margin-top: 15px;
-  justify-content: space-evenly;
-  row-gap: 30px;
-  font-size: 30px;
-
   .opportunity {
     position: absolute;
   }
@@ -228,6 +219,32 @@ const UserView = styled.div`
     place-self: center;
     font-size: 200px;
     color: red;
+  }
+`;
+
+const UserCamera = styled.div`
+  display: grid;
+  grid-template-columns: 500px 300px;
+  grid-template-rows: 430px 250px;
+  column-gap: 110px;
+  margin-top: 50px;
+  margin-left: 60px;
+
+  .userRole {
+    position: absolute;
+  }
+
+  .userVideo {
+    position: absolute;
+    width: 500px;
+    height: 350px;
+    align-items: center;
+    object-fit: fill;
+  }
+
+  .userOpportunity {
+    align-self: end;
+    text-align: center;
   }
 `;
 

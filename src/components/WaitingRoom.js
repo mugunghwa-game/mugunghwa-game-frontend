@@ -33,7 +33,7 @@ function WaitingRoom() {
     participantList.length
   );
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
   };
@@ -55,7 +55,7 @@ function WaitingRoom() {
   };
 
   const handleRole = () => {
-    if (participantCount < 1) {
+    if (participantCount < 2) {
       socketApi.userCount(socket.id, "participant");
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
@@ -146,13 +146,12 @@ function WaitingRoom() {
       </Content>
       <ButtonWrap>
         <Button
-          // property={itCount !== 1 || participantCount !== 2 ? "disabled" : null}
+          property={itCount !== 1 || participantCount !== 2 ? "disabled" : null}
           handleClick={handleGame}
         >
           게임시작
         </Button>
       </ButtonWrap>
-      {isReady && <Game />}
     </DefaultPage>
   );
 }

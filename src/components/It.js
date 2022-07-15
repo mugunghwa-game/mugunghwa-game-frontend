@@ -5,8 +5,8 @@ import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function It({ user, itCount, handleCount, isAllGameEnd }) {
-  const { fistParticipantPreparation, secondParticipantPreparation } =
+function It({ itCount, handleCount, isAllGameEnd }) {
+  const { it, fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
   const handleStopButton = () => {
@@ -18,14 +18,14 @@ function It({ user, itCount, handleCount, isAllGameEnd }) {
 
   return (
     <>
-      {user &&
-        user[0] === socket.id &&
+      {it &&
+        it[0] === socket.id &&
         fistParticipantPreparation &&
         secondParticipantPreparation && (
-        <div className="stop">
-          <Button handleClick={handleStopButton}>멈춤</Button>
-        </div>
-      )}
+          <div className="stop">
+            <Button handleClick={handleStopButton}>멈춤</Button>
+          </div>
+        )}
     </>
   );
 }

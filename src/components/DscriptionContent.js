@@ -3,18 +3,17 @@ import React from "react";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 
-function DescriptionContent({
-  itUser,
-  participantUser,
-  isSingleMode,
-  isReadySingleMode,
-}) {
-  const { fistParticipantPreparation, secondParticipantPreparation } =
-    useStore();
+function DescriptionContent({ isSingleMode, isReadySingleMode }) {
+  const {
+    fistParticipantPreparation,
+    secondParticipantPreparation,
+    it,
+    participantList,
+  } = useStore();
 
   return (
     <>
-      {itUser && participantUser && itUser[0] === socket.id && (
+      {it && participantList && it[0] === socket.id && (
         <>
           {fistParticipantPreparation && secondParticipantPreparation ? (
             <>
@@ -34,30 +33,30 @@ function DescriptionContent({
           )}
         </>
       )}
-      {(participantUser &&
-        participantUser[0].id === socket.id &&
+      {(participantList &&
+        participantList[0] === socket.id &&
         fistParticipantPreparation) ||
-      (participantUser &&
-        participantUser[1].id === socket.id &&
+      (participantList &&
+        participantList[1] === socket.id &&
         secondParticipantPreparation) ||
       isReadySingleMode ? (
-          <>
-            <div>
+        <>
+          <div>
             술래가 <span className="color">무궁화 꽃이 피었습니다</span>를
             외치면
-              <span className="color"> 3초</span>간 동작을 멈춰야합니다
-            </div>
-          </>
-        ) : null}
-      {(participantUser &&
-        participantUser[0].id === socket.id &&
+            <span className="color"> 3초</span>간 동작을 멈춰야합니다
+          </div>
+        </>
+      ) : null}
+      {(participantList &&
+        participantList[0] === socket.id &&
         !fistParticipantPreparation) ||
-      (participantUser &&
-        participantUser[1].id === socket.id &&
+      (participantList &&
+        participantList[1] === socket.id &&
         !secondParticipantPreparation) ||
       isSingleMode ? (
-          <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
-        ) : null}
+        <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
+      ) : null}
     </>
   );
 }
