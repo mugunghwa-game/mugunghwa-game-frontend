@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
-import useCamera from "../hooks/useCamera";
 import useStore from "../store/store";
-import { socket } from "../utils/socket";
 
 export default function Video({
   index,
@@ -42,12 +40,12 @@ export default function Video({
       {participantUser[0].id === peersRef.current[index].peerID ? (
         <span>
           {participantUser[0].opportunity}
-          {index}
+          index{index}
         </span>
       ) : (
         <span>
           {participantUser[1].opportunity}
-          {index}
+          index {index}
         </span>
       )}
       <video className="otherUser" playsInline autoPlay ref={anotherUserRef} />

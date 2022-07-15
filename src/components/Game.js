@@ -18,7 +18,7 @@ function Game({
   itCount,
 }) {
   const navigate = useNavigate();
-
+  console.log(clickCount);
   const [isGameEnd, setIsGameEnd] = useState(false);
   const {
     firstParticipantPose,
@@ -44,7 +44,7 @@ function Game({
       if (result) {
         handleTouchDown(true);
       }
-
+      console.log(participantList[0]);
       if (moved) {
         socketApi.userMoved(participantList[0]);
       }
@@ -118,6 +118,7 @@ function Game({
       socket.off(SOCKET.GAME_END);
       socket.off(SOCKET.IT_END);
       socket.off(SOCKET.ANOTHER_USER_END);
+      socket.off("poseDetection-start");
     };
   }, [clickCount, isGameEnd]);
 
