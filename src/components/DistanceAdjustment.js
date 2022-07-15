@@ -25,6 +25,7 @@ function DistanceAdjustment({
     updateSecondChildParticipant,
     updateFirstChildParticipant,
     singleModeUserPose,
+    participantList,
   } = useStore();
 
   const [count, setCount] = useState(20);
@@ -40,10 +41,10 @@ function DistanceAdjustment({
   }, [singleModeUserPose]);
 
   useEffect(() => {
-    if (participantUser) {
+    if (participantList) {
       if (
         preStartFirstParticipantPose.length !== 0 &&
-        participantUser[0].id === socket.id
+        participantList[0] === socket.id
       ) {
         const sholuderLength = sholuderLengthinScreen(
           preStartFirstParticipantPose[0]
@@ -63,7 +64,7 @@ function DistanceAdjustment({
 
       if (
         preStartSecondparticipantPose.length !== 0 &&
-        participantUser[1].id === socket.id
+        participantList[1] === socket.id
       ) {
         const isItChild = divisionChildAndAdult(
           preStartSecondparticipantPose[0]
