@@ -11,13 +11,6 @@ export function createPeer(userToSignal, callerID, stream) {
   });
 
   peer.on("signal", (signal) => {
-    console.log(
-      signal,
-      socket.id,
-      "socketid가 들어온사람",
-      userToSignal,
-      "userTosignal은 받는사람"
-    );
     socket.emit(SOCKET.SENDING_SIGNAL, {
       userToSignal: userToSignal,
       callerID: socket.id,

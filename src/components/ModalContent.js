@@ -9,7 +9,8 @@ import { socket } from "../utils/socket";
 import Button from "./Button";
 
 function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
-  const { addIt, addDifficulty, addPerson } = useStore();
+  const { addIt, addPerson } = useStore();
+
   const handleClick = () => {
     handleModal(false);
   };
@@ -20,10 +21,10 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
       role: "it",
       difficulty: event.target.innerText,
     });
+
     addIt(socket.id);
-    console.log(event.target.innerText);
-    addDifficulty(event.target.innerText);
     addPerson({ person: socket.id, role: "it" });
+
     handleItCount((prev) => prev + 1);
     handleModal(false);
   };

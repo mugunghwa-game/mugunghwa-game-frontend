@@ -15,13 +15,10 @@ const useStore = create(
     preStartSecondparticipantPose: [],
     firstParticipantPose: [],
     secondParticipantPose: [],
-    firstVideo: [],
-    secondVideo: [],
     isChildFirstParticipant: false,
     isChildSecondParticipant: false,
     fistParticipantPreparation: false,
     secondParticipantPreparation: false,
-    showVideo: true,
     count: 0,
     vidoeNumber: 0,
 
@@ -54,10 +51,6 @@ const useStore = create(
     addIt: (item) =>
       set((state) => ({
         it: [item],
-      })),
-    updateShowVideo: (item) =>
-      set((state) => ({
-        showVideo: false,
       })),
     addDifficulty: (item) =>
       set((state) => ({
@@ -150,13 +143,10 @@ const useStore = create(
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],
         preStartSecondparticipantPose: [],
-        firstVideo: [],
-        secondVideo: [],
         isChildFirstParticipant: false,
         isChildSecondParticipant: false,
         fistParticipantPreparation: false,
         secondParticipantPreparation: false,
-        showVideo: true,
         count: 0,
         vidoeNumber: 0,
       })),

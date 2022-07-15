@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import {
   divisionChildAndAdult,
-  moveDetection,
   sholuderLengthinScreen,
-  visibleButton,
 } from "../utils/motionDetection";
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
@@ -21,20 +19,8 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
     updateFirstChildParticipant,
     singleModeUserPose,
     participantList,
-    fistParticipantPreparation,
-    secondParticipantPreparation,
-    isChildFirstParticipant,
-    isChildSecondParticipant,
   } = useStore();
 
-  console.log(
-    fistParticipantPreparation,
-    secondParticipantPreparation,
-    isChildFirstParticipant,
-    isChildSecondParticipant
-  );
-
-  console.log(participantList[0] === socket.id);
   useEffect(() => {
     if (singleModeUserPose.length !== 0) {
       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);

@@ -165,6 +165,7 @@ function View() {
 
   useEffect(() => {
     if (mode === "prepare") {
+      //posedetection을 바로 실행시키지 말고 모든 유저가 들어왔을때
       runPosenet();
     }
     if (mode === "game" && hasStop) {
@@ -218,7 +219,7 @@ function View() {
   return (
     <DefaultPage>
       <Description>
-        <DescriptionContent />
+        <DescriptionContent participantUser={participantUser} />
       </Description>
       <UserView>
         <UserCamera>
