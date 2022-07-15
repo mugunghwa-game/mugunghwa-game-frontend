@@ -1,5 +1,6 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
+import { MdScreenLockLandscape } from "react-icons/md";
 import Webcam from "react-webcam";
 import Peer from "simple-peer";
 import styled from "styled-components";
@@ -137,7 +138,7 @@ function View() {
       scale: 0.8,
     });
 
-    if (mode === "game") {
+    if (mode === "game" && hasStop && socket.id !== itUser[0]) {
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
@@ -149,7 +150,7 @@ function View() {
       }, 3000);
     }
 
-    if (mode === "prepare" && hasStop) {
+    if (mode === "prepare") {
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
@@ -202,11 +203,11 @@ function View() {
 
   const handleStopButton = () => {
     if (itCount > 0) {
-      setItCount((prev) => prev - 1);
       socket.emit(SOCKET.MOTION_START, true);
     }
   };
-  console.log(participantUser);
+
+  console.log(participantUser, "participantUser");
 
   return (
     <DefaultPage>
