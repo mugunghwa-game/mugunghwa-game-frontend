@@ -2,7 +2,12 @@ import io from "socket.io-client";
 
 import { SOCKET } from "../constants/constants";
 
-export const socket = io.connect(process.env.REACT_APP_URL);
+export const socket = io.connect(process.env.REACT_APP_URL, {
+  withCredentials: true,
+  extraHeaders: {
+    "my-custom-header": "abcd",
+  },
+});
 console.log(process.env.REACT_APP_URL);
 
 export const socketApi = {
