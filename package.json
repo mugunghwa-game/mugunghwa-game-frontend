@@ -21,6 +21,7 @@
     "web-vitals": "^2.1.4",
     "zustand": "^4.0.0-rc.1"
   },
+  "proxy": "Mugunghwa3-env.eba-enci7edt.ap-northeast-2.elasticbeanstalk.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
