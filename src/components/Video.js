@@ -11,17 +11,22 @@ export default function Video(props) {
   }, []);
 
   return (
-    <Container>
-      <video className="otherUser" playsInline autoPlay ref={otherUserRef} />
-    </Container>
+    <VideoContainer>
+      <video className="otherUser" playsInline autoPlay ref={anotherUserRef} />
+    </VideoContainer>
   );
 }
 
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-  height: 100vh;
-  width: 90%;
-  margin: auto;
-  flex-wrap: wrap;
+const VideoContainer = styled.div`
+  display: grid;
+  grid-template-columns: 220px;
+  grid-template-rows: 250px;
+
+  .otherUser {
+    position: relative;
+    width: 400px;
+    height: 200px;
+    float: right;
+    object-fit: fill;
+  }
 `;

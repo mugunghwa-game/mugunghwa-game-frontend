@@ -130,6 +130,7 @@ export function helpDetection(pose) {
         firstPoint.position.x,
         secondPoint.position.x
       );
+
       return result;
     }
   }
