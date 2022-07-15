@@ -13,6 +13,8 @@ export default function useCamera() {
   const [peers, setPeers] = useState([]);
   const userVideo = useRef();
   const peersRef = useRef([]);
+  const [participant, setParticipant] = useState(null);
+  const [it, setIt] = useState(null);
 
   useEffect(() => {
     navigator.mediaDevices
@@ -26,6 +28,9 @@ export default function useCamera() {
         socketApi.enterGameRoom(true);
 
         socket.on("all-info", (payload) => {
+          setIt(payload.it);
+          setParticipant(payload.participant);
+
           const peers = [];
 
           payload.socketInRoom.forEach((user) => {
@@ -87,9 +92,12 @@ export default function useCamera() {
 
     return peer;
   }
-
+  console.log("peersRef", peersRef);
   return {
     peers,
     userVideo,
+    it,
+    participant,
+    peersRef,
   };
 }

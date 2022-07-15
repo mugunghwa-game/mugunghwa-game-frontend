@@ -1,17 +1,55 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-export default function Video(props) {
+import useCamera from "../hooks/useCamera";
+import useStore from "../store/store";
+import { socket } from "../utils/socket";
+
+export default function Video({
+  index,
+  peersRef,
+  participantUser,
+  itUser,
+  peer,
+  itCount,
+}) {
+  const { participantList } = useStore();
   const anotherUserRef = useRef();
 
+  console.log(peersRef.current, participantList, participantUser);
+
   useEffect(() => {
-    props.peer.on("stream", (stream) => {
+    peer.on("stream", (stream) => {
       anotherUserRef.current.srcObject = stream;
     });
   }, []);
 
+  const result = participantUser.map(
+    (item, index) => participantUser[index].id
+  );
+
   return (
     <VideoContainer>
+      {peersRef.current[index].peerID === itUser[0] && (
+        <span>술래{itCount}</span>
+      )}
+      {result.includes(peersRef.current[index].peerID) && (
+        <span>
+          {peersRef.current[index].peerID}
+          {index}
+        </span>
+      )}
+      {participantUser[0].id === peersRef.current[index].peerID ? (
+        <span>
+          {participantUser[0].opportunity}
+          {index}
+        </span>
+      ) : (
+        <span>
+          {participantUser[1].opportunity}
+          {index}
+        </span>
+      )}
       <video className="otherUser" playsInline autoPlay ref={anotherUserRef} />
     </VideoContainer>
   );
@@ -20,7 +58,7 @@ export default function Video(props) {
 const VideoContainer = styled.div`
   display: grid;
   grid-template-columns: 220px;
-  grid-template-rows: 250px;
+  grid-template-rows: 220px;
 
   .otherUser {
     position: relative;

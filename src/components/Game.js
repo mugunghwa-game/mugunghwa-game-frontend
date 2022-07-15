@@ -27,13 +27,11 @@ function Game({
     isChildFirstParticipant,
     isChildSecondParticipant,
     addWinner,
+    participantList,
   } = useStore();
 
   useEffect(() => {
-    if (
-      firstParticipantPose.length === 3 &&
-      participantUser[0].id === socket.id
-    ) {
+    if (firstParticipantPose.length === 3 && participantList[0] === socket.id) {
       const moved = moveDetection(
         firstParticipantPose[0],
         firstParticipantPose[2],
@@ -48,12 +46,12 @@ function Game({
       }
 
       if (moved) {
-        socketApi.userMoved(participantUser[0].id);
+        socketApi.userMoved(participantList[0]);
       }
     }
     if (
       secondParticipantPose.length === 3 &&
-      participantUser[1].id === socket.id
+      participantList[1] === socket.id
     ) {
       const moved = moveDetection(
         secondParticipantPose[0],
@@ -68,13 +66,13 @@ function Game({
         handleTouchDown(true);
       }
       if (moved) {
-        socketApi.userMoved(participantUser[1].id);
+        socketApi.userMoved(participantList[1]);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
-    socket.on(SOCKET.START, (payload) => {
+    socket.on("poseDetection-start", (payload) => {
       if (payload) {
         handleStop(true);
         handleItCount((prev) => prev - 1);
