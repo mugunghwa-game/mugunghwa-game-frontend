@@ -16,63 +16,65 @@ function Game({
   clickCount,
   isItLoser,
   itCount,
+  hasStop,
+  difficulty,
 }) {
   const navigate = useNavigate();
-  console.log(clickCount);
   const [isGameEnd, setIsGameEnd] = useState(false);
   const {
     firstParticipantPose,
     secondParticipantPose,
-    difficulty,
     isChildFirstParticipant,
     isChildSecondParticipant,
     addWinner,
-    participantList,
   } = useStore();
 
   useEffect(() => {
-    if (firstParticipantPose.length === 3 && participantList[0] === socket.id) {
-      const moved = moveDetection(
+    if (
+      firstParticipantPose.length === 3 &&
+      participantUser[0].id === socket.id
+    ) {
+      const firstParticipantMoved = moveDetection(
         firstParticipantPose[0],
         firstParticipantPose[2],
-        difficulty,
+        difficulty[0],
         isChildFirstParticipant
       );
 
-      const result = visibleButton(firstParticipantPose[0]);
+      const firstResult = visibleButton(firstParticipantPose[0]);
 
-      if (result) {
+      if (firstResult) {
         handleTouchDown(true);
       }
-      console.log(participantList[0]);
-      if (moved) {
-        socketApi.userMoved(participantList[0]);
+      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
+      if (firstParticipantMoved) {
+        socketApi.userMoved(socket.id);
       }
     }
     if (
       secondParticipantPose.length === 3 &&
-      participantList[1] === socket.id
+      participantUser[1].id === socket.id
     ) {
-      const moved = moveDetection(
+      const secondParticipantMoved = moveDetection(
         secondParticipantPose[0],
         secondParticipantPose[2],
-        difficulty,
+        difficulty[0],
         isChildSecondParticipant
       );
+      const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
-      const result = visibleButton(secondParticipantPose[0]);
-
-      if (result) {
+      if (secondParticipantResult) {
         handleTouchDown(true);
       }
-      if (moved) {
-        socketApi.userMoved(participantList[1]);
+      if (secondParticipantMoved) {
+        socketApi.userMoved(socket.id);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
     socket.on("poseDetection-start", (payload) => {
+      console.log("술래 빼고 다 들어와야함", payload);
       if (payload) {
         handleStop(true);
         handleItCount((prev) => prev - 1);
@@ -90,11 +92,16 @@ function Game({
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
+      console.log("얘 움직였어", payload);
       handleParticipantUser(payload);
+      handleStop(false);
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_COUNT, (payload) => {
+      console.log("얘 움직였어", payload);
+
       handleParticipantUser(payload);
+      handleStop(false);
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
@@ -120,7 +127,7 @@ function Game({
       socket.off(SOCKET.ANOTHER_USER_END);
       socket.off("poseDetection-start");
     };
-  }, [clickCount, isGameEnd]);
+  }, [clickCount, isGameEnd, hasStop]);
 
   useEffect(() => {
     if ((itCount === 0 && clickCount === 5) || (isGameEnd && itCount === 0)) {
@@ -138,7 +145,6 @@ function Game({
 
     if (isItLoser) {
       socketApi.itLoser(true);
-      // setIsAllGameEnd(true);
       addWinner("참가자");
       navigate("/ending");
     }

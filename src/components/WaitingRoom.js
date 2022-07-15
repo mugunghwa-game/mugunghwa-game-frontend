@@ -64,11 +64,12 @@ function WaitingRoom() {
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
       addParticipantList(socket.id);
+      console.log(socket.id);
     } else {
       setShouldDisplayInfoModal(true);
     }
   };
-
+  console.log("participantList", participantList);
   useEffect(() => {
     socketApi.joinRoom("gameRoom");
     socket.on(SOCKET.SOCKET_ID, (payload) => {

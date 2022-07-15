@@ -11,10 +11,7 @@ export default function Video({
   peer,
   itCount,
 }) {
-  const { participantList } = useStore();
   const anotherUserRef = useRef();
-
-  console.log(peersRef.current, participantList, participantUser);
 
   useEffect(() => {
     peer.on("stream", (stream) => {

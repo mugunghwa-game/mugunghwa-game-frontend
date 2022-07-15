@@ -27,8 +27,8 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
       //각도 차 20일때 움직임이라고 체크하기
     }
   }
-
-  if (isChild || difficult === "쉬움")
+  console.log(isChild, difficult);
+  if (isChild || difficult === "쉬움" || difficult === undefined)
     if ((isChild && shoulderLength > 16) || shoulderLength > 26) {
       console.log("26");
       return compareAngle(firstResult, secondResult, 1);

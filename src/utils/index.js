@@ -44,3 +44,13 @@ export function addPeer(incomingSignal, callerID, stream) {
 
   return peer;
 }
+
+export function stopStreamVideo(video) {
+  console.log(video);
+  const stream = video.srcObject;
+  const tracks = stream.getTracks();
+
+  tracks.forEach((track) => track.stop());
+
+  video.srcObject = null;
+}
