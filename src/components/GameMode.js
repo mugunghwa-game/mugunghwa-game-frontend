@@ -6,6 +6,7 @@ import DefaultPage from "./DefaultPage";
 
 function GameMode() {
   const navigate = useNavigate();
+
   const handleExitButton = () => {
     navigate("/");
   };

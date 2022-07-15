@@ -13,12 +13,11 @@ import DescriptionContent from "./DscriptionContent";
 import Event from "./Event";
 
 function SingleMode() {
+  const navigate = useNavigate();
   const { addSingleModeUserPose, singleModeUserPose, addWinner } = useStore();
   const userVideo = useRef();
   const userCanvas = useRef();
-  const navigate = useNavigate();
   const [countDownStart, setCountDownStart] = useState(false);
-
   const [isSingleMode, setSingMode] = useState(true);
   const [isReadySingleMode, setIsReadySingleMode] = useState(false);
   const [userOpportunity, setUserOpportunity] = useState(3);

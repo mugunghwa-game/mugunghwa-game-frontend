@@ -3,17 +3,17 @@ import React from "react";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 
-function DescriptionContent({ isSingleMode, isReadySingleMode }) {
-  const {
-    fistParticipantPreparation,
-    secondParticipantPreparation,
-    it,
-    participantList,
-  } = useStore();
+function DescriptionContent({
+  participantUser,
+  isSingleMode,
+  isReadySingleMode,
+}) {
+  const { fistParticipantPreparation, secondParticipantPreparation, it } =
+    useStore();
 
   return (
     <>
-      {it && participantList && it[0] === socket.id && (
+      {it && participantUser && it[0] === socket.id && (
         <>
           {fistParticipantPreparation && secondParticipantPreparation ? (
             <>
@@ -33,11 +33,11 @@ function DescriptionContent({ isSingleMode, isReadySingleMode }) {
           )}
         </>
       )}
-      {(participantList &&
-        participantList[0] === socket.id &&
+      {(participantUser &&
+        participantUser[0].id === socket.id &&
         fistParticipantPreparation) ||
-      (participantList &&
-        participantList[1] === socket.id &&
+      (participantUser &&
+        participantUser[1].id === socket.id &&
         secondParticipantPreparation) ||
       isReadySingleMode ? (
         <>
@@ -48,11 +48,11 @@ function DescriptionContent({ isSingleMode, isReadySingleMode }) {
           </div>
         </>
       ) : null}
-      {(participantList &&
-        participantList[0] === socket.id &&
+      {(participantUser &&
+        participantUser[0].id === socket.id &&
         !fistParticipantPreparation) ||
-      (participantList &&
-        participantList[1] === socket.id &&
+      (participantUser &&
+        participantUser[1].id === socket.id &&
         !secondParticipantPreparation) ||
       isSingleMode ? (
         <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
