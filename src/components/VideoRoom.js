@@ -7,7 +7,7 @@ import Video from "./Video";
 
 export default function VideoRoom() {
   const { peers, userVideo } = useCamera();
-  console.log(userVideo);
+
   const userCanvas = useRef();
 
   return (
@@ -31,7 +31,6 @@ const UserCamera = styled.div`
   display: grid;
   grid-template-columns: 500px 300px;
   grid-template-rows: 250px 250px;
-  /* column-gap: 80px; */
   margin-top: 20px;
   margin-left: 60px;
 

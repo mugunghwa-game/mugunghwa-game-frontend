@@ -1,6 +1,7 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import Peer from "simple-peer";
 import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
@@ -8,6 +9,7 @@ import useCamera from "../hooks/useCamera";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket, socketApi } from "../utils/socket";
+import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 import DistanceAdjustment from "./DistanceAdjustment";
 import DescriptionContent from "./DscriptionContent";
@@ -18,7 +20,6 @@ import Video from "./Video";
 import VideoRoom from "./VideoRoom";
 
 function View() {
-  const [itUser, setItUser] = useState(null);
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
@@ -33,14 +34,102 @@ function View() {
     fistParticipantPreparation,
     secondParticipantPreparation,
     participantList,
-    it,
   } = useStore();
+  const [participantUser, setParticipantUser] = useState(null);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const [itUser, setItUser] = useState(null);
   const [itCount, setItCount] = useState(5);
-  const [participantUser, setParticipantUser] = useState(null);
   const [mode, setMode] = useState("prepare");
-  const { peers, userVideo } = useCamera();
+
+  const [peers, setPeers] = useState([]);
+  const userVideo = useRef();
+  const peersRef = useRef([]);
+  const [participant, setParticipant] = useState(null);
+  const [it, setIt] = useState(null);
+
+  const videoConstraints = {
+    height: window.innerHeight / 2,
+    width: window.innerWidth / 2,
+  };
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: videoConstraints,
+        audio: true,
+      })
+      .then((stream) => {
+        userVideo.current.srcObject = stream;
+
+        socketApi.enterGameRoom(true);
+
+        socket.on("all-info", (payload) => {
+          console.log(payload);
+          setItUser(payload.it);
+          setParticipantUser(payload.participant);
+
+          const peers = [];
+
+          payload.socketInRoom.forEach((user) => {
+            const peer = new Peer({
+              initiator: true,
+              trickle: false,
+              stream,
+            });
+
+            peer.on("signal", (signal) => {
+              console.log("this is signal", signal);
+              socket.emit("sending signal", {
+                userToSignal: user,
+                callerID: socket.id,
+                signal,
+              });
+            });
+
+            peersRef.current.push({
+              peerID: user,
+              peer,
+            });
+            peers.push(peer);
+          });
+          setPeers(peers);
+        });
+
+        socket.on("user joined", (payload) => {
+          const peer = addPeer(payload.signal, payload.callerID, stream);
+          peersRef.current.push({
+            peerID: payload.callerID,
+            peer,
+          });
+
+          setPeers((users) => [...users, peer]);
+        });
+
+        socket.on("receiving-returned-signal", (payload) => {
+          const item = peersRef.current.find((p) => p.peerID === payload.id);
+          item.peer.signal(payload.signal);
+        });
+      });
+    return () => {};
+  }, []);
+
+  function addPeer(incomingSignal, callerID, stream) {
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream,
+    });
+
+    peer.on("signal", (signal) => {
+      console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
+      socket.emit("returning signal", { signal, callerID });
+    });
+    console.log("this is incomingSignal", incomingSignal);
+    peer.signal(incomingSignal);
+
+    return peer;
+  }
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -60,7 +149,7 @@ function View() {
       }, 3000);
     }
 
-    if (mode === "prepare" && socket.id !== it[0]) {
+    if (mode === "prepare" && hasStop) {
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
@@ -111,6 +200,14 @@ function View() {
     }
   };
 
+  const handleStopButton = () => {
+    if (itCount > 0) {
+      setItCount((prev) => prev - 1);
+      socket.emit(SOCKET.MOTION_START, true);
+    }
+  };
+  console.log(participantUser);
+
   return (
     <DefaultPage>
       <Description>
@@ -120,29 +217,45 @@ function View() {
         <UserCamera>
           <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
           <canvas ref={userCanvas} className="userVideo" />
-          {socket.id === it[0] ? (
-            <div className="userRole">술래</div>
+          {itUser && socket.id === itUser[0] ? (
+            <div className="userRole">술래{socket.id}</div>
           ) : (
-            <div className="userRole">참가자</div>
+            <div className="userRole">참가자{socket.id}</div>
           )}
-          {/* {socket.id === it[0] && (
-            <div className="userOpportunity">기회의 수 {itCount}</div>
-          )} */}
-          <div className="userOpportunity">기회의 수 {itCount}</div>
+          <span className="userOpportunity">
+            기회의 수
+            {itUser && socket.id === itUser[0] && <span> {itCount}</span>}
+            {participantUser &&
+              participantUser[0] &&
+              participantUser[0].id === socket.id &&
+              participantUser[0].opportunity}
+            {participantUser &&
+              participantUser[1] &&
+              participantUser[1].id === socket.id &&
+              participantUser[1].opportunity}
+            {itUser &&
+              socket.id === itUser[0] &&
+              fistParticipantPreparation &&
+              secondParticipantPreparation && (
+                <Button handleClick={handleStopButton}>멈춤</Button>
+              )}
+          </span>
           <div>
-            {socket.id === it[0] ? (
-              <div className="userRole">술래</div>
-            ) : (
-              <div className="userRole">참가자</div>
-            )}
-            {peers.map((peer, index) => {
-              return <Video key={index} peer={peer} />;
-            })}
+            {peers.map((peer, index) => (
+              <Video
+                key={index}
+                index={index}
+                peer={peer}
+                peersRef={peersRef}
+                participantList={participantList}
+                itUser={itUser}
+                itCount={itCount}
+                participantUser={participantUser}
+              />
+            ))}
           </div>
         </UserCamera>
-        <It itCount={itCount} handleCount={setItCount} />
         <Event
-          peers={peers}
           participantUser={participantUser}
           touchDown={mode === "preapre" ? null : hasTouchDownButton}
           wildCard={mode === "preapre" ? null : setIsItLoser}
@@ -151,15 +264,9 @@ function View() {
           handleCountDownStart={setCountDownStart}
         />
       </UserView>
-      {!fistParticipantPreparation &&
-        participantUser &&
-        !secondParticipantPreparation && (
-          <DistanceAdjustment
-            participantUser={participantUser}
-            handleMode={setMode}
-            itUser={it}
-          />
-        )}
+      {!fistParticipantPreparation && !secondParticipantPreparation && (
+        <DistanceAdjustment handleMode={setMode} />
+      )}
       {fistParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}

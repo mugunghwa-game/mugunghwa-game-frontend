@@ -36,18 +36,6 @@ const useStore = create(
             ? (state.peersInCamera = [item])
             : state.peersInCamera.push(item),
       })),
-    addVideoNumber: (item) =>
-      set((state) => ({
-        vidoeNumber: state.vidoeNumber + 1,
-      })),
-    addfirstVideo: (item) =>
-      set((state) => ({
-        firstVideo: [item],
-      })),
-    addSecondVideo: (item) =>
-      set((state) => ({
-        secondVideo: [item],
-      })),
 
     addPerson: (item) =>
       set((state) => ({

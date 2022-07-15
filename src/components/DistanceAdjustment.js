@@ -11,12 +11,7 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-function DistanceAdjustment({
-  handleSingleMode,
-  participantUser,
-  handleMode,
-  itUser,
-}) {
+function DistanceAdjustment({ handleSingleMode, handleMode }) {
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -26,15 +21,25 @@ function DistanceAdjustment({
     updateFirstChildParticipant,
     singleModeUserPose,
     participantList,
+    fistParticipantPreparation,
+    secondParticipantPreparation,
+    isChildFirstParticipant,
+    isChildSecondParticipant,
   } = useStore();
 
-  const [count, setCount] = useState(20);
+  console.log(
+    fistParticipantPreparation,
+    secondParticipantPreparation,
+    isChildFirstParticipant,
+    isChildSecondParticipant
+  );
 
+  console.log(participantList[0] === socket.id);
   useEffect(() => {
     if (singleModeUserPose.length !== 0) {
       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
       console.log(sholuderLength, singleModeUserPose[0].score);
-      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.7) {
+      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
         handleSingleMode(true);
       }
     }
@@ -54,7 +59,7 @@ function DistanceAdjustment({
         );
         if (
           0 < sholuderLength < 5 &&
-          preStartFirstParticipantPose[0].score > 0.7
+          preStartFirstParticipantPose[0].score > 0.8
         ) {
           console.log("heelllll here is one");
           isItChild ? updateFirstChildParticipant() : null;
@@ -71,7 +76,7 @@ function DistanceAdjustment({
         );
         if (
           0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
-          preStartSecondparticipantPose[0].score > 0.7
+          preStartSecondparticipantPose[0].score > 0.8
         ) {
           console.log("heelllll here is two");
 
@@ -105,11 +110,7 @@ function DistanceAdjustment({
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
 
-  return (
-    <>
-      <div>{count}</div>
-    </>
-  );
+  return <></>;
 }
 
 export default DistanceAdjustment;

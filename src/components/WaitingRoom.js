@@ -45,7 +45,7 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    socket.emit(SOCKET.READY, true);
+    // socket.emit(SOCKET.READY, true);
 
     navigate("/countDown");
   };
@@ -53,12 +53,14 @@ function WaitingRoom() {
   const handleExist = () => {
     socket.emit("leaveRoom", socket.id);
     updatePerson(socket.id);
+
     navigate("/");
   };
 
   const handleRole = () => {
     if (participantCount < 2) {
       socketApi.userCount(socket.id, "participant");
+
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
       addParticipantList(socket.id);
@@ -91,7 +93,7 @@ function WaitingRoom() {
     });
 
     socket.on(SOCKET.START, (payload) => {
-      payload ? navigate("/countDown") : null;
+      // payload ? navigate("/countDown") : null;
     });
 
     return () => {
