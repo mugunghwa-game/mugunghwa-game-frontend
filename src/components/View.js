@@ -125,10 +125,16 @@ function View() {
           ) : (
             <div className="userRole">참가자</div>
           )}
-          {socket.id === it[0] && (
+          {/* {socket.id === it[0] && (
             <div className="userOpportunity">기회의 수 {itCount}</div>
-          )}
+          )} */}
+          <div className="userOpportunity">기회의 수 {itCount}</div>
           <div>
+            {socket.id === it[0] ? (
+              <div className="userRole">술래</div>
+            ) : (
+              <div className="userRole">참가자</div>
+            )}
             {peers.map((peer, index) => {
               return <Video key={index} peer={peer} />;
             })}

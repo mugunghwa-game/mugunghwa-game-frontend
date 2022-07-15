@@ -45,7 +45,9 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    navigate("/game");
+    socket.emit(SOCKET.READY, true);
+
+    navigate("/countDown");
   };
 
   const handleExist = () => {
@@ -86,6 +88,10 @@ function WaitingRoom() {
       console.log("update", payload);
       setParticipantCount(payload.participant.length);
       setItCount(payload.it.length);
+    });
+
+    socket.on(SOCKET.START, (payload) => {
+      payload ? navigate("/countDown") : null;
     });
 
     return () => {
