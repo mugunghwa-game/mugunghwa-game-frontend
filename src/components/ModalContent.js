@@ -18,8 +18,10 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
     socket.emit(SOCKET.USER_COUNT, {
       id: socket.id,
       role: "it",
+      difficulty: event.target.innerText,
     });
     addIt(socket.id);
+    console.log(event.target.innerText);
     addDifficulty(event.target.innerText);
     addPerson({ person: socket.id, role: "it" });
     handleItCount((prev) => prev + 1);
@@ -68,9 +70,9 @@ const Content = styled.div`
 
   .description {
     margin-top: ${(props) =>
-    props.modalTitle === "난이도 선택"
-      ? "30px"
-      : props.modalTitle === "알려드립니다"
+      props.modalTitle === "난이도 선택"
+        ? "30px"
+        : props.modalTitle === "알려드립니다"
         ? "70px"
         : "4px"};
     line-height: 50px;

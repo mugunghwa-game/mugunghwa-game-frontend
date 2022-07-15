@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { SOCKET } from "../constants/constants";
 import useCamera from "../hooks/useCamera";
 import useStore from "../store/store";
+import { stopStreamVideo } from "../utils/index";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
@@ -24,9 +25,8 @@ function View() {
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const userCanvas = useRef();
-
+  console.log("hasStop", hasStop);
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -42,6 +42,7 @@ function View() {
   const [itUser, setItUser] = useState(null);
   const [itCount, setItCount] = useState(5);
   const [mode, setMode] = useState("prepare");
+  const [difficulty, setDifficulty] = useState(null);
 
   const [peers, setPeers] = useState([]);
   const userVideo = useRef();
@@ -69,6 +70,7 @@ function View() {
           console.log(payload);
           setItUser(payload.it);
           setParticipantUser(payload.participant);
+          setDifficulty(payload.difficulty);
 
           const peers = [];
 
@@ -111,6 +113,8 @@ function View() {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
+
+        stopStreamVideo(stream);
       });
     return () => {};
   }, []);
@@ -137,15 +141,15 @@ function View() {
       inputResolution: { width: 640, height: 480 },
       scale: 0.8,
     });
-
-    if (mode === "game" && hasStop && socket.id !== itUser[0]) {
+    console.log("mode", mode, hasStop);
+    if (mode === "game" && hasStop) {
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
       console.log("im here");
       setTimeout(() => {
-        clearInterval(temp),
-          setClickCount((prev) => prev + 1),
+        setClickCount((prev) => prev + 1),
+          clearInterval(temp),
           console.log("done");
       }, 3000);
     }
@@ -164,6 +168,7 @@ function View() {
       runPosenet();
     }
     if (mode === "game" && hasStop) {
+      console.log("game runposenet", hasStop);
       runPosenet();
       setCountDownStart(true);
       setHasStop(false);
@@ -191,7 +196,8 @@ function View() {
           }
         }
         if (mode === "game") {
-          if (participantList[0] === socket.id) {
+          console.log(socket.id, participantUser);
+          if (participantUser[0].id === socket.id) {
             addFirstParticipantPose(pose);
           } else {
             addSecondParticipantPose(pose);
@@ -278,6 +284,9 @@ function View() {
           clickCount={clickCount}
           isItLoser={isItLoser}
           itCount={itCount}
+          hasStop={hasStop}
+          handleClickCount={setClickCount}
+          difficulty={difficulty}
         />
       )}
     </DefaultPage>
