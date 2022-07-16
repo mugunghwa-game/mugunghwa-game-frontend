@@ -13,7 +13,7 @@ function Ending() {
   const { removeAll, winner } = useStore();
 
   useEffect(() => {
-    socket.emit(SOCKET.INFO_INITIALIZATION, true);
+    // socket.emit(SOCKET.INFO_INITIALIZATION, true);
 
     removeAll();
   }, []);

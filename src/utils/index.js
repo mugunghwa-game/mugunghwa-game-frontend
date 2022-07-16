@@ -11,11 +11,11 @@ export function createPeer(userToSignal, callerID, stream) {
   });
 
   peer.on("signal", (signal) => {
-    socket.emit(SOCKET.SENDING_SIGNAL, {
-      userToSignal: userToSignal,
-      callerID: socket.id,
-      signal: signal,
-    });
+    // socket.emit(SOCKET.SENDING_SIGNAL, {
+    //   userToSignal: userToSignal,
+    //   callerID: socket.id,
+    //   signal: signal,
+    // });
   });
 
   return peer;
@@ -30,7 +30,7 @@ export function addPeer(incomingSignal, callerID, stream) {
 
   peer.on("signal", (signal) => {
     console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
-    socket.emit("returning signal", { signal, callerID });
+    // socket.emit("returning signal", { signal, callerID });
   });
 
   peer.signal(incomingSignal);
