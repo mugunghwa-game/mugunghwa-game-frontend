@@ -1,6 +1,5 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
-import { MdScreenLockLandscape } from "react-icons/md";
 import Webcam from "react-webcam";
 import Peer from "simple-peer";
 import styled from "styled-components";
@@ -43,7 +42,7 @@ function View() {
   const [itCount, setItCount] = useState(5);
   const [mode, setMode] = useState("prepare");
   const [difficulty, setDifficulty] = useState(null);
-
+  const [isRedadyPoseDetection, setIsReadyPoseDetection] = useState(false);
   const [peers, setPeers] = useState([]);
   const userVideo = useRef();
   const peersRef = useRef([]);
@@ -71,6 +70,7 @@ function View() {
           setItUser(payload.it);
           setParticipantUser(payload.participant);
           setDifficulty(payload.difficulty);
+          setIsReadyPoseDetection(true);
 
           const peers = [];
 
@@ -114,9 +114,16 @@ function View() {
           item.peer.signal(payload.signal);
         });
 
-        stopStreamVideo(stream);
+        // stopStreamVideo(stream);
       });
-    return () => {};
+
+    return () => {
+      userVideo.current = null;
+
+      socket.off("all-info");
+      socket.off("user joined");
+      socket.off("receiving-returned-signal");
+    };
   }, []);
 
   function addPeer(incomingSignal, callerID, stream) {
@@ -141,7 +148,7 @@ function View() {
       inputResolution: { width: 640, height: 480 },
       scale: 0.8,
     });
-    console.log("mode", mode, hasStop);
+
     if (mode === "game" && hasStop) {
       const temp = setInterval(() => {
         detect(net);
@@ -154,7 +161,7 @@ function View() {
       }, 3000);
     }
 
-    if (mode === "prepare") {
+    if (mode === "prepare" && itUser[0] !== socket.id) {
       const temp = setInterval(() => {
         detect(net);
       }, 3000);
@@ -164,8 +171,11 @@ function View() {
   };
 
   useEffect(() => {
-    if (mode === "prepare") {
-      //posedetection을 바로 실행시키지 말고 모든 유저가 들어왔을때
+    if (
+      mode === "prepare" &&
+      isRedadyPoseDetection &&
+      itUser[0] !== socket.id
+    ) {
       runPosenet();
     }
     if (mode === "game" && hasStop) {
@@ -174,7 +184,7 @@ function View() {
       setCountDownStart(true);
       setHasStop(false);
     }
-  }, [hasStop]);
+  }, [hasStop, isRedadyPoseDetection]);
 
   const detect = async (net) => {
     if (
@@ -219,16 +229,22 @@ function View() {
   return (
     <DefaultPage>
       <Description>
-        <DescriptionContent participantUser={participantUser} />
+        {participantUser && (
+          <DescriptionContent participantUser={participantUser} />
+        )}
       </Description>
       <UserView>
         <UserCamera>
           <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
           <canvas ref={userCanvas} className="userVideo" />
           {itUser && socket.id === itUser[0] ? (
-            <div className="userRole">술래{socket.id}</div>
+            <div className="userRole">
+              <span className="me"> 나</span> 술래{socket.id}
+            </div>
           ) : (
-            <div className="userRole">참가자{socket.id}</div>
+            <div className="userRole">
+              <span className="me"> 나</span> 참가자{socket.id}
+            </div>
           )}
           <span className="userOpportunity">
             기회의 수
@@ -262,15 +278,15 @@ function View() {
               />
             ))}
           </div>
+          <Event
+            participantUser={participantUser}
+            touchDown={mode === "preapre" ? null : hasTouchDownButton}
+            wildCard={mode === "preapre" ? null : setIsItLoser}
+            handleLoser={mode === "preapre" ? null : setIsItLoser}
+            countDownStart={countDownStart}
+            handleCountDownStart={setCountDownStart}
+          />
         </UserCamera>
-        <Event
-          participantUser={participantUser}
-          touchDown={mode === "preapre" ? null : hasTouchDownButton}
-          wildCard={mode === "preapre" ? null : setIsItLoser}
-          handleLoser={mode === "preapre" ? null : setIsItLoser}
-          countDownStart={countDownStart}
-          handleCountDownStart={setCountDownStart}
-        />
       </UserView>
       {!fistParticipantPreparation && !secondParticipantPreparation && (
         <DistanceAdjustment handleMode={setMode} />
@@ -341,7 +357,7 @@ const UserView = styled.div`
     z-index: 300;
     position: absolute;
     place-self: center;
-    font-size: 200px;
+    font-size: 400px;
     color: red;
   }
 `;
@@ -369,6 +385,10 @@ const UserCamera = styled.div`
   .userOpportunity {
     align-self: end;
     text-align: center;
+  }
+
+  .me {
+    color: #f47676;
   }
 `;
 
