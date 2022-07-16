@@ -176,6 +176,7 @@ export function videoReference(video) {
   const eachVideo = video.current.video;
   const eachVideoWidth = video.current.video.videoWidth;
   const eachVideoHeight = video.current.video.videoHeight;
+
   video.current.video.width = eachVideoWidth;
   video.current.video.height = eachVideoHeight;
 

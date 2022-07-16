@@ -13,7 +13,7 @@ function DescriptionContent({
 
   return (
     <>
-      {it && participantUser && it[0] === socket.id && (
+      {it[0] === socket.id && (
         <>
           {fistParticipantPreparation && secondParticipantPreparation ? (
             <>

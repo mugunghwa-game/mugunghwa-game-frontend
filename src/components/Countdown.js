@@ -11,17 +11,19 @@ import DefaultPage from "./DefaultPage";
 
 function Countdown() {
   const navigate = useNavigate();
+
   const [flower, setFlower] = useState([]);
   const flowers = [flower1, flower2, flower3, flower4, flower5];
   const count = [0, 1, 2, 3, 4, 5];
 
   useEffect(() => {
-    count.forEach((item) =>
+    count.forEach((number) =>
       setTimeout(
-        () => setFlower(flowers.slice(0, flowers.length - item)),
-        1000 * item
+        () => setFlower(flowers.slice(0, flowers.length - number)),
+        1000 * number
       )
     );
+
     setTimeout(() => navigate("/game"), 5500);
   }, []);
 

@@ -14,6 +14,7 @@ function Ending() {
 
   useEffect(() => {
     socket.emit(SOCKET.INFO_INITIALIZATION, true);
+
     removeAll();
   }, []);
 

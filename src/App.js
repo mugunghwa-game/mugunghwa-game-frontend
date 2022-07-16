@@ -6,10 +6,8 @@ import GameMode from "./components/GameMode";
 import Main from "./components/Main";
 import NotFound from "./components/NotFound";
 import SingleMode from "./components/SingleMode";
-import Temp from "./components/Temp";
 import View from "./components/View";
 import WaitingRoom from "./components/WaitingRoom";
-import useStore from "./store/store";
 
 function App() {
   return (
