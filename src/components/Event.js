@@ -18,6 +18,7 @@ function Event({
 
   useEffect(() => {
     let interval;
+
     if (countDownStart) {
       if (countDown > 1) {
         interval = setInterval(() => {
@@ -28,6 +29,7 @@ function Event({
 
     setTimeout(() => {
       clearInterval(interval);
+
       setCounDown(3);
       handleCountDownStart(false);
     }, 3000);

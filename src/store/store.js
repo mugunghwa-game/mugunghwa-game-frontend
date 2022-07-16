@@ -9,7 +9,6 @@ const useStore = create(
     participantList: [],
     difficulty: "",
     winner: "",
-    peersInCamera: [],
     singleModeUserPose: [],
     preStartFirstParticipantPose: [],
     preStartSecondparticipantPose: [],
@@ -25,13 +24,6 @@ const useStore = create(
     addCount: (item) =>
       set((state) => ({
         count: state.count + 1,
-      })),
-    updatePeer: (item) =>
-      set((state) => ({
-        peersInCamera:
-          state.peersInCamera.length === 0
-            ? (state.peersInCamera = [item])
-            : state.peersInCamera.push(item),
       })),
 
     addPerson: (item) =>
@@ -138,7 +130,6 @@ const useStore = create(
         participantList: [],
         it: [],
         difficulty: "",
-        peersInCamera: [],
         firstParticipantPose: [],
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],

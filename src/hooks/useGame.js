@@ -7,18 +7,14 @@ import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { socketApi } from "../utils/socket";
 import { socket } from "../utils/socket";
 
-function Game({
+export default function useGame(
   participantUser,
-  handleTouchDown,
-  handleItCount,
-  handleParticipantUser,
-  handleStop,
+  difficulty,
   clickCount,
   isItLoser,
-  itCount,
   hasStop,
-  difficulty,
-}) {
+  itCount
+) {
   const navigate = useNavigate();
   const [isGameEnd, setIsGameEnd] = useState(false);
   const {
@@ -26,9 +22,11 @@ function Game({
     secondParticipantPose,
     isChildFirstParticipant,
     isChildSecondParticipant,
-    addWinner,
-    winner,
+    // addWinner,
+    // winner,
   } = useStore();
+
+  const [winner, setWinner] = useState("");
 
   useEffect(() => {
     if (
@@ -90,11 +88,10 @@ function Game({
           payload.participant.filter((person) => person.opportunity === 0)
             .length === 2
         ) {
-          addWinner("술래");
+          setWinner("술래");
         } else {
-          addWinner("참가자");
+          setWinner("참가자");
         }
-        navigate("/ending");
       }
 
       handleParticipantUser(payload.participant);
@@ -104,13 +101,14 @@ function Game({
     socket.on(SOCKET.GAME_END, (payload) => {
       if (payload) {
         addWinner("술래");
-        navigate("/ending");
       }
     });
 
     return () => {
+      socket.off(SOCKET.START);
       socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
       socket.off(SOCKET.GAME_END);
+      socket.off(SOCKET.IT_END);
       socket.off("poseDetection-start");
     };
   }, [clickCount, hasStop, winner]);
@@ -119,8 +117,7 @@ function Game({
     if (itCount === 0 && clickCount === 5) {
       socket.on("user-loser", (payload) => {
         console.log("user loser", payload);
-        addWinner("술래");
-        navigate("/ending");
+        setWinner("술래");
       });
     }
 
@@ -130,18 +127,14 @@ function Game({
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
       if (payload) {
-        addWinner("참가자");
-        navigate("/ending");
+        setWinner("참가자");
       }
     });
 
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
-      socket.off("user-loser");
     };
   }, [clickCount, isItLoser]);
 
-  return <></>;
+  return { winner };
 }
-
-export default Game;

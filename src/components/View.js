@@ -1,31 +1,20 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
 import Peer from "simple-peer";
 import styled from "styled-components";
 
-import { SOCKET } from "../constants/constants";
-import useCamera from "../hooks/useCamera";
+import useGame from "../hooks/useGame";
 import useStore from "../store/store";
-import { stopStreamVideo } from "../utils/index";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket, socketApi } from "../utils/socket";
-import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 import DistanceAdjustment from "./DistanceAdjustment";
 import DescriptionContent from "./DscriptionContent";
 import Event from "./Event";
 import Game from "./Game";
-import It from "./It";
-import Video from "./Video";
-import VideoRoom from "./VideoRoom";
+import UserVideoRoom from "./UserVideoRoom";
 
 function View() {
-  const [isItLoser, setIsItLoser] = useState(false);
-  const [hasStop, setHasStop] = useState(false);
-  const [countDownStart, setCountDownStart] = useState(false);
-  const userCanvas = useRef();
-  console.log("hasStop", hasStop);
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -35,6 +24,10 @@ function View() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
+  const [isItLoser, setIsItLoser] = useState(false);
+  const [hasStop, setHasStop] = useState(false);
+  const [countDownStart, setCountDownStart] = useState(false);
+  const userCanvas = useRef();
   const [participantUser, setParticipantUser] = useState(null);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [clickCount, setClickCount] = useState(0);
@@ -46,8 +39,6 @@ function View() {
   const [peers, setPeers] = useState([]);
   const userVideo = useRef();
   const peersRef = useRef([]);
-  const [participant, setParticipant] = useState(null);
-  const [it, setIt] = useState(null);
 
   const videoConstraints = {
     height: window.innerHeight / 2,
@@ -61,7 +52,9 @@ function View() {
         audio: true,
       })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
+        if (userVideo.current) {
+          userVideo.current.srcObject = stream;
+        }
 
         socketApi.enterGameRoom(true);
 
@@ -113,8 +106,6 @@ function View() {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
-
-        // stopStreamVideo(stream);
       });
 
     return () => {
@@ -218,66 +209,50 @@ function View() {
     }
   };
 
-  const handleStopButton = () => {
-    if (itCount > 0) {
-      socket.emit(SOCKET.MOTION_START, true);
-    }
-  };
+  // const { winner } = useGame(
+  //   participantUser,
+  //   difficulty,
+  //   clickCount,
+  //   isItLoser,
+  //   hasStop,
+  //   setHasTouchDownButton,
+  //   setClickCount,
+  //   setItCount,
+  //   setHasTouchDownButton,
+  //   setParticipantUser,
+  //   itCount
+  // );
 
-  console.log(participantUser, "participantUser");
+  // if (winner) {
+  //   addWinner(winner);
+  //   navigator("/ending");
+  // }
 
   return (
     <DefaultPage>
       <Description>
         {participantUser && (
-          <DescriptionContent participantUser={participantUser} />
+          <DescriptionContent
+            participantUser={participantUser}
+            // isReadySingleMode={isReadySingleMode}
+            // isSingleMode={isSingleMode}
+          />
         )}
       </Description>
       <UserView>
         <UserCamera>
-          <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
-          <canvas ref={userCanvas} className="userVideo" />
-          {itUser && socket.id === itUser[0] ? (
-            <div className="userRole">
-              <span className="me"> 나</span> 술래{socket.id}
-            </div>
-          ) : (
-            <div className="userRole">
-              <span className="me"> 나</span> 참가자{socket.id}
-            </div>
+          {participantUser && (
+            <UserVideoRoom
+              itUser={itUser}
+              itCount={itCount}
+              participantUser={participantUser}
+              userVideo={userVideo}
+              userCanvas={userCanvas}
+              peers={peers}
+              peersRef={peersRef}
+              participantList={participantList}
+            />
           )}
-          <span className="userOpportunity">
-            기회의 수
-            {itUser && socket.id === itUser[0] && <span> {itCount}</span>}
-            {participantUser &&
-              participantUser[0] &&
-              participantUser[0].id === socket.id &&
-              participantUser[0].opportunity}
-            {participantUser &&
-              participantUser[1] &&
-              participantUser[1].id === socket.id &&
-              participantUser[1].opportunity}
-            {itUser &&
-              socket.id === itUser[0] &&
-              fistParticipantPreparation &&
-              secondParticipantPreparation && (
-                <Button handleClick={handleStopButton}>멈춤</Button>
-              )}
-          </span>
-          <div>
-            {peers.map((peer, index) => (
-              <Video
-                key={index}
-                index={index}
-                peer={peer}
-                peersRef={peersRef}
-                participantList={participantList}
-                itUser={itUser}
-                itCount={itCount}
-                participantUser={participantUser}
-              />
-            ))}
-          </div>
           <Event
             participantUser={participantUser}
             touchDown={mode === "preapre" ? null : hasTouchDownButton}
@@ -309,6 +284,7 @@ function View() {
     </DefaultPage>
   );
 }
+
 const Description = styled.div`
   margin-top: 10px;
   text-align: center;
@@ -349,6 +325,7 @@ const UserView = styled.div`
     color: #f47676;
     font-size: 30px;
   }
+
   .stop {
     margin-top: 60px;
   }

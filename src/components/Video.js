@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
-export default function Video({
+export default function UserVideoRoom({
   index,
   peersRef,
   participantUser,
@@ -10,16 +10,13 @@ export default function Video({
   itCount,
 }) {
   const anotherUserRef = useRef();
+  const participantId = participantUser.map((person, index) => person.id);
 
   useEffect(() => {
     peer.on("stream", (stream) => {
       anotherUserRef.current.srcObject = stream;
     });
   }, []);
-
-  const result = participantUser.map(
-    (item, index) => participantUser[index].id
-  );
 
   return (
     <VideoContainer>
@@ -29,7 +26,7 @@ export default function Video({
           {itUser[0]}
         </span>
       )}
-      {result.includes(peersRef.current[index].peerID) && (
+      {participantId.includes(peersRef.current[index].peerID) && (
         <span>
           참가자{peersRef.current[index].peerID}
           {index}

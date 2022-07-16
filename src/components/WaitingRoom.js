@@ -72,6 +72,7 @@ function WaitingRoom() {
 
   useEffect(() => {
     socketApi.joinRoom("gameRoom");
+
     socket.on(SOCKET.SOCKET_ID, (payload) => {
       console.log(socket.id, payload);
       setSocketId(payload.id);
