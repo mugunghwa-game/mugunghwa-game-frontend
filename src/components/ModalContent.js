@@ -16,11 +16,11 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   };
 
   const handleDifficulty = (event) => {
-    // socket.emit(SOCKET.USER_COUNT, {
-    //   id: socket.id,
-    //   role: "it",
-    //   difficulty: event.target.innerText,
-    // });
+    socket.emit(SOCKET.USER_COUNT, {
+      id: socket.id,
+      role: "it",
+      difficulty: event.target.innerText,
+    });
 
     addIt(socket.id);
     addPerson({ person: socket.id, role: "it" });

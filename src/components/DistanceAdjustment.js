@@ -49,7 +49,7 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
         ) {
           console.log("heelllll here is one");
           isItChild ? updateFirstChildParticipant() : null;
-          // socketApi.isReady(true);
+          socketApi.isReady(true);
         }
       }
 
@@ -67,32 +67,32 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
           console.log("heelllll here is two");
 
           isItChild ? updateSecondChildParticipant() : null;
-          // socketApi.isReady(true);
+          socketApi.isReady(true);
         }
       }
     }
 
-    // socket.on(SOCKET.PREPARED_GAME, (payload) => {
-    //   if (payload) {
-    //     console.log("prepare");
-    //     updateFirstParticipantPreparation();
-    //     updateSecondParticipantPreparation();
-    //     handleMode("game");
-    //   }
-    // });
+    socket.on(SOCKET.PREPARED_GAME, (payload) => {
+      if (payload) {
+        console.log("prepare");
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        handleMode("game");
+      }
+    });
 
-    // socket.on(SOCKET.PREPARED, (payload) => {
-    //   if (payload) {
-    //     console.log("prepare");
-    //     updateFirstParticipantPreparation();
-    //     updateSecondParticipantPreparation();
-    //     handleMode("game");
-    //   }
-    // });
+    socket.on(SOCKET.PREPARED, (payload) => {
+      if (payload) {
+        console.log("prepare");
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        handleMode("game");
+      }
+    });
 
     return () => {
-      // socket.off(SOCKET.PREPARED_GAME);
-      // socket.off(SOCKET.PREPARED);
+      socket.off(SOCKET.PREPARED_GAME);
+      socket.off(SOCKET.PREPARED);
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
 
