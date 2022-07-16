@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
-import useStore from "../store/store";
-
 export default function Video({
   index,
   peersRef,
@@ -26,11 +24,14 @@ export default function Video({
   return (
     <VideoContainer>
       {peersRef.current[index].peerID === itUser[0] && (
-        <span>술래{itCount}</span>
+        <span>
+          술래{itCount}
+          {itUser[0]}
+        </span>
       )}
       {result.includes(peersRef.current[index].peerID) && (
         <span>
-          {peersRef.current[index].peerID}
+          참가자{peersRef.current[index].peerID}
           {index}
         </span>
       )}
@@ -52,8 +53,8 @@ export default function Video({
 
 const VideoContainer = styled.div`
   display: grid;
-  grid-template-columns: 220px;
-  grid-template-rows: 220px;
+  grid-template-columns: 130px;
+  grid-template-rows: 40px;
 
   .otherUser {
     position: relative;

@@ -15,12 +15,12 @@ function Button({ children, handleClick, property }) {
 
 const ButtonBody = styled.button`
   width: ${(props) =>
-    props.property === "stop" || props.children === "멈춤" ? "150px" : "300px"};
-  height: ${(props) => (props.property === "alram" ? "120px" : "70px")};
+    props.property === "stop" || props.children === "멈춤" ? "150px" : "400px"};
+  height: ${(props) => (props.property === "alram" ? "200px" : "70px")};
   background-color: ${(props) =>
     props.property === "alram" ? "#f47676" : "#fbe6ce"};
   color: ${(props) => (props.property === "disabled" ? "#808080" : "#199816")};
-  font-size: ${(props) => (props.property === "alram" ? "35px" : "25px")};
+  font-size: ${(props) => (props.property === "alram" ? "50px" : "25px")};
   border-radius: 20px;
   border-style: none;
   z-index: ${(props) => (props.property === "alram" ? "100" : null)};

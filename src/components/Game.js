@@ -1,3 +1,4 @@
+import { add } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -27,6 +28,7 @@ function Game({
     isChildFirstParticipant,
     isChildSecondParticipant,
     addWinner,
+    winner,
   } = useStore();
 
   useEffect(() => {
@@ -61,6 +63,8 @@ function Game({
         difficulty[0],
         isChildSecondParticipant
       );
+      console.log(clickCount);
+
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
       if (secondParticipantResult) {
@@ -81,26 +85,20 @@ function Game({
       }
     });
 
-    if (clickCount === 5) {
-      socketApi.countEnd(true);
-    }
-
-    socket.on(SOCKET.IT_END, (payload) => {
-      if (payload) {
-        setIsGameEnd(true);
-      }
-    });
-
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      console.log("얘 움직였어", payload);
-      handleParticipantUser(payload);
-      handleStop(false);
-    });
+      if (payload.count === 6) {
+        if (
+          payload.participant.filter((person) => person.opportunity === 0)
+            .length === 2
+        ) {
+          addWinner("술래");
+        } else {
+          addWinner("참가자");
+        }
+        navigate("/ending");
+      }
 
-    socket.on(SOCKET.PARTICIPANT_REMAINING_COUNT, (payload) => {
-      console.log("얘 움직였어", payload);
-
-      handleParticipantUser(payload);
+      handleParticipantUser(payload.participant);
       handleStop(false);
     });
 
@@ -111,42 +109,26 @@ function Game({
       }
     });
 
-    socket.on(SOCKET.ANOTHER_USER_END, (payload) => {
-      if (payload) {
-        addWinner("술래");
-        navigate("/ending");
-      }
-    });
-
     return () => {
       socket.off(SOCKET.START);
       socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
-      socket.off(SOCKET.PARTICIPANT_REMAINING_COUNT);
       socket.off(SOCKET.GAME_END);
       socket.off(SOCKET.IT_END);
-      socket.off(SOCKET.ANOTHER_USER_END);
       socket.off("poseDetection-start");
     };
-  }, [clickCount, isGameEnd, hasStop]);
+  }, [clickCount, hasStop, winner]);
 
   useEffect(() => {
-    if ((itCount === 0 && clickCount === 5) || (isGameEnd && itCount === 0)) {
-      const reaminingUser = participantUser.filter(
-        (item) => item.opportunity > 0
-      );
-
-      if (reaminingUser.length === 0) {
+    if (itCount === 0 && clickCount === 5) {
+      socket.on("user-loser", (payload) => {
+        console.log("user loser", payload);
         addWinner("술래");
-      } else {
-        addWinner("참가자");
-      }
-      navigate("/ending");
+        navigate("/ending");
+      });
     }
 
     if (isItLoser) {
       socketApi.itLoser(true);
-      addWinner("참가자");
-      navigate("/ending");
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
@@ -159,7 +141,7 @@ function Game({
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
     };
-  }, [clickCount, isItLoser, isGameEnd]);
+  }, [clickCount, isItLoser]);
 
   return <></>;
 }
