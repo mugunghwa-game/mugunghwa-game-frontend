@@ -23,7 +23,7 @@ export default function UserVideoRoom({
 
   const handleStopButton = () => {
     if (itCount > 0) {
-      socket.emit(SOCKET.MOTION_START, true);
+      // socket.emit(SOCKET.MOTION_START, true);
     }
   };
 

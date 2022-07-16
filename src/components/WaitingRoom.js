@@ -51,7 +51,7 @@ function WaitingRoom() {
   };
 
   const handleExist = () => {
-    socket.emit("leaveRoom", socket.id);
+    // socket.emit("leaveRoom", socket.id);
     updatePerson(socket.id);
 
     navigate("/");
@@ -59,7 +59,7 @@ function WaitingRoom() {
 
   const handleRole = () => {
     if (participantCount < 2) {
-      socketApi.userCount(socket.id, "participant");
+      // socketApi.userCount(socket.id, "participant");
 
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
@@ -73,33 +73,33 @@ function WaitingRoom() {
   useEffect(() => {
     socketApi.joinRoom("gameRoom");
 
-    socket.on(SOCKET.SOCKET_ID, (payload) => {
-      console.log(socket.id, payload);
-      setSocketId(payload.id);
-      setItCount(payload.it);
-      setParticipantCount(payload.participant);
-    });
+    // socket.on(SOCKET.SOCKET_ID, (payload) => {
+    //   console.log(socket.id, payload);
+    //   setSocketId(payload.id);
+    //   setItCount(payload.it);
+    //   setParticipantCount(payload.participant);
+    // });
 
-    socket.on(SOCKET.ROLE_COUNT, (payload) => {
-      console.log(payload);
-      setItCount(payload.it);
-      setParticipantCount(payload.participant);
-    });
+    // socket.on(SOCKET.ROLE_COUNT, (payload) => {
+    //   console.log(payload);
+    //   setItCount(payload.it);
+    //   setParticipantCount(payload.participant);
+    // });
 
-    socket.on("updateUser", (payload) => {
-      console.log("update", payload);
-      setParticipantCount(payload.participant.length);
-      setItCount(payload.it.length);
-    });
+    // socket.on("updateUser", (payload) => {
+    //   console.log("update", payload);
+    //   setParticipantCount(payload.participant.length);
+    //   setItCount(payload.it.length);
+    // });
 
-    socket.on(SOCKET.START, (payload) => {
-      // payload ? navigate("/countDown") : null;
-    });
+    // socket.on(SOCKET.START, (payload) => {
+    // payload ? navigate("/countDown") : null;
+    // });
 
     return () => {
-      socket.off(SOCKET.SOCKET_ID);
-      socket.off(SOCKET.ROLE_COUNT);
-      socket.off("updateUser");
+      // socket.off(SOCKET.SOCKET_ID);
+      // socket.off(SOCKET.ROLE_COUNT);
+      // socket.off("updateUser");
     };
   }, [participant, people, itCount]);
 

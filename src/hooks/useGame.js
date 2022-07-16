@@ -47,7 +47,7 @@ export default function useGame(
       }
       console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
       if (firstParticipantMoved) {
-        socketApi.userMoved(socket.id);
+        // socketApi.userMoved(socket.id);
       }
     }
     if (
@@ -68,71 +68,71 @@ export default function useGame(
         handleTouchDown(true);
       }
       if (secondParticipantMoved) {
-        socketApi.userMoved(socket.id);
+        // socketApi.userMoved(socket.id);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
-    socket.on("poseDetection-start", (payload) => {
-      console.log("술래 빼고 다 들어와야함", payload);
-      if (payload) {
-        handleStop(true);
-        handleItCount((prev) => prev - 1);
-      }
-    });
+    // socket.on("poseDetection-start", (payload) => {
+    //   console.log("술래 빼고 다 들어와야함", payload);
+    //   if (payload) {
+    //     handleStop(true);
+    //     handleItCount((prev) => prev - 1);
+    //   }
+    // });
 
-    socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      if (payload.count === 6) {
-        if (
-          payload.participant.filter((person) => person.opportunity === 0)
-            .length === 2
-        ) {
-          setWinner("술래");
-        } else {
-          setWinner("참가자");
-        }
-      }
+    // socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
+    //   if (payload.count === 6) {
+    //     if (
+    //       payload.participant.filter((person) => person.opportunity === 0)
+    //         .length === 2
+    //     ) {
+    //       setWinner("술래");
+    //     } else {
+    //       setWinner("참가자");
+    //     }
+    //   }
 
-      handleParticipantUser(payload.participant);
-      handleStop(false);
-    });
+    //   handleParticipantUser(payload.participant);
+    //   handleStop(false);
+    // });
 
-    socket.on(SOCKET.GAME_END, (payload) => {
-      if (payload) {
-        addWinner("술래");
-      }
-    });
+    // socket.on(SOCKET.GAME_END, (payload) => {
+    //   if (payload) {
+    //     addWinner("술래");
+    //   }
+    // });
 
     return () => {
-      socket.off(SOCKET.START);
-      socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
-      socket.off(SOCKET.GAME_END);
-      socket.off(SOCKET.IT_END);
-      socket.off("poseDetection-start");
+      // socket.off(SOCKET.START);
+      // socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
+      // socket.off(SOCKET.GAME_END);
+      // socket.off(SOCKET.IT_END);
+      // socket.off("poseDetection-start");
     };
   }, [clickCount, hasStop, winner]);
 
   useEffect(() => {
     if (itCount === 0 && clickCount === 5) {
-      socket.on("user-loser", (payload) => {
-        console.log("user loser", payload);
-        setWinner("술래");
-      });
+      // socket.on("user-loser", (payload) => {
+      //   console.log("user loser", payload);
+      //   setWinner("술래");
+      // });
     }
 
     if (isItLoser) {
-      socketApi.itLoser(true);
+      // socketApi.itLoser(true);
     }
 
-    socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
-      if (payload) {
-        setWinner("참가자");
-      }
-    });
+    // socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
+    //   if (payload) {
+    //     setWinner("참가자");
+    //   }
+    // });
 
     return () => {
-      socket.off(SOCKET.IT_LOSER_GAME_END);
+      // socket.off(SOCKET.IT_LOSER_GAME_END);
     };
   }, [clickCount, isItLoser]);
 
