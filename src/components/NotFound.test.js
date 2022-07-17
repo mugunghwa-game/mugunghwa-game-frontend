@@ -15,3 +15,13 @@ test("1. NotFound 페이지에 '처음으로 돌아가기'버튼과 꽃 이미�
   expect(screen.getAllByRole("button", { name: "처음으로 돌아가기" }));
   expect(screen.getByText("페이지를 찾지 못했습니다"));
 });
+
+test("2. '처음으로 돌아가기'버튼은 활성화가 되어있어야한다.", () => {
+  const { getByText } = render(
+    <MemoryRouter>
+      <NotFound />
+    </MemoryRouter>
+  );
+
+  expect(getByText(/처음으로 돌아가기/i)).not.toBeDisabled();
+});
