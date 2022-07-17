@@ -25,7 +25,6 @@ const useStore = create(
       set((state) => ({
         count: state.count + 1,
       })),
-
     addPerson: (item) =>
       set((state) => ({
         people: [
