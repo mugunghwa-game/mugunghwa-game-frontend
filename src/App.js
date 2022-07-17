@@ -13,8 +13,6 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Main />} />
-      <Route path="/waitingRoom" element={<WaitingRoom />} />
-
       <Route path="/ready" element={<GameMode />} />
       <Route path="/singleGame" element={<SingleMode />} />
       <Route path="/waitingRoom" element={<WaitingRoom />} />
