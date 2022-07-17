@@ -15,17 +15,3 @@ test("1. 메인페이지에 '게임참여하기'버튼과, gif파일이 보여�
   expect(screen.getAllByRole("img", { name: "main.gif" }));
   expect(screen.getByText("꽃"));
 });
-
-test("2. 게임참여하기 버튼을 누르면 게임모드 선택 페이지로 넘어간다.", async () => {
-  render(
-    <MemoryRouter>
-      <Main />
-    </MemoryRouter>
-  );
-
-  const button = screen.getByRole("button");
-
-  fireEvent.click(button);
-
-  //   await waitFor(() => expect(location.pathname).toBe("/ready"));
-});
