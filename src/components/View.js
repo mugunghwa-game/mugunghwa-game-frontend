@@ -4,6 +4,8 @@ import Peer from "simple-peer";
 import styled from "styled-components";
 
 import useGame from "../hooks/useGame";
+import usePosenet from "../hooks/usePosenet";
+import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket, socketApi } from "../utils/socket";
@@ -28,111 +30,32 @@ function View() {
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
   const userCanvas = useRef();
-  const [participantUser, setParticipantUser] = useState(null);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const [itUser, setItUser] = useState(null);
   const [itCount, setItCount] = useState(5);
   const [mode, setMode] = useState("prepare");
-  const [difficulty, setDifficulty] = useState(null);
-  const [isRedadyPoseDetection, setIsReadyPoseDetection] = useState(false);
-  const [peers, setPeers] = useState([]);
-  const userVideo = useRef();
-  const peersRef = useRef([]);
 
-  const videoConstraints = {
-    height: window.innerHeight / 2,
-    width: window.innerWidth / 2,
-  };
+  const {
+    userVideo,
+    participantUser,
+    itUser,
+    difficulty,
+    isRedadyPoseDetection,
+    peers,
+    peersRef,
+    setParticipantUser,
+  } = useVideo();
 
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({
-        video: videoConstraints,
-        audio: true,
-      })
-      .then((stream) => {
-        if (userVideo.current) {
-          userVideo.current.srcObject = stream;
-        }
-
-        socketApi.enterGameRoom(true);
-
-        socket.on("all-info", (payload) => {
-          console.log(payload);
-          setItUser(payload.it);
-          setParticipantUser(payload.participant);
-          setDifficulty(payload.difficulty);
-          setIsReadyPoseDetection(true);
-
-          const peers = [];
-
-          payload.socketInRoom.forEach((user) => {
-            const peer = new Peer({
-              initiator: true,
-              trickle: false,
-              stream,
-            });
-
-            peer.on("signal", (signal) => {
-              console.log("this is signal", signal);
-              socket.emit("sending signal", {
-                userToSignal: user,
-                callerID: socket.id,
-                signal,
-              });
-            });
-
-            peersRef.current.push({
-              peerID: user,
-              peer,
-            });
-            peers.push(peer);
-          });
-          setPeers(peers);
-        });
-
-        socket.on("user joined", (payload) => {
-          const peer = addPeer(payload.signal, payload.callerID, stream);
-          peersRef.current.push({
-            peerID: payload.callerID,
-            peer,
-          });
-
-          setPeers((users) => [...users, peer]);
-        });
-
-        socket.on("receiving-returned-signal", (payload) => {
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
-          item.peer.signal(payload.signal);
-        });
-      });
-
-    return () => {
-      userVideo.current = null;
-
-      socket.off("all-info");
-      socket.off("user joined");
-      socket.off("receiving-returned-signal");
-    };
-  }, []);
-
-  function addPeer(incomingSignal, callerID, stream) {
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-    });
-
-    peer.on("signal", (signal) => {
-      console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
-      socket.emit("returning signal", { signal, callerID });
-    });
-    console.log("this is incomingSignal", incomingSignal);
-    peer.signal(incomingSignal);
-
-    return peer;
-  }
+  // const {} = usePosenet(
+  //   mode,
+  //   setClickCount,
+  //   hasStop,
+  //   itUser,
+  //   isRedadyPoseDetection,
+  //   userVideo,
+  //   userCanvas,
+  //   participantUser
+  // );
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -251,6 +174,11 @@ function View() {
               peers={peers}
               peersRef={peersRef}
               participantList={participantList}
+              isRedadyPoseDetection={isRedadyPoseDetection}
+              mode={mode}
+              setClickCount={setClickCount}
+              hasStop={hasStop}
+              setCountDownStart={setCountDownStart}
             />
           )}
           <Event
@@ -277,7 +205,6 @@ function View() {
           isItLoser={isItLoser}
           itCount={itCount}
           hasStop={hasStop}
-          handleClickCount={setClickCount}
           difficulty={difficulty}
         />
       )}

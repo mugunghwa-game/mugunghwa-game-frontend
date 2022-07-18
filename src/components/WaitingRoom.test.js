@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
+import { expect } from "chai";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
+import SocketMock from "socket.io-mock";
 
 import WaitingRoom from "./WaitingRoom";
 
@@ -26,5 +28,45 @@ test("2. 역할을 아무도 선택하지 않았다면 게임시작 버튼은 �
     </MemoryRouter>
   );
 
-  expect(getByText(/게임시작/i)).toBeDisabled();
+  expect(getByText(/게임시작/i)).to.have.property("disabled");
+});
+
+describe("3. waitingRoom에 들어오게 되면 socket server로 들어왔음을 알린다.", () => {
+  it("1) event명이 join-room이며, 'gameRoom'을 보낸다", (done) => {
+    const socket = new SocketMock();
+
+    socket.on("join-room", (info) => {
+      expect(info).to.equal("gameRoom");
+    });
+
+    socket.socketClient.emit("join-room", "gameRoom");
+    done();
+  });
+
+  it("2) 사용자가 역할을 선택하면 역할과 socket id를 전송한다.", (done) => {
+    const socket = new SocketMock();
+
+    socket.on("user-count", (info) => {
+      expect(info).to.equal(JSON.stringify({ id: "111", role: "participant" }));
+    });
+
+    socket.socketClient.emit(
+      "user-count",
+      JSON.stringify({ id: "111", role: "participant" })
+    );
+
+    done();
+  });
+
+  it("3) 사용자가 '나가기'를 누르면 socket으로 id를 전송한다.", (done) => {
+    const socket = new SocketMock();
+
+    socket.on("leaveRoom", (id) => {
+      expect(id).to.equal("22");
+    });
+
+    socket.socketClient.emit("leaveRoom", "22");
+
+    done();
+  });
 });

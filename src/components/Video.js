@@ -10,7 +10,7 @@ export default function UserVideoRoom({
   itCount,
 }) {
   const anotherUserRef = useRef();
-  const participantId = participantUser.map((person, index) => person.id);
+  const participantId = participantUser.map((person) => person.id);
 
   useEffect(() => {
     peer.on("stream", (stream) => {
