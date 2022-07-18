@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import PropTypes from "prop-types";
+import React from "react";
 import Webcam from "react-webcam";
 
 import { SOCKET } from "../constants/constants";
@@ -70,3 +71,14 @@ export default function UserVideoRoom({
     </>
   );
 }
+
+UserVideoRoom.propTypes = {
+  itUser: PropTypes.array,
+  itCount: PropTypes.number,
+  userVideo: PropTypes.object,
+  userCanvas: PropTypes.object,
+  participantUser: PropTypes.array,
+  peers: PropTypes.array,
+  peersRef: PropTypes.object,
+  participantList: PropTypes.array,
+};

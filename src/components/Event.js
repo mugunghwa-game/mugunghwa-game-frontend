@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
 import Button from "./Button";
@@ -46,5 +47,13 @@ function Event({
     </>
   );
 }
+
+Event.propTypes = {
+  touchDown: PropTypes.bool,
+  wildCard: PropTypes.func,
+  handleLoser: PropTypes.func,
+  countDownStart: PropTypes.bool,
+  handleCountDownStart: PropTypes.func,
+};
 
 export default Event;

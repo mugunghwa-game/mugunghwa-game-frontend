@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
@@ -31,5 +32,9 @@ const Content = styled.div`
   transform: translate(-50%, -50%);
   background-color: #ffecec;
 `;
+
+DefaultPage.propTypes = {
+  children: PropTypes.any,
+};
 
 export default DefaultPage;

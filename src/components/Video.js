@@ -1,7 +1,8 @@
+import PropTypes from "prop-types";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
-export default function UserVideoRoom({
+export default function Video({
   index,
   peersRef,
   participantUser,
@@ -61,3 +62,12 @@ const VideoContainer = styled.div`
     object-fit: fill;
   }
 `;
+
+Video.propTypes = {
+  index: PropTypes.number,
+  peersRef: PropTypes.object,
+  participantUser: PropTypes.array,
+  itUser: PropTypes.array,
+  peer: PropTypes.object,
+  itCount: PropTypes.number,
+};

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 
 import useStore from "../store/store";
@@ -60,5 +61,11 @@ function DescriptionContent({
     </>
   );
 }
+
+DescriptionContent.propTypes = {
+  participantUser: PropTypes.any,
+  isSingleMode: PropTypes.bool,
+  isReadySingleMode: PropTypes.bool,
+};
 
 export default DescriptionContent;

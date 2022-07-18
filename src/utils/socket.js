@@ -2,7 +2,7 @@ import io from "socket.io-client";
 
 import { SOCKET } from "../constants/constants";
 
-export const socket = io.connect(process.env.REACT_APP_URL);
+export const socket = io.connect("http://localhost:8080");
 
 export const socketApi = {
   userCount: (id, role) => {
@@ -12,7 +12,6 @@ export const socketApi = {
     });
   },
   joinRoom: (roomName) => {
-    console.log(roomName);
     socket.emit(SOCKET.JOIN_ROOM, roomName);
   },
   enterGameRoom: (enter) => {

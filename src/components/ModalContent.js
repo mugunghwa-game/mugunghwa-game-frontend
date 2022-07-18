@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { MdClose } from "react-icons/md";
 import styled from "styled-components";
@@ -93,5 +94,12 @@ const Content = styled.div`
     justify-content: space-around;
   }
 `;
+
+ModalContent.propTypes = {
+  modalText: PropTypes.string,
+  modalTitle: PropTypes.string,
+  handleModal: PropTypes.func,
+  handleItCount: PropTypes.func,
+};
 
 export default ModalContent;
