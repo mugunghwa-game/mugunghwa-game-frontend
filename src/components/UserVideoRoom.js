@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import Webcam from "react-webcam";
-import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
+import usePosenet from "../hooks/usePosenet";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 import Button from "./Button";

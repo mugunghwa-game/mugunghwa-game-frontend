@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { MemoryRouter } from "react-router-dom";
+
 import Countdown from "./Countdown";
 
 test("1. CountDown이 실행되면 '잠시 후 게임이 시작됩니다'글자가 보여져야 한다.", () => {

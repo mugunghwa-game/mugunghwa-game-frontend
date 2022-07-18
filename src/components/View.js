@@ -4,6 +4,7 @@ import Peer from "simple-peer";
 import styled from "styled-components";
 
 import useGame from "../hooks/useGame";
+import usePosenet from "../hooks/usePosenet";
 import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
@@ -44,6 +45,17 @@ function View() {
     peersRef,
     setParticipantUser,
   } = useVideo();
+
+  // const {} = usePosenet(
+  //   mode,
+  //   setClickCount,
+  //   hasStop,
+  //   itUser,
+  //   isRedadyPoseDetection,
+  //   userVideo,
+  //   userCanvas,
+  //   participantUser
+  // );
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -162,6 +174,11 @@ function View() {
               peers={peers}
               peersRef={peersRef}
               participantList={participantList}
+              isRedadyPoseDetection={isRedadyPoseDetection}
+              mode={mode}
+              setClickCount={setClickCount}
+              hasStop={hasStop}
+              setCountDownStart={setCountDownStart}
             />
           )}
           <Event
@@ -188,7 +205,6 @@ function View() {
           isItLoser={isItLoser}
           itCount={itCount}
           hasStop={hasStop}
-          handleClickCount={setClickCount}
           difficulty={difficulty}
         />
       )}
