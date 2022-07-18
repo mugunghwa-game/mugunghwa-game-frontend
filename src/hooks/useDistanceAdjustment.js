@@ -9,7 +9,7 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-function DistanceAdjustment({ handleSingleMode, handleMode }) {
+export default function useeDistanceAdjustment(gameMode, handleMode) {
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -24,7 +24,7 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
   useEffect(() => {
     if (singleModeUserPose.length !== 0) {
       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
-      console.log(sholuderLength, singleModeUserPose[0].score);
+
       if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
         handleSingleMode(true);
       }
@@ -33,7 +33,6 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
 
   useEffect(() => {
     if (participantList) {
-      console.log(preStartFirstParticipantPose);
       if (
         preStartFirstParticipantPose.length !== 0 &&
         participantList[0] === socket.id
@@ -44,6 +43,7 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
         const isItChild = divisionChildAndAdult(
           preStartFirstParticipantPose[0]
         );
+
         if (
           0 < sholuderLength < 5 &&
           preStartFirstParticipantPose[0].score > 0.8
@@ -61,12 +61,11 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
         const isItChild = divisionChildAndAdult(
           preStartSecondparticipantPose[0]
         );
+
         if (
           0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
           preStartSecondparticipantPose[0].score > 0.8
         ) {
-          console.log("heelllll here is two");
-
           isItChild ? updateSecondChildParticipant() : null;
           socketApi.isReady(true);
         }
@@ -75,7 +74,6 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
 
     socket.on(SOCKET.PREPARED_GAME, (payload) => {
       if (payload) {
-        console.log("prepare");
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
         handleMode("game");
@@ -84,7 +82,6 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
 
     socket.on(SOCKET.PREPARED, (payload) => {
       if (payload) {
-        console.log("prepare");
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
         handleMode("game");
@@ -97,7 +94,7 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
 
-  return <></>;
+  return {
+    gameMode,
+  };
 }
-
-export default DistanceAdjustment;

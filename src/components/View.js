@@ -1,16 +1,15 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
-import Peer from "simple-peer";
 import styled from "styled-components";
 
+import useDistanceAdjustment from "../hooks/useDistanceAdjustment";
 import useGame from "../hooks/useGame";
 import usePosenet from "../hooks/usePosenet";
 import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
-import { socket, socketApi } from "../utils/socket";
+import { socket } from "../utils/socket";
 import DefaultPage from "./DefaultPage";
-import DistanceAdjustment from "./DistanceAdjustment";
 import DescriptionContent from "./DscriptionContent";
 import Event from "./Event";
 import Game from "./Game";
@@ -45,6 +44,8 @@ function View() {
     peersRef,
     setParticipantUser,
   } = useVideo();
+
+  const { gameMode } = useDistanceAdjustment(mode, setMode);
 
   // const {} = usePosenet(
   //   mode,
@@ -92,7 +93,7 @@ function View() {
     ) {
       runPosenet();
     }
-    if (mode === "game" && hasStop) {
+    if (gameMode === "game" && hasStop) {
       console.log("game runposenet", hasStop);
       runPosenet();
       setCountDownStart(true);
@@ -120,7 +121,7 @@ function View() {
             addPreStartSecondparticipantPose(pose);
           }
         }
-        if (mode === "game") {
+        if (gameMode === "game") {
           console.log(socket.id, participantUser);
           if (participantUser[0].id === socket.id) {
             addFirstParticipantPose(pose);
@@ -131,25 +132,6 @@ function View() {
       }
     }
   };
-
-  // const { winner } = useGame(
-  //   participantUser,
-  //   difficulty,
-  //   clickCount,
-  //   isItLoser,
-  //   hasStop,
-  //   setHasTouchDownButton,
-  //   setClickCount,
-  //   setItCount,
-  //   setHasTouchDownButton,
-  //   setParticipantUser,
-  //   itCount
-  // );
-
-  // if (winner) {
-  //   addWinner(winner);
-  //   navigator("/ending");
-  // }
 
   return (
     <DefaultPage>
@@ -182,7 +164,6 @@ function View() {
             />
           )}
           <Event
-            participantUser={participantUser}
             touchDown={mode === "preapre" ? null : hasTouchDownButton}
             wildCard={mode === "preapre" ? null : setIsItLoser}
             handleLoser={mode === "preapre" ? null : setIsItLoser}
@@ -191,9 +172,6 @@ function View() {
           />
         </UserCamera>
       </UserView>
-      {!fistParticipantPreparation && !secondParticipantPreparation && (
-        <DistanceAdjustment handleMode={setMode} />
-      )}
       {fistParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}

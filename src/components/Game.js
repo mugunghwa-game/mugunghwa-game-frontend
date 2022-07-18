@@ -20,7 +20,7 @@ function Game({
   difficulty,
 }) {
   const navigate = useNavigate();
-  const [isGameEnd, setIsGameEnd] = useState(false);
+
   const {
     firstParticipantPose,
     secondParticipantPose,

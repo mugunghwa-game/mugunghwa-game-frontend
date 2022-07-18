@@ -4,6 +4,7 @@ import Webcam from "react-webcam";
 
 import { SOCKET } from "../constants/constants";
 import usePosenet from "../hooks/usePosenet";
+import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
@@ -19,6 +20,7 @@ export default function UserVideoRoom({
   peersRef,
   participantList,
 }) {
+  // const { itUser, userVideo, participantUser, peers, peersRef } = useVideo();
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
