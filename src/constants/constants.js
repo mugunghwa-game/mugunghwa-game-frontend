@@ -55,7 +55,7 @@ export const GAME = {
   RULE: "게임 규칙",
   DIFFICULTY_CHOICE: "난이도 선택",
   DIFFICULTY_CHOICE_DESCRIPTION:
-    "난이도 선택은 술래만 할 수 있으며 한 번 선택하면 바꿀 수없습니다.",
+    "난이도 선택은 술래만 할 수 있으며 한 번 선택하면 바꿀 수 없습니다.",
   INFO_MODAL_TITLE: "알려드립니다",
   INFO_MODAL_TEXT: "인원이 다 찼습니다",
   GAME_PROGRESS: "게임 중입니다",

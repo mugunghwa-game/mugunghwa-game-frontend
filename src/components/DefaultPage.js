@@ -24,9 +24,9 @@ const Background = styled.div`
 
 const Content = styled.div`
   position: absolute;
-  width: 80%;
-  height: 80%;
-  border-radius: 20px;
+  width: 90%;
+  height: 85%;
+  border-radius: 2vh;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

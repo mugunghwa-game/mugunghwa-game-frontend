@@ -42,18 +42,18 @@ function Countdown() {
 }
 
 const Content = styled.div`
-  margin-top: 40px;
+  margin-top: 10vh;
   text-align: center;
-  font-size: 50px;
+  font-size: 5vh;
 `;
 
 const Img = styled.div`
-  margin-top: 80px;
-  margin-left: 230px;
+  margin-top: 15vh;
+  margin-left: 6vh;
 
   img {
-    width: 140px;
-    height: 140px;
+    width: 30vh;
+    height: 25vh;
   }
 `;
 

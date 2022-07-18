@@ -60,7 +60,6 @@ export default function useGame(
         difficulty[0],
         isChildSecondParticipant
       );
-      console.log(clickCount);
 
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 

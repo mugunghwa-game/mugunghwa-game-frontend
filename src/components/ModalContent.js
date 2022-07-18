@@ -59,25 +59,27 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
 }
 
 const Content = styled.div`
+  font-size: 2.2vh;
+
   .icon {
-    width: 30px;
-    height: 70px;
+    width: 8vh;
+    height: 9vh;
     vertical-align: middle;
     margin-right: 5px;
   }
 
   .none {
-    height: 40px;
+    height: 14vh;
   }
 
   .description {
     margin-top: ${(props) =>
       props.modalTitle === "난이도 선택"
-        ? "30px"
+        ? "10vh"
         : props.modalTitle === "알려드립니다"
         ? "70px"
         : "4px"};
-    line-height: 50px;
+    line-height: 7.5vh;
   }
 
   h3 {

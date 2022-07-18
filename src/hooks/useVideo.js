@@ -31,7 +31,6 @@ export default function useVideo() {
         socketApi.enterGameRoom(true);
 
         socket.on("all-info", (payload) => {
-          console.log(payload);
           setItUser(payload.it);
           setParticipantUser(payload.participant);
           setDifficulty(payload.difficulty);
@@ -47,7 +46,6 @@ export default function useVideo() {
             });
 
             peer.on("signal", (signal) => {
-              console.log("this is signal", signal);
               socket.emit("sending signal", {
                 userToSignal: user,
                 callerID: socket.id,
@@ -66,6 +64,7 @@ export default function useVideo() {
 
         socket.on("user joined", (payload) => {
           const peer = addPeer(payload.signal, payload.callerID, stream);
+
           peersRef.current.push({
             peerID: payload.callerID,
             peer,

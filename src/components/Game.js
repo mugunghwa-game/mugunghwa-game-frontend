@@ -62,7 +62,6 @@ function Game({
         difficulty[0],
         isChildSecondParticipant
       );
-      console.log(clickCount);
 
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
@@ -77,7 +76,6 @@ function Game({
 
   useEffect(() => {
     socket.on(SOCKET.POSEDETECTION_START, (payload) => {
-      console.log("술래 빼고 다 들어와야함", payload);
       if (payload) {
         handleStop(true);
         handleItCount((prev) => prev - 1);
@@ -118,7 +116,6 @@ function Game({
   useEffect(() => {
     if (itCount === 0 && clickCount === 5) {
       socket.on(SOCKET.USER_LOSER, (payload) => {
-        console.log("user loser", payload);
         addWinner("술래");
         navigate("/ending");
       });

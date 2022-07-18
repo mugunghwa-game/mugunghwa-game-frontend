@@ -30,13 +30,13 @@ const ModalContainer = styled.div`
 `;
 
 const ModalBody = styled.div`
-  width: ${(props) => (props.property === "info" ? "500px" : "900px")};
+  width: ${(props) => (props.property === "info" ? "500px" : "120vh")};
   height: ${(props) =>
     props.property === "difficulty"
-      ? "400px"
+      ? "80vh"
       : props.property === "info"
-      ? "400px"
-      : "600px"};
+      ? "80vh"
+      : "80vh"};
   border-radius: 7px;
   background-color: white;
 

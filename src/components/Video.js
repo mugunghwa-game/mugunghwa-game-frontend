@@ -1,6 +1,9 @@
+import { fireEvent } from "@testing-library/react";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+
+import useStore from "../store/store";
 
 export default function Video({
   index,
@@ -10,6 +13,8 @@ export default function Video({
   peer,
   itCount,
 }) {
+  const { fistParticipantPreparation, secondParticipantPreparation } =
+    useStore();
   const anotherUserRef = useRef();
   const participantId = participantUser.map((person) => person.id);
 
@@ -21,28 +26,25 @@ export default function Video({
 
   return (
     <VideoContainer>
-      {peersRef.current[index].peerID === itUser[0] && (
-        <span>
-          술래{itCount}
-          {itUser[0]}
-        </span>
-      )}
-      {participantId.includes(peersRef.current[index].peerID) && (
-        <span>
-          참가자{peersRef.current[index].peerID}
-          {index}
-        </span>
-      )}
-      {participantUser[0].id === peersRef.current[index].peerID ? (
-        <span>
-          {participantUser[0].opportunity}
-          index{index}
-        </span>
-      ) : (
-        <span>
-          {participantUser[1].opportunity}
-          index {index}
-        </span>
+      {fistParticipantPreparation && secondParticipantPreparation && (
+        <>
+          {peersRef.current[index].peerID === itUser[0] && (
+            <span className="role">
+              술래
+              {itUser[0]}
+              <span className="count">{itCount}</span>
+            </span>
+          )}
+          {participantId.includes(peersRef.current[index].peerID) && (
+            <span className="role">
+              {peersRef.current[index].peerID}참가자
+              {index}
+              <span className="count">
+                {participantUser[index].opportunity}
+              </span>
+            </span>
+          )}
+        </>
       )}
       <video className="otherUser" playsInline autoPlay ref={anotherUserRef} />
     </VideoContainer>
@@ -50,16 +52,26 @@ export default function Video({
 }
 
 const VideoContainer = styled.div`
-  display: grid;
-  grid-template-columns: 130px;
-  grid-template-rows: 40px;
+  margin-left: 30vh;
+  width: 30vh;
+  height: 30vh;
+  line-height: 2vh;
+  margin-bottom: 2vh;
 
   .otherUser {
-    position: relative;
-    width: 400px;
-    height: 200px;
+    width: 50vh;
+    height: 30vh;
     float: right;
     object-fit: fill;
+  }
+
+  .role {
+    position: absolute;
+    font-size: 1.5vh;
+  }
+
+  .count {
+    color: #f47676;
   }
 `;
 
