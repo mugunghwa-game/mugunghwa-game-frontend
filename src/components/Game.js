@@ -76,7 +76,7 @@ function Game({
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
-    socket.on("poseDetection-start", (payload) => {
+    socket.on(SOCKET.POSEDETECTION_START, (payload) => {
       console.log("술래 빼고 다 들어와야함", payload);
       if (payload) {
         handleStop(true);
@@ -111,13 +111,13 @@ function Game({
     return () => {
       socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
       socket.off(SOCKET.GAME_END);
-      socket.off("poseDetection-start");
+      socket.off(SOCKET.POSEDETECTION_START);
     };
   }, [clickCount, hasStop, winner]);
 
   useEffect(() => {
     if (itCount === 0 && clickCount === 5) {
-      socket.on("user-loser", (payload) => {
+      socket.on(SOCKET.USER_LOSER, (payload) => {
         console.log("user loser", payload);
         addWinner("술래");
         navigate("/ending");
@@ -137,7 +137,7 @@ function Game({
 
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
-      socket.off("user-loser");
+      socket.off(SOCKET.USER_LOSER);
     };
   }, [clickCount, isItLoser]);
 

@@ -5,7 +5,7 @@ import Webcam from "react-webcam";
 import { SOCKET } from "../constants/constants";
 import usePosenet from "../hooks/usePosenet";
 import useStore from "../store/store";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import Video from "./Video";
 
@@ -24,7 +24,7 @@ export default function UserVideoRoom({
 
   const handleStopButton = () => {
     if (itCount > 0) {
-      socket.emit(SOCKET.MOTION_START, true);
+      socketApi.motionStart(true);
     }
   };
 

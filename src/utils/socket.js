@@ -14,11 +14,14 @@ export const socketApi = {
   joinRoom: (roomName) => {
     socket.emit(SOCKET.JOIN_ROOM, roomName);
   },
+  leaveRoom: (user) => {
+    socket.emit(SOCKET.LEAVE_ROOM, user);
+  },
   enterGameRoom: (enter) => {
     socket.emit(SOCKET.ENTER, enter);
   },
   sendSignalAnotherUser: (user, socketID, signal) => {
-    socket.emit("sending signal", {
+    socket.emit(SOCKET.SENDING_SIGNAL, {
       userToSignal: user,
       callerID: socketID,
       signal: signal,
@@ -26,6 +29,9 @@ export const socketApi = {
   },
   isReady: (enter) => {
     socket.emit(SOCKET.IS_READY, enter);
+  },
+  motionStart: (state) => {
+    socket.emit(SOCKET.MOTION_START, state);
   },
   userMoved: (user) => {
     socket.emit(SOCKET.MOVED, user);

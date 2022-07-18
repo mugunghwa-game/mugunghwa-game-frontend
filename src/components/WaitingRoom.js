@@ -8,7 +8,6 @@ import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
-import Game from "./Game";
 import Modal from "./Modal";
 import ModalContent from "./ModalContent";
 
@@ -33,6 +32,8 @@ function WaitingRoom() {
     participantList.length
   );
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
+  const [shouldDisplayProgressModal, setShouldDisplayProgressModal] =
+    useState(false);
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -51,7 +52,7 @@ function WaitingRoom() {
   };
 
   const handleExist = () => {
-    socket.emit("leaveRoom", socket.id);
+    socketApi.leaveRoom(socket.id);
     updatePerson(socket.id);
 
     navigate("/");
@@ -78,6 +79,7 @@ function WaitingRoom() {
       setSocketId(payload.id);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
+      setShouldDisplayProgressModal(payload.isProgress);
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
@@ -86,7 +88,7 @@ function WaitingRoom() {
       setParticipantCount(payload.participant);
     });
 
-    socket.on("updateUser", (payload) => {
+    socket.on(SOCKET.UPDATE_USER, (payload) => {
       console.log("update", payload);
       setParticipantCount(payload.participant.length);
       setItCount(payload.it.length);
@@ -99,7 +101,7 @@ function WaitingRoom() {
     return () => {
       socket.off(SOCKET.SOCKET_ID);
       socket.off(SOCKET.ROLE_COUNT);
-      socket.off("updateUser");
+      socket.off(SOCKET.UPDATE_USER);
     };
   }, [participant, people, itCount]);
 
@@ -131,6 +133,15 @@ function WaitingRoom() {
               handleModal={setShouldDisplayInfoModal}
               modalTitle={GAME.INFO_MODAL_TITLE}
               modalText={GAME.INFO_MODAL_TEXT}
+            />
+          </Modal>
+        )}
+        {shouldDisplayProgressModal && (
+          <Modal property="info">
+            <ModalContent
+              handleModal={setShouldDisplayProgressModal}
+              modalTitle={GAME.INFO_MODAL_TITLE}
+              modalText={GAME.GAME_PROGRESS}
             />
           </Modal>
         )}
