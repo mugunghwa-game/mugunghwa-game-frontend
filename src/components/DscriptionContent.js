@@ -10,7 +10,7 @@ function DescriptionContent({
 }) {
   const { fistParticipantPreparation, secondParticipantPreparation, it } =
     useStore();
-
+  console.log(fistParticipantPreparation, secondParticipantPreparation);
   return (
     <>
       {it[0] === socket.id && (

@@ -33,6 +33,7 @@ function DistanceAdjustment({ handleSingleMode, handleMode }) {
 
   useEffect(() => {
     if (participantList) {
+      console.log(preStartFirstParticipantPose);
       if (
         preStartFirstParticipantPose.length !== 0 &&
         participantList[0] === socket.id

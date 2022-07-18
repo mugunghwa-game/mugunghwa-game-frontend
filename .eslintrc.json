@@ -10,7 +10,6 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "testEnvironment": "node",
   "plugins": ["react", "simple-import-sort"],
   "rules": {
     "semi": "warn",
