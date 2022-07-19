@@ -98,7 +98,7 @@ function WaitingRoom() {
       socket.off(SOCKET.UPDATE_USER);
     };
   }, [participant, people, itCount]);
-  console.log(participantCount, participantList.length);
+
   return (
     <DefaultPage>
       <Content>
