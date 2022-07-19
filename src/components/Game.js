@@ -11,21 +11,25 @@ import Button from "./Button";
 
 function Game({
   participantUser,
-  handleTouchDown,
   handleItCount,
   handleParticipantUser,
   handleStop,
   clickCount,
-  isItLoser,
   itCount,
   hasStop,
   difficulty,
-  touchDown,
-  wildCard,
   countDownStart,
   handleCountDownStart,
 }) {
   const navigate = useNavigate();
+
+  const [countDown, setCounDown] = useState(3);
+  const [isItLoser, setIsItLoser] = useState(false);
+  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
+
+  const handleIt = () => {
+    setIsItLoser(true);
+  };
 
   const {
     firstParticipantPose,
@@ -51,14 +55,16 @@ function Game({
 
       const firstResult = visibleButton(firstParticipantPose[0]);
 
-      if (firstResult) {
-        handleTouchDown(true);
-      }
-      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
       if (firstParticipantMoved) {
         socketApi.userMoved(socket.id);
       }
+
+      if (firstResult) {
+        setHasTouchDownButton(true);
+      }
+      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
     }
+
     if (
       secondParticipantPose.length === 3 &&
       participantUser[1].id === socket.id
@@ -72,11 +78,12 @@ function Game({
 
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
-      if (secondParticipantResult) {
-        handleTouchDown(true);
-      }
       if (secondParticipantMoved) {
         socketApi.userMoved(socket.id);
+      }
+
+      if (secondParticipantResult) {
+        setHasTouchDownButton(true);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
@@ -119,12 +126,6 @@ function Game({
       socket.off(SOCKET.POSEDETECTION_START);
     };
   }, [clickCount, hasStop, winner]);
-
-  const [countDown, setCounDown] = useState(3);
-
-  const handleIt = () => {
-    wildCard(true);
-  };
 
   useEffect(() => {
     let interval;
@@ -193,7 +194,7 @@ function Game({
         )}
       </Description>
       <EventZone>
-        {touchDown && (
+        {hasTouchDownButton && (
           <Button property="alram" handleClick={handleIt}>
             술래 등 때리기
           </Button>
@@ -224,11 +225,4 @@ const EventZone = styled.div`
   }
 `;
 
-// Game.propTypes = {
-//   touchDown: PropTypes.bool,
-//   wildCard: PropTypes.func,
-//   handleLoser: PropTypes.func,
-//   countDownStart: PropTypes.bool,
-//   handleCountDownStart: PropTypes.func,
-// };
 export default Game;

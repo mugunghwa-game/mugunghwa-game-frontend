@@ -15,6 +15,7 @@ export default function Video({
 }) {
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
+
   const anotherUserRef = useRef();
   const participantId = participantUser.map((person) => person.id);
 

@@ -46,11 +46,7 @@ export default function useVideo() {
             });
 
             peer.on("signal", (signal) => {
-              socket.emit("sending signal", {
-                userToSignal: user,
-                callerID: socket.id,
-                signal,
-              });
+              socketApi.sendSignalAnotherUser(user, socket.id, signal);
             });
 
             peersRef.current.push({
@@ -97,7 +93,7 @@ export default function useVideo() {
 
     peer.on("signal", (signal) => {
       console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
-      socket.emit("returning signal", { signal, callerID });
+      socketApi.returningSignal(signal, callerID);
     });
 
     console.log("this is incomingSignal", incomingSignal);

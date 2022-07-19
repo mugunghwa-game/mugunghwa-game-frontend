@@ -10,7 +10,7 @@ function Main() {
   const navigate = useNavigate();
 
   const handleGowaitingRoom = () => {
-    navigate("/ready");
+    navigate("/waitingRoom");
   };
 
   return (

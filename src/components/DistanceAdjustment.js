@@ -79,6 +79,7 @@ export default function DistanceAdustment({ handleMode }) {
       if (payload) {
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
+
         handleMode("game");
       }
     });
@@ -87,6 +88,7 @@ export default function DistanceAdustment({ handleMode }) {
       if (payload) {
         updateFirstParticipantPreparation();
         updateSecondParticipantPreparation();
+
         handleMode("game");
       }
     });
@@ -96,7 +98,6 @@ export default function DistanceAdustment({ handleMode }) {
       socket.off(SOCKET.PREPARED);
     };
   }, [preStartFirstParticipantPose, preStartFirstParticipantPose]);
-  console.log(preStartFirstParticipantPose, preStartFirstParticipantPose);
 
   return (
     <>
@@ -114,6 +115,7 @@ export default function DistanceAdustment({ handleMode }) {
     </>
   );
 }
+
 const Description = styled.div`
   margin-top: 2.5vh;
   text-align: center;

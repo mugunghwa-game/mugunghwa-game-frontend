@@ -7,7 +7,7 @@ import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
 import DefaultPage from "./DefaultPage";
-import DistanceAdustment from "./DistanceAdjustment";
+import DistanceAdjustment from "./DistanceAdjustment";
 import Game from "./Game";
 import UserVideoRoom from "./UserVideoRoom";
 
@@ -22,15 +22,6 @@ function GameRoom() {
     participantList,
   } = useStore();
 
-  const [isItLoser, setIsItLoser] = useState(false);
-  const [hasStop, setHasStop] = useState(false);
-  const [countDownStart, setCountDownStart] = useState(false);
-  const userCanvas = useRef();
-  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const [itCount, setItCount] = useState(5);
-  const [mode, setMode] = useState("prepare");
-
   const {
     userVideo,
     participantUser,
@@ -42,6 +33,13 @@ function GameRoom() {
     setParticipantUser,
   } = useVideo();
 
+  const [hasStop, setHasStop] = useState(false);
+  const [countDownStart, setCountDownStart] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [itCount, setItCount] = useState(5);
+  const [mode, setMode] = useState("prepare");
+  const userCanvas = useRef();
+
   const runPosenet = async () => {
     const net = await posenet.load({
       inputResolution: { width: 640, height: 480 },
@@ -52,7 +50,7 @@ function GameRoom() {
       const temp = setInterval(() => {
         detect(net);
       }, 1000);
-      console.log("im here");
+
       setTimeout(() => {
         setClickCount((prev) => prev + 1),
           clearInterval(temp),
@@ -78,8 +76,8 @@ function GameRoom() {
       runPosenet();
     }
     if (mode === "game" && hasStop) {
-      console.log("game runposenet", hasStop);
       runPosenet();
+
       setCountDownStart(true);
       setHasStop(false);
     }
@@ -105,6 +103,7 @@ function GameRoom() {
             addPreStartSecondparticipantPose(pose);
           }
         }
+
         if (mode === "game") {
           if (participantUser[0].id === socket.id) {
             addFirstParticipantPose(pose);
@@ -119,24 +118,20 @@ function GameRoom() {
   return (
     <DefaultPage>
       {!fistParticipantPreparation && !secondParticipantPreparation && (
-        <DistanceAdustment handleMode={setMode} />
+        <DistanceAdjustment handleMode={setMode} />
       )}
       {fistParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}
-          handleTouchDown={setHasTouchDownButton}
-          handleItCount={setItCount}
           handleParticipantUser={setParticipantUser}
-          handleStop={setHasStop}
-          clickCount={clickCount}
-          isItLoser={isItLoser}
-          itCount={itCount}
-          hasStop={hasStop}
-          difficulty={difficulty}
-          touchDown={hasTouchDownButton}
-          wildCard={setIsItLoser}
           countDownStart={countDownStart}
           handleCountDownStart={setCountDownStart}
+          itCount={itCount}
+          handleItCount={setItCount}
+          hasStop={hasStop}
+          handleStop={setHasStop}
+          clickCount={clickCount}
+          difficulty={difficulty}
         />
       )}
       <UserView>

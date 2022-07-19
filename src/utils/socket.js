@@ -27,6 +27,9 @@ export const socketApi = {
       signal: signal,
     });
   },
+  returningSignal: (signal, id) => {
+    socket.emit(SOCKET.RETURNING_SIGNAL, { signal, id });
+  },
   isReady: (enter) => {
     socket.emit(SOCKET.IS_READY, enter);
   },
