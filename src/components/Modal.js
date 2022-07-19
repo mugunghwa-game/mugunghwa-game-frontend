@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
@@ -29,13 +30,13 @@ const ModalContainer = styled.div`
 `;
 
 const ModalBody = styled.div`
-  width: ${(props) => (props.property === "info" ? "500px" : "900px")};
+  width: ${(props) => (props.property === "info" ? "80vh" : "120vh")};
   height: ${(props) =>
     props.property === "difficulty"
-      ? "400px"
+      ? "80vh"
       : props.property === "info"
-        ? "400px"
-        : "600px"};
+      ? "40vh"
+      : "80vh"};
   border-radius: 7px;
   background-color: white;
 
@@ -46,5 +47,10 @@ const ModalBody = styled.div`
     margin: 10px 20px;
   }
 `;
+
+Modal.propTypes = {
+  children: PropTypes.object,
+  property: PropTypes.string,
+};
 
 export default Modal;

@@ -39,7 +39,9 @@ function GameMode() {
 
 const Mode = styled.div`
   .exit {
-    font-size: 20px;
+    margin-left: 5vh;
+    margin-top: 2vh;
+    font-size: 4vh;
     cursor: pointer;
   }
 

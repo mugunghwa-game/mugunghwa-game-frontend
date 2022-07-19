@@ -8,8 +8,6 @@ import useStore from "../store/store";
 import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import DefaultPage from "./DefaultPage";
-import DistanceAdjustment from "./DistanceAdjustment";
-import DescriptionContent from "./DscriptionContent";
 import Event from "./Event";
 
 function SingleMode() {

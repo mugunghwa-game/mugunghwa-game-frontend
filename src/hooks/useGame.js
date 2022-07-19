@@ -9,24 +9,25 @@ import { socket } from "../utils/socket";
 
 export default function useGame(
   participantUser,
-  difficulty,
+  handleTouchDown,
+  handleItCount,
+  handleParticipantUser,
+  handleStop,
   clickCount,
   isItLoser,
+  itCount,
   hasStop,
-  itCount
+  difficulty
 ) {
-  const navigate = useNavigate();
-  const [isGameEnd, setIsGameEnd] = useState(false);
+  const count = 0;
   const {
     firstParticipantPose,
     secondParticipantPose,
     isChildFirstParticipant,
     isChildSecondParticipant,
-    // addWinner,
-    // winner,
+    addWinner,
+    winner,
   } = useStore();
-
-  const [winner, setWinner] = useState("");
 
   useEffect(() => {
     if (
@@ -47,7 +48,7 @@ export default function useGame(
       }
       console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
       if (firstParticipantMoved) {
-        // socketApi.userMoved(socket.id);
+        socketApi.userMoved(socket.id);
       }
     }
     if (
@@ -60,7 +61,6 @@ export default function useGame(
         difficulty[0],
         isChildSecondParticipant
       );
-      console.log(clickCount);
 
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
@@ -68,73 +68,76 @@ export default function useGame(
         handleTouchDown(true);
       }
       if (secondParticipantMoved) {
-        // socketApi.userMoved(socket.id);
+        socketApi.userMoved(socket.id);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
-    // socket.on("poseDetection-start", (payload) => {
-    //   console.log("술래 빼고 다 들어와야함", payload);
-    //   if (payload) {
-    //     handleStop(true);
-    //     handleItCount((prev) => prev - 1);
-    //   }
-    // });
+    socket.on(SOCKET.POSEDETECTION_START, (payload) => {
+      if (payload) {
+        handleStop(true);
+        handleItCount((prev) => prev - 1);
+      }
+    });
 
-    // socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-    //   if (payload.count === 6) {
-    //     if (
-    //       payload.participant.filter((person) => person.opportunity === 0)
-    //         .length === 2
-    //     ) {
-    //       setWinner("술래");
-    //     } else {
-    //       setWinner("참가자");
-    //     }
-    //   }
+    socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
+      if (payload.count === 6) {
+        if (
+          payload.participant.filter((person) => person.opportunity === 0)
+            .length === 2
+        ) {
+          addWinner("술래");
+        } else {
+          addWinner("참가자");
+        }
+        navigate("/ending");
+      }
 
-    //   handleParticipantUser(payload.participant);
-    //   handleStop(false);
-    // });
+      handleParticipantUser(payload.participant);
+      handleStop(false);
+    });
 
-    // socket.on(SOCKET.GAME_END, (payload) => {
-    //   if (payload) {
-    //     addWinner("술래");
-    //   }
-    // });
+    socket.on(SOCKET.GAME_END, (payload) => {
+      if (payload) {
+        addWinner("술래");
+        navigate("/ending");
+      }
+    });
 
     return () => {
-      // socket.off(SOCKET.START);
-      // socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
-      // socket.off(SOCKET.GAME_END);
-      // socket.off(SOCKET.IT_END);
-      // socket.off("poseDetection-start");
+      socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
+      socket.off(SOCKET.GAME_END);
+      socket.off(SOCKET.POSEDETECTION_START);
     };
   }, [clickCount, hasStop, winner]);
 
   useEffect(() => {
     if (itCount === 0 && clickCount === 5) {
-      // socket.on("user-loser", (payload) => {
-      //   console.log("user loser", payload);
-      //   setWinner("술래");
-      // });
+      socket.on(SOCKET.USER_LOSER, (payload) => {
+        addWinner("술래");
+        navigate("/ending");
+      });
     }
 
     if (isItLoser) {
-      // socketApi.itLoser(true);
+      socketApi.itLoser(true);
     }
 
-    // socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
-    //   if (payload) {
-    //     setWinner("참가자");
-    //   }
-    // });
+    socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
+      if (payload) {
+        addWinner("참가자");
+        navigate("/ending");
+      }
+    });
 
     return () => {
-      // socket.off(SOCKET.IT_LOSER_GAME_END);
+      socket.off(SOCKET.IT_LOSER_GAME_END);
+      socket.off(SOCKET.USER_LOSER);
     };
   }, [clickCount, isItLoser]);
 
-  return { winner };
+  return {
+    count,
+  };
 }

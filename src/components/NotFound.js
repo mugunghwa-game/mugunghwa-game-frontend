@@ -44,7 +44,7 @@ const Background = styled.div`
 
   .flower {
     position: relative;
-    width: 100px;
+    width: 20vh;
     vertical-align: middle;
   }
 
@@ -54,7 +54,7 @@ const Background = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
     line-height: 20px;
-    font-size: 60px;
+    font-size: 7vh;
   }
 
   .number {
@@ -62,14 +62,13 @@ const Background = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    line-height: 20px;
-    font-size: 60px;
+    font-size: 11vh;
   }
 `;
 
 const ButtonWarp = styled.div`
   position: absolute;
-  top: 70%;
+  top: 72%;
   left: 50%;
   transform: translate(-50%, -50%);
 `;

@@ -1,10 +1,9 @@
-import React, { useRef } from "react";
+import PropTypes from "prop-types";
+import React from "react";
 import Webcam from "react-webcam";
 
-import { SOCKET } from "../constants/constants";
-import usePosenet from "../hooks/usePosenet";
 import useStore from "../store/store";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import Video from "./Video";
 
@@ -23,14 +22,16 @@ export default function UserVideoRoom({
 
   const handleStopButton = () => {
     if (itCount > 0) {
-      socket.emit(SOCKET.MOTION_START, true);
+      socketApi.motionStart(true);
     }
   };
 
   return (
     <>
-      <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
-      <canvas ref={userCanvas} className="userVideo" />
+      <div>
+        <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
+        <canvas ref={userCanvas} className="userVideo" />
+      </div>
       <div className="userRole">
         <span className="me"> 나</span>
         {socket.id === itUser[0] ? (
@@ -38,21 +39,22 @@ export default function UserVideoRoom({
         ) : (
           <span>참가자{socket.id}</span>
         )}
-      </div>
-      <span className="userOpportunity">
-        기회의 수{itUser && socket.id === itUser[0] && <span> {itCount}</span>}
-        {participantUser.map(
-          (person, index) =>
-            person.id === socket.id && (
-              <span key={index}>{person.opportunity}</span>
-            )
+        {fistParticipantPreparation && secondParticipantPreparation && (
+          <div className="userOpportunity">
+            기회의 수
+            {itUser && socket.id === itUser[0] && <span> {itCount}</span>}
+            {participantUser.map(
+              (person, index) =>
+                person.id === socket.id && (
+                  <span key={index}>{person.opportunity}</span>
+                )
+            )}
+            {socket.id === itUser[0] && (
+              <Button handleClick={handleStopButton}>멈춤</Button>
+            )}
+          </div>
         )}
-        {socket.id === itUser[0] &&
-          fistParticipantPreparation &&
-          secondParticipantPreparation && (
-            <Button handleClick={handleStopButton}>멈춤</Button>
-          )}
-      </span>
+      </div>
       <div>
         {peers.map((peer, index) => (
           <Video
@@ -70,3 +72,14 @@ export default function UserVideoRoom({
     </>
   );
 }
+
+UserVideoRoom.propTypes = {
+  itUser: PropTypes.array,
+  itCount: PropTypes.number,
+  userVideo: PropTypes.object,
+  userCanvas: PropTypes.object,
+  participantUser: PropTypes.array,
+  peers: PropTypes.array,
+  peersRef: PropTypes.object,
+  participantList: PropTypes.array,
+};

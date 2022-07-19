@@ -55,9 +55,9 @@ const useStore = create(
       set((state) => ({
         participantList: [...state.participantList, item],
       })),
-    addUserVideo: (item) =>
+    deleteParticipantList: (item) =>
       set((state) => ({
-        allUserVideo: [...state.allUserVideo, item],
+        participantList: [...state.participantList.filter((id) => id !== item)],
       })),
     updateParticipant: (item) =>
       set((state) => ({

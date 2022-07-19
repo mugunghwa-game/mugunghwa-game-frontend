@@ -8,7 +8,6 @@ import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
-import Game from "./Game";
 import Modal from "./Modal";
 import ModalContent from "./ModalContent";
 
@@ -24,15 +23,15 @@ function WaitingRoom() {
     updatePerson,
   } = useStore();
   const hasIt = people.filter((item) => item.role === "it");
+
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
-  const [socketId, setSocketId] = useState(null);
   const [itCount, setItCount] = useState(hasIt.length);
-  const [participantCount, setParticipantCount] = useState(
-    participantList.length
-  );
+  const [participantCount, setParticipantCount] = useState(0);
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
+  const [shouldDisplayProgressModal, setShouldDisplayProgressModal] =
+    useState(false);
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -51,7 +50,7 @@ function WaitingRoom() {
   };
 
   const handleExist = () => {
-    socket.emit("leaveRoom", socket.id);
+    socketApi.leaveRoom(socket.id);
     updatePerson(socket.id);
 
     navigate("/");
@@ -64,7 +63,6 @@ function WaitingRoom() {
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
       addParticipantList(socket.id);
-      console.log(socket.id);
     } else {
       setShouldDisplayInfoModal(true);
     }
@@ -74,20 +72,18 @@ function WaitingRoom() {
     socketApi.joinRoom("gameRoom");
 
     socket.on(SOCKET.SOCKET_ID, (payload) => {
-      console.log(socket.id, payload);
-      setSocketId(payload.id);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
+      setShouldDisplayProgressModal(payload.isProgress);
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
-      console.log(payload);
+      console.log("payload", payload);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
     });
 
-    socket.on("updateUser", (payload) => {
-      console.log("update", payload);
+    socket.on(SOCKET.UPDATE_USER, (payload) => {
       setParticipantCount(payload.participant.length);
       setItCount(payload.it.length);
     });
@@ -99,7 +95,7 @@ function WaitingRoom() {
     return () => {
       socket.off(SOCKET.SOCKET_ID);
       socket.off(SOCKET.ROLE_COUNT);
-      socket.off("updateUser");
+      socket.off(SOCKET.UPDATE_USER);
     };
   }, [participant, people, itCount]);
 
@@ -131,6 +127,15 @@ function WaitingRoom() {
               handleModal={setShouldDisplayInfoModal}
               modalTitle={GAME.INFO_MODAL_TITLE}
               modalText={GAME.INFO_MODAL_TEXT}
+            />
+          </Modal>
+        )}
+        {shouldDisplayProgressModal && (
+          <Modal property="info">
+            <ModalContent
+              handleModal={setShouldDisplayProgressModal}
+              modalTitle={GAME.INFO_MODAL_TITLE}
+              modalText={GAME.GAME_PROGRESS}
             />
           </Modal>
         )}
@@ -166,37 +171,38 @@ function WaitingRoom() {
 
 const Content = styled.div`
   .exit {
-    font-size: 20px;
+    position: absolute;
+    font-size: 4vh;
+    margin: 0 2vh;
     cursor: pointer;
   }
 
   .rule {
-    margin-top: 20px;
-    margin-right: 60px;
+    margin: 2vh 2vh;
     text-align: right;
-    font-size: 20px;
+    font-size: 4vh;
     cursor: pointer;
   }
 
   .participation {
-    font-size: 40px;
+    font-size: 6vh;
     text-align: center;
   }
 
   .it,
   .participant {
-    width: 80%;
-    height: 80px;
-    margin-top: 60px;
+    width: 130vh;
+    height: 12vh;
+    margin-top: 5vh;
     margin-inline: auto;
-    border-radius: 20px;
-    font-size: 30px;
+    border-radius: 2vh;
+    font-size: 3.5vh;
     background-color: #fdf3ef;
     cursor: pointer;
 
     .choice {
-      padding-top: 15px;
-      margin-left: 20px;
+      padding-top: 2.3vh;
+      margin: 0 3vh;
     }
 
     .count {
@@ -217,7 +223,7 @@ const Content = styled.div`
 
 const ButtonWrap = styled.div`
   bottom: 10px;
-  margin-top: 40px;
+  margin-top: 10vh;
   text-align: center;
 `;
 

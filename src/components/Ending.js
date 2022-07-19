@@ -39,13 +39,13 @@ function Ending() {
 
 const Result = styled.div`
   margin-top: 40px;
-  font-size: 70px;
+  font-size: 10vh;
   text-align: center;
 `;
 
 const Winner = styled.div`
-  margin-top: 100px;
-  font-size: 45px;
+  margin-top: 13vh;
+  font-size: 7vh;
   text-align: center;
 
   .win {
@@ -54,7 +54,7 @@ const Winner = styled.div`
 `;
 
 const ButtonWarp = styled.div`
-  margin-top: 80px;
+  margin-top: 15vh;
   text-align: center;
 `;
 

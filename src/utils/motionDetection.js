@@ -7,11 +7,6 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
   const secondResult = helpDetection(secondPose);
   const shoulderLength = sholuderLengthinScreen(firstPose);
 
-  console.log(firstResult, secondResult, shoulderLength);
-  //가장가까울때, 중간일때, 가장 멀때를 체크해주고 함수를만들어 넘겨줌
-  //아이가 아니고 difficulty가 어려움이라면 이거의 1.8배 높게 적용
-  //아이일때는 이거 적용
-
   if (!isChild && difficult === "어려움") {
     if (shoulderLength > 26) {
       console.log("26");
@@ -27,8 +22,7 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
       //각도 차 20일때 움직임이라고 체크하기
     }
   }
-  console.log(isChild, difficult);
-  if (isChild || difficult === "쉬움" || difficult === undefined)
+  if (isChild || difficult === "쉬움")
     if ((isChild && shoulderLength > 16) || shoulderLength > 26) {
       console.log("26");
       return compareAngle(firstResult, secondResult, 1);

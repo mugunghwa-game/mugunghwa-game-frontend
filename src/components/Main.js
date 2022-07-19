@@ -10,7 +10,7 @@ function Main() {
   const navigate = useNavigate();
 
   const handleGowaitingRoom = () => {
-    navigate("/ready");
+    navigate("/waitingRoom");
   };
 
   return (
@@ -35,8 +35,9 @@ function Main() {
 
 const Sentence = styled.div`
   text-align: left;
-  font-size: 65px;
-  margin-left: 150px;
+  font-size: 10vh;
+  margin-left: 13vh;
+  margin-top: 2vh;
 
   .flower {
     color: #f47676;
@@ -49,16 +50,16 @@ const Sentence = styled.div`
 
   img {
     position: relative;
-    width: 570px;
+    width: 72vh;
     float: right;
-    margin-right: 100px;
+    margin-right: 14vh;
   }
 `;
 
 const WrapButton = styled.div`
   position: absolute;
-  bottom: 60px;
-  margin-left: 150px;
+  bottom: 8vh;
+  margin-left: 50vh;
 `;
 
 export default Main;

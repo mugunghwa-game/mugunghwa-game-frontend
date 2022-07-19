@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { MdClose } from "react-icons/md";
 import styled from "styled-components";
@@ -5,26 +6,31 @@ import styled from "styled-components";
 import flowericon from "../asset/flowericon.jpeg";
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 
 function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
-  const { addIt, addPerson } = useStore();
+  const {
+    addIt,
+    addPerson,
+    addParticipantList,
+    deleteParticipantList,
+    participantList,
+  } = useStore();
 
   const handleClick = () => {
     handleModal(false);
   };
 
   const handleDifficulty = (event) => {
-    socket.emit(SOCKET.USER_COUNT, {
-      id: socket.id,
-      role: "it",
-      difficulty: event.target.innerText,
-    });
+    socketApi.userCount(socket.id, "it", event.target.innerText);
+    console.log(participantList);
 
+    participantList.includes(socket.id)
+      ? deleteParticipantList(socket.id)
+      : null;
     addIt(socket.id);
     addPerson({ person: socket.id, role: "it" });
-
     handleItCount((prev) => prev + 1);
     handleModal(false);
   };
@@ -58,25 +64,27 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
 }
 
 const Content = styled.div`
+  font-size: 2.2vh;
+
   .icon {
-    width: 30px;
-    height: 70px;
+    width: 8vh;
+    height: 9vh;
     vertical-align: middle;
     margin-right: 5px;
   }
 
   .none {
-    height: 40px;
+    height: 14vh;
   }
 
   .description {
     margin-top: ${(props) =>
       props.modalTitle === "난이도 선택"
-        ? "30px"
+        ? "10vh"
         : props.modalTitle === "알려드립니다"
         ? "70px"
         : "4px"};
-    line-height: 50px;
+    line-height: 7.5vh;
   }
 
   h3 {
@@ -93,5 +101,12 @@ const Content = styled.div`
     justify-content: space-around;
   }
 `;
+
+ModalContent.propTypes = {
+  modalText: PropTypes.string,
+  modalTitle: PropTypes.string,
+  handleModal: PropTypes.func,
+  handleItCount: PropTypes.func,
+};
 
 export default ModalContent;

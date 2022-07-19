@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect } from "react";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
@@ -7,9 +6,10 @@ import {
   divisionChildAndAdult,
   sholuderLengthinScreen,
 } from "../utils/motionDetection";
-import { socket, socketApi } from "../utils/socket";
+import { socket } from "../utils/socket";
+import { socketApi } from "../utils/socket";
 
-export default function DistanceAdustment({ handleMode }) {
+export default function useeDistanceAdjustment(gameMode, handleMode) {
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -19,20 +19,19 @@ export default function DistanceAdustment({ handleMode }) {
     updateFirstChildParticipant,
     singleModeUserPose,
     participantList,
-    it,
   } = useStore();
 
   console.log(preStartFirstParticipantPose, preStartSecondparticipantPose);
 
-  //   useEffect(() => {
-  //     if (singleModeUserPose.length !== 0) {
-  //       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
+  useEffect(() => {
+    if (singleModeUserPose.length !== 0) {
+      const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
 
-  //       if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
-  //         handleSingleMode(true);
-  //       }
-  //     }
-  //   }, [singleModeUserPose]);
+      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
+        handleSingleMode(true);
+      }
+    }
+  }, [singleModeUserPose]);
 
   useEffect(() => {
     if (participantList) {
@@ -76,48 +75,28 @@ export default function DistanceAdustment({ handleMode }) {
     }
 
     socket.on(SOCKET.PREPARED_GAME, (payload) => {
-      updateFirstParticipantPreparation();
-      updateSecondParticipantPreparation();
-
-      handleMode("game");
+      if (payload) {
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        handleMode("game");
+      }
     });
 
     socket.on(SOCKET.PREPARED, (payload) => {
-      updateFirstParticipantPreparation();
-      updateSecondParticipantPreparation();
-
-      handleMode("game");
+      if (payload) {
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        handleMode("game");
+      }
     });
 
     return () => {
       socket.off(SOCKET.PREPARED_GAME);
       socket.off(SOCKET.PREPARED);
     };
-  }, [preStartFirstParticipantPose, preStartFirstParticipantPose]);
+  }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
 
-  return (
-    <>
-      <Description>
-        {it[0] === socket.id ? (
-          <>
-            <span className="color">
-              참가자들이 위치로 갈 때까지 잠시만 기다려주세요
-            </span>
-          </>
-        ) : (
-          <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
-        )}
-      </Description>
-    </>
-  );
+  return {
+    gameMode,
+  };
 }
-
-const Description = styled.div`
-  margin-top: 2.5vh;
-  text-align: center;
-  font-size: 3.7vh;
-
-  .color {
-    color: #199816;
-  }
-`;

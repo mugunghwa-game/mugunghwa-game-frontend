@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { socketApi } from "../utils/socket";
 import { socket } from "../utils/socket";
+import Button from "./Button";
 
 function Game({
   participantUser,
-  handleTouchDown,
   handleItCount,
   handleParticipantUser,
   handleStop,
   clickCount,
-  isItLoser,
   itCount,
   hasStop,
   difficulty,
+  countDownStart,
+  handleCountDownStart,
 }) {
   const navigate = useNavigate();
-  const [isGameEnd, setIsGameEnd] = useState(false);
+
+  const [countDown, setCounDown] = useState(3);
+  const [isItLoser, setIsItLoser] = useState(false);
+  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
+
+  const handleIt = () => {
+    setIsItLoser(true);
+  };
+
   const {
     firstParticipantPose,
     secondParticipantPose,
@@ -28,6 +38,7 @@ function Game({
     isChildSecondParticipant,
     addWinner,
     winner,
+    it,
   } = useStore();
 
   useEffect(() => {
@@ -44,14 +55,16 @@ function Game({
 
       const firstResult = visibleButton(firstParticipantPose[0]);
 
-      if (firstResult) {
-        handleTouchDown(true);
-      }
-      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
       if (firstParticipantMoved) {
         socketApi.userMoved(socket.id);
       }
+
+      if (firstResult) {
+        setHasTouchDownButton(true);
+      }
+      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
     }
+
     if (
       secondParticipantPose.length === 3 &&
       participantUser[1].id === socket.id
@@ -62,26 +75,23 @@ function Game({
         difficulty[0],
         isChildSecondParticipant
       );
-      console.log(clickCount);
 
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
-      if (secondParticipantResult) {
-        handleTouchDown(true);
-      }
       if (secondParticipantMoved) {
         socketApi.userMoved(socket.id);
+      }
+
+      if (secondParticipantResult) {
+        setHasTouchDownButton(true);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
-    socket.on("poseDetection-start", (payload) => {
-      console.log("술래 빼고 다 들어와야함", payload);
-      if (payload) {
-        handleStop(true);
-        handleItCount((prev) => prev - 1);
-      }
+    socket.on(SOCKET.POSEDETECTION_START, (payload) => {
+      handleStop(true);
+      handleItCount((prev) => prev - 1);
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
@@ -102,23 +112,39 @@ function Game({
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
-      if (payload) {
-        addWinner("술래");
-        navigate("/ending");
-      }
+      addWinner("술래");
+      navigate("/ending");
     });
 
     return () => {
       socket.off(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY);
       socket.off(SOCKET.GAME_END);
-      socket.off("poseDetection-start");
+      socket.off(SOCKET.POSEDETECTION_START);
     };
   }, [clickCount, hasStop, winner]);
 
   useEffect(() => {
+    let interval;
+
+    if (countDownStart) {
+      if (countDown > 1) {
+        interval = setInterval(() => {
+          setCounDown((prev) => prev - 1);
+        }, 1000);
+      }
+    }
+
+    setTimeout(() => {
+      clearInterval(interval);
+
+      setCounDown(3);
+      handleCountDownStart(false);
+    }, 3000);
+  }, [countDownStart]);
+
+  useEffect(() => {
     if (itCount === 0 && clickCount === 5) {
-      socket.on("user-loser", (payload) => {
-        console.log("user loser", payload);
+      socket.on(SOCKET.USER_LOSER, (payload) => {
         addWinner("술래");
         navigate("/ending");
       });
@@ -129,19 +155,68 @@ function Game({
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
-      if (payload) {
-        addWinner("참가자");
-        navigate("/ending");
-      }
+      addWinner("참가자");
+      navigate("/ending");
     });
 
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
-      socket.off("user-loser");
+      socket.off(SOCKET.USER_LOSER);
     };
   }, [clickCount, isItLoser]);
 
-  return <></>;
+  return (
+    <>
+      <Description>
+        {it[0] === socket.id ? (
+          <>
+            <div>
+              <span className="color">무궁화 꽃이 피었습니다</span> 라고 외친 후
+              <span className="color"> 멈춤</span> 버튼을 눌러주세요
+            </div>
+            <div>
+              버튼 누른 후 <span className="color"> 3초</span> 동안 참가자들의
+              움직임이 감지됩니다
+            </div>
+          </>
+        ) : (
+          <div>
+            술래가 <span className="color">무궁화 꽃이 피었습니다</span>를
+            외치면
+            <span className="color"> 3초</span>간 동작을 멈춰야합니다
+          </div>
+        )}
+      </Description>
+      <EventZone>
+        {hasTouchDownButton && (
+          <Button property="alram" handleClick={handleIt}>
+            술래 등 때리기
+          </Button>
+        )}
+        {countDownStart && <div className="countDown">{countDown}</div>}
+      </EventZone>
+    </>
+  );
 }
+
+const Description = styled.div`
+  margin-top: 2.5vh;
+  text-align: center;
+  font-size: 3.7vh;
+
+  .color {
+    color: #199816;
+  }
+`;
+
+const EventZone = styled.div`
+  .countDown {
+    z-index: 300;
+    position: absolute;
+    margin-left: 80vh;
+    font-size: 400px;
+    color: red;
+  }
+`;
 
 export default Game;
