@@ -99,6 +99,7 @@ export default function useVideo() {
       console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
       socket.emit("returning signal", { signal, callerID });
     });
+
     console.log("this is incomingSignal", incomingSignal);
     peer.signal(incomingSignal);
 

@@ -2,20 +2,16 @@ import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-import useDistanceAdjustment from "../hooks/useDistanceAdjustment";
-import useGame from "../hooks/useGame";
-import usePosenet from "../hooks/usePosenet";
 import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import { socket } from "../utils/socket";
 import DefaultPage from "./DefaultPage";
-import DescriptionContent from "./DscriptionContent";
-import Event from "./Event";
+import DistanceAdustment from "./DistanceAdjustment";
 import Game from "./Game";
 import UserVideoRoom from "./UserVideoRoom";
 
-function View() {
+function GameRoom() {
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -25,6 +21,7 @@ function View() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
+
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
@@ -44,8 +41,6 @@ function View() {
     peersRef,
     setParticipantUser,
   } = useVideo();
-
-  const { gameMode } = useDistanceAdjustment(mode, setMode);
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -82,7 +77,7 @@ function View() {
     ) {
       runPosenet();
     }
-    if (gameMode === "game" && hasStop) {
+    if (mode === "game" && hasStop) {
       console.log("game runposenet", hasStop);
       runPosenet();
       setCountDownStart(true);
@@ -104,13 +99,13 @@ function View() {
         drawCanvas(pose, video, video.width, video.height, userCanvas);
 
         if (mode === "prepare") {
-          if (participantList[0] === socket.id) {
+          if (participantUser[0].id === socket.id) {
             addPreStartFirstParticipantPose(pose);
           } else {
             addPreStartSecondparticipantPose(pose);
           }
         }
-        if (gameMode === "game") {
+        if (mode === "game") {
           if (participantUser[0].id === socket.id) {
             addFirstParticipantPose(pose);
           } else {
@@ -123,15 +118,27 @@ function View() {
 
   return (
     <DefaultPage>
-      <Description>
-        {participantUser && (
-          <DescriptionContent
-            participantUser={participantUser}
-            // isReadySingleMode={isReadySingleMode}
-            // isSingleMode={isSingleMode}
-          />
-        )}
-      </Description>
+      {!fistParticipantPreparation && !secondParticipantPreparation && (
+        <DistanceAdustment handleMode={setMode} />
+      )}
+      {fistParticipantPreparation && secondParticipantPreparation && (
+        <Game
+          participantUser={participantUser}
+          handleTouchDown={setHasTouchDownButton}
+          handleItCount={setItCount}
+          handleParticipantUser={setParticipantUser}
+          handleStop={setHasStop}
+          clickCount={clickCount}
+          isItLoser={isItLoser}
+          itCount={itCount}
+          hasStop={hasStop}
+          difficulty={difficulty}
+          touchDown={hasTouchDownButton}
+          wildCard={setIsItLoser}
+          countDownStart={countDownStart}
+          handleCountDownStart={setCountDownStart}
+        />
+      )}
       <UserView>
         <UserCamera>
           {participantUser && (
@@ -146,42 +153,11 @@ function View() {
               participantList={participantList}
             />
           )}
-          <Event
-            touchDown={mode === "preapre" ? null : hasTouchDownButton}
-            wildCard={mode === "preapre" ? null : setIsItLoser}
-            handleLoser={mode === "preapre" ? null : setIsItLoser}
-            countDownStart={countDownStart}
-            handleCountDownStart={setCountDownStart}
-          />
         </UserCamera>
       </UserView>
-      {fistParticipantPreparation && secondParticipantPreparation && (
-        <Game
-          participantUser={participantUser}
-          handleTouchDown={setHasTouchDownButton}
-          handleItCount={setItCount}
-          handleParticipantUser={setParticipantUser}
-          handleStop={setHasStop}
-          clickCount={clickCount}
-          isItLoser={isItLoser}
-          itCount={itCount}
-          hasStop={hasStop}
-          difficulty={difficulty}
-        />
-      )}
     </DefaultPage>
   );
 }
-
-const Description = styled.div`
-  margin-top: 2.5vh;
-  text-align: center;
-  font-size: 3.7vh;
-
-  .color {
-    color: #199816;
-  }
-`;
 
 const UserView = styled.div`
   .opportunity {
@@ -217,14 +193,6 @@ const UserView = styled.div`
   .stop {
     margin-top: 60px;
   }
-
-  .countDown {
-    z-index: 300;
-    position: absolute;
-    place-self: center;
-    font-size: 400px;
-    color: red;
-  }
 `;
 
 const UserCamera = styled.div`
@@ -251,11 +219,10 @@ const UserCamera = styled.div`
   }
 
   .userOpportunity {
-    margin-top: 45vh;
+    margin-top: 42vh;
     align-self: end;
     text-align: center;
     font-size: 2em;
-    margin-left: 18vh;
   }
 
   .me {
@@ -264,4 +231,4 @@ const UserCamera = styled.div`
   }
 `;
 
-export default View;
+export default GameRoom;
