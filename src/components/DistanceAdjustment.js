@@ -76,21 +76,17 @@ export default function DistanceAdustment({ handleMode }) {
     }
 
     socket.on(SOCKET.PREPARED_GAME, (payload) => {
-      if (payload) {
-        updateFirstParticipantPreparation();
-        updateSecondParticipantPreparation();
+      updateFirstParticipantPreparation();
+      updateSecondParticipantPreparation();
 
-        handleMode("game");
-      }
+      handleMode("game");
     });
 
     socket.on(SOCKET.PREPARED, (payload) => {
-      if (payload) {
-        updateFirstParticipantPreparation();
-        updateSecondParticipantPreparation();
+      updateFirstParticipantPreparation();
+      updateSecondParticipantPreparation();
 
-        handleMode("game");
-      }
+      handleMode("game");
     });
 
     return () => {

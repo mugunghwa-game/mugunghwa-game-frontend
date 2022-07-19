@@ -6,7 +6,7 @@ import styled from "styled-components";
 import flowericon from "../asset/flowericon.jpeg";
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
-import { socket } from "../utils/socket";
+import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 
 function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
@@ -17,11 +17,7 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   };
 
   const handleDifficulty = (event) => {
-    socket.emit(SOCKET.USER_COUNT, {
-      id: socket.id,
-      role: "it",
-      difficulty: event.target.innerText,
-    });
+    socketApi.userCount(socket.id, "it", event.target.innerText);
 
     addIt(socket.id);
     addPerson({ person: socket.id, role: "it" });

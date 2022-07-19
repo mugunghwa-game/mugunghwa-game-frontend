@@ -5,10 +5,11 @@ import { SOCKET } from "../constants/constants";
 export const socket = io.connect("http://localhost:8080");
 
 export const socketApi = {
-  userCount: (id, role) => {
+  userCount: (id, role, difficulty) => {
     socket.emit(SOCKET.USER_COUNT, {
       id,
       role,
+      difficulty,
     });
   },
   joinRoom: (roomName) => {
@@ -30,6 +31,7 @@ export const socketApi = {
   returningSignal: (signal, id) => {
     socket.emit(SOCKET.RETURNING_SIGNAL, { signal, id });
   },
+
   isReady: (enter) => {
     socket.emit(SOCKET.IS_READY, enter);
   },

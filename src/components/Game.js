@@ -90,10 +90,8 @@ function Game({
 
   useEffect(() => {
     socket.on(SOCKET.POSEDETECTION_START, (payload) => {
-      if (payload) {
-        handleStop(true);
-        handleItCount((prev) => prev - 1);
-      }
+      handleStop(true);
+      handleItCount((prev) => prev - 1);
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
@@ -114,10 +112,8 @@ function Game({
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
-      if (payload) {
-        addWinner("술래");
-        navigate("/ending");
-      }
+      addWinner("술래");
+      navigate("/ending");
     });
 
     return () => {
@@ -159,10 +155,8 @@ function Game({
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
-      if (payload) {
-        addWinner("참가자");
-        navigate("/ending");
-      }
+      addWinner("참가자");
+      navigate("/ending");
     });
 
     return () => {
