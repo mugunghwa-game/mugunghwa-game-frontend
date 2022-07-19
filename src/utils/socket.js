@@ -21,17 +21,15 @@ export const socketApi = {
   enterGameRoom: (enter) => {
     socket.emit(SOCKET.ENTER, enter);
   },
-  sendSignalAnotherUser: (user, socketID, signal) => {
-    socket.emit(SOCKET.SENDING_SIGNAL, {
-      userToSignal: user,
-      callerID: socketID,
-      signal: signal,
-    });
-  },
-  returningSignal: (signal, id) => {
-    socket.emit(SOCKET.RETURNING_SIGNAL, { signal, id });
-  },
+  sendSignalAnotherUser: (payload) => {
+    const { userToSignal, signal, callerID } = payload;
 
+    socket.emit(SOCKET.SENDING_SIGNAL, { userToSignal, signal, callerID });
+  },
+  returningSignal: (payload) => {
+    const { signal, callerID } = payload;
+    socket.emit(SOCKET.RETURNING_SIGNAL, { signal, callerID });
+  },
   isReady: (enter) => {
     socket.emit(SOCKET.IS_READY, enter);
   },

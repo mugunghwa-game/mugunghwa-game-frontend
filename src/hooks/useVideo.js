@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 
+import { SOCKET } from "../constants/constants";
 import { socket, socketApi } from "../utils/socket";
 
 export default function useVideo() {
@@ -30,7 +31,7 @@ export default function useVideo() {
 
         socketApi.enterGameRoom(true);
 
-        socket.on("all-info", (payload) => {
+        socket.on(SOCKET.USER, (payload) => {
           setItUser(payload.it);
           setParticipantUser(payload.participant);
           setDifficulty(payload.difficulty);
@@ -46,7 +47,12 @@ export default function useVideo() {
             });
 
             peer.on("signal", (signal) => {
-              socketApi.sendSignalAnotherUser(user, socket.id, signal);
+              console.log(socket.id);
+              socketApi.sendSignalAnotherUser({
+                userToSignal: user,
+                callerID: socket.id,
+                signal,
+              });
             });
 
             peersRef.current.push({
@@ -58,7 +64,8 @@ export default function useVideo() {
           setPeers(peers);
         });
 
-        socket.on("user joined", (payload) => {
+        socket.on(SOCKET.USER_JOINED, (payload) => {
+          console.log("userJoined", payload);
           const peer = addPeer(payload.signal, payload.callerID, stream);
 
           peersRef.current.push({
@@ -69,7 +76,8 @@ export default function useVideo() {
           setPeers((users) => [...users, peer]);
         });
 
-        socket.on("receiving-returned-signal", (payload) => {
+        socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
+          console.log("receivings", payload);
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
@@ -78,9 +86,9 @@ export default function useVideo() {
     return () => {
       userVideo.current = null;
 
-      socket.off("all-info");
-      socket.off("user joined");
-      socket.off("receiving-returned-signal");
+      socket.off(SOCKET.USER);
+      socket.off(SOCKET.USER_JOINED);
+      socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
     };
   }, []);
 
@@ -93,7 +101,7 @@ export default function useVideo() {
 
     peer.on("signal", (signal) => {
       console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
-      socketApi.returningSignal(signal, callerID);
+      socketApi.returningSignal({ signal, callerID });
     });
 
     console.log("this is incomingSignal", incomingSignal);

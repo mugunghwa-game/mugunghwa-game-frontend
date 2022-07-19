@@ -22,6 +22,13 @@ function GameRoom() {
     participantList,
   } = useStore();
 
+  const [hasStop, setHasStop] = useState(false);
+  const [countDownStart, setCountDownStart] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [itCount, setItCount] = useState(5);
+  const [mode, setMode] = useState("prepare");
+  const userCanvas = useRef();
+
   const {
     userVideo,
     participantUser,
@@ -32,13 +39,6 @@ function GameRoom() {
     peersRef,
     setParticipantUser,
   } = useVideo();
-
-  const [hasStop, setHasStop] = useState(false);
-  const [countDownStart, setCountDownStart] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const [itCount, setItCount] = useState(5);
-  const [mode, setMode] = useState("prepare");
-  const userCanvas = useRef();
 
   const runPosenet = async () => {
     const net = await posenet.load({

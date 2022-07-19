@@ -22,16 +22,13 @@ function WaitingRoom() {
     participant,
     updatePerson,
   } = useStore();
-
   const hasIt = people.filter((item) => item.role === "it");
+
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
-  const [socketId, setSocketId] = useState(null);
   const [itCount, setItCount] = useState(hasIt.length);
-  const [participantCount, setParticipantCount] = useState(
-    participantList.length
-  );
+  const [participantCount, setParticipantCount] = useState(0);
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
   const [shouldDisplayProgressModal, setShouldDisplayProgressModal] =
     useState(false);
@@ -75,13 +72,13 @@ function WaitingRoom() {
     socketApi.joinRoom("gameRoom");
 
     socket.on(SOCKET.SOCKET_ID, (payload) => {
-      setSocketId(payload.id);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
       setShouldDisplayProgressModal(payload.isProgress);
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
+      console.log("payload", payload);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
     });
@@ -101,7 +98,7 @@ function WaitingRoom() {
       socket.off(SOCKET.UPDATE_USER);
     };
   }, [participant, people, itCount]);
-
+  console.log(participantCount, participantList.length);
   return (
     <DefaultPage>
       <Content>

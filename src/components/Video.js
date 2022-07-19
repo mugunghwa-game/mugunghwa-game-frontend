@@ -1,4 +1,3 @@
-import { fireEvent } from "@testing-library/react";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
@@ -16,8 +15,8 @@ export default function Video({
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
-  const anotherUserRef = useRef();
   const participantId = participantUser.map((person) => person.id);
+  const anotherUserRef = useRef();
 
   useEffect(() => {
     peer.on("stream", (stream) => {

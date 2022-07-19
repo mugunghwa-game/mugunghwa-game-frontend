@@ -29,13 +29,7 @@ export default function UserVideoRoom({
   return (
     <>
       <div>
-        <Webcam
-          // mirrored={true}
-          className="userVideo"
-          ref={userVideo}
-          autoPlay
-          playsInline
-        />
+        <Webcam className="userVideo" ref={userVideo} autoPlay playsInline />
         <canvas ref={userCanvas} className="userVideo" />
       </div>
       <div className="userRole">

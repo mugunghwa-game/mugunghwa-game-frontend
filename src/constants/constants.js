@@ -31,6 +31,7 @@ export const SOCKET = {
   START: "start",
   ENTER: "enter",
   USER: "all-info",
+  USER_JOINED: "user joined",
   IS_READY: "isReady",
   PREPARED_GAME: "prepared-game",
   PREPARED: "prepared",
