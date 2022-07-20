@@ -40,8 +40,6 @@ function GameRoom() {
     setParticipantUser,
   } = useVideo();
 
-  console.log(peers);
-
   const runPosenet = async () => {
     const net = await posenet.load({
       inputResolution: { width: 640, height: 480 },
@@ -50,7 +48,9 @@ function GameRoom() {
 
     if (mode === "game" && hasStop) {
       const temp = setInterval(() => {
-        detect(net);
+        if (socket.id !== itUser[0]) {
+          detect(net);
+        }
       }, 1000);
 
       setTimeout(() => {
