@@ -51,6 +51,7 @@ export const SOCKET = {
   IT_LOSER: "itLoser",
   IT_LOSER_GAME_END: "itLoser-gameEnd",
   INFO_INITIALIZATION: "infoInitialization",
+  USER_LEFT: "userLeft",
 };
 
 export const GAME = {

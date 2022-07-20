@@ -40,6 +40,8 @@ function GameRoom() {
     setParticipantUser,
   } = useVideo();
 
+  console.log(peers);
+
   const runPosenet = async () => {
     const net = await posenet.load({
       inputResolution: { width: 640, height: 480 },

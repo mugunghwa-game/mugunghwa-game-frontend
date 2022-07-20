@@ -14,7 +14,7 @@ export default function Video({
 }) {
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
-
+  console.log(peer);
   const participantId = participantUser.map((person) => person.id);
   const anotherUserRef = useRef();
 

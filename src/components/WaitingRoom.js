@@ -78,7 +78,6 @@ function WaitingRoom() {
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
-      console.log("payload", payload);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
     });

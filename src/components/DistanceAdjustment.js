@@ -24,15 +24,15 @@ export default function DistanceAdustment({ handleMode }) {
 
   console.log(preStartFirstParticipantPose, preStartSecondparticipantPose);
 
-  //   useEffect(() => {
-  //     if (singleModeUserPose.length !== 0) {
-  //       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
+  useEffect(() => {
+    if (singleModeUserPose.length !== 0) {
+      const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
 
-  //       if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
-  //         handleSingleMode(true);
-  //       }
-  //     }
-  //   }, [singleModeUserPose]);
+      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
+        handleSingleMode(true);
+      }
+    }
+  }, [singleModeUserPose]);
 
   useEffect(() => {
     if (participantList) {
