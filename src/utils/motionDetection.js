@@ -170,7 +170,7 @@ export function sholuderLengthinScreen(pose) {
   const result =
     ((leftResult.position.x - rightResult.position.x) * 100) /
     window.innerWidth;
-
+  console.log(result, "shoulder");
   return result;
 }
 

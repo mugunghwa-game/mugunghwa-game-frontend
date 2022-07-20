@@ -17,7 +17,6 @@ export default function UserVideoRoom({
   peersRef,
   participantList,
 }) {
-  console.log(peers);
   const { fistParticipantPreparation, secondParticipantPreparation } =
     useStore();
 

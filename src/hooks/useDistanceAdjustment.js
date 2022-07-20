@@ -45,7 +45,7 @@ export default function useDistanceAdjustment(gameMode, handleMode) {
         const isItChild = divisionChildAndAdult(
           preStartFirstParticipantPose[0]
         );
-
+        console.log(sholuderLength);
         if (
           0 < sholuderLength < 5 &&
           preStartFirstParticipantPose[0].score > 0.8

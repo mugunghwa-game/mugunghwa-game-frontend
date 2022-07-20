@@ -10,6 +10,7 @@ import DefaultPage from "./DefaultPage";
 
 function Ending() {
   const navigate = useNavigate();
+
   const { removeAll, winner } = useStore();
 
   useEffect(() => {

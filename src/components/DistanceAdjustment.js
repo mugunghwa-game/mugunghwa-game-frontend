@@ -3,12 +3,13 @@ import styled from "styled-components";
 
 import useDistanceAdjustment from "../hooks/useDistanceAdjustment";
 import useStore from "../store/store";
-import { socket, socketApi } from "../utils/socket";
+import { socket } from "../utils/socket";
 
 export default function DistanceAdustment({ handleMode, mode }) {
   const { it } = useStore();
 
   const { gameMode } = useDistanceAdjustment(mode, handleMode);
+
   return (
     <>
       <Description>

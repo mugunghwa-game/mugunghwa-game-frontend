@@ -17,11 +17,11 @@ function WaitingRoom() {
     addPerson,
     people,
     addParticipant,
-    participantList,
     addParticipantList,
     participant,
     updatePerson,
   } = useStore();
+
   const hasIt = people.filter((item) => item.role === "it");
 
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);

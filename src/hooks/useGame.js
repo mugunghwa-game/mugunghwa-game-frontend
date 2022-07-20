@@ -19,6 +19,8 @@ export default function useGame(
   countdownStart,
   handleCountDownStart
 ) {
+  const navigate = useNavigate();
+
   const [countDown, setCounDown] = useState(3);
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
@@ -86,7 +88,7 @@ export default function useGame(
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      if (payload.count === 6) {
+      if (payload.count === 5) {
         if (
           payload.participant.filter((person) => person.opportunity === 0)
             .length === 2
@@ -103,6 +105,7 @@ export default function useGame(
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
+      //참가자 둘 다 기회가 0일때
       addWinner("술래");
       navigate("/ending");
     });
@@ -112,7 +115,9 @@ export default function useGame(
       socket.off(SOCKET.GAME_END);
       socket.off(SOCKET.POSEDETECTION_START);
     };
-  }, [clickCount, hasStop, winner]);
+  }, [hasStop, winner]);
+
+  console.log(clickCount, "clickCount", itCount);
 
   useEffect(() => {
     let interval;
@@ -134,18 +139,13 @@ export default function useGame(
   }, [countdownStart]);
 
   useEffect(() => {
-    if (itCount === 0 && clickCount === 5) {
-      socket.on(SOCKET.USER_LOSER, (payload) => {
-        addWinner("술래");
-        navigate("/ending");
-      });
-    }
-
     if (isItLoser) {
+      //등때리기 버튼 눌렀을 때
       socketApi.itLoser(true);
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
+      //등때리기 버튼 눌렀을 때
       addWinner("참가자");
       navigate("/ending");
     });
@@ -154,7 +154,7 @@ export default function useGame(
       socket.off(SOCKET.IT_LOSER_GAME_END);
       socket.off(SOCKET.USER_LOSER);
     };
-  }, [clickCount, isItLoser]);
+  }, [clickCount, isItLoser, itCount]);
 
   return {
     hasTouchDownButton,

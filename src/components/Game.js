@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import styled from "styled-components";
 
-import { SOCKET } from "../constants/constants";
 import useGame from "../hooks/useGame";
 import useStore from "../store/store";
-import { moveDetection, visibleButton } from "../utils/motionDetection";
-import { socketApi } from "../utils/socket";
 import { socket } from "../utils/socket";
 import Button from "./Button";
 
@@ -22,18 +18,19 @@ function Game({
   countDownStart,
   handleCountDownStart,
 }) {
-  const { hasTouchDownButton, countdownStart, countDown } = useGame(
-    participantUser,
-    handleItCount,
-    handleParticipantUser,
-    handleStop,
-    clickCount,
-    itCount,
-    hasStop,
-    difficulty,
-    countDownStart,
-    handleCountDownStart
-  );
+  const { hasTouchDownButton, countdownStart, countDown, setIsItLoser } =
+    useGame(
+      participantUser,
+      handleItCount,
+      handleParticipantUser,
+      handleStop,
+      clickCount,
+      itCount,
+      hasStop,
+      difficulty,
+      countDownStart,
+      handleCountDownStart
+    );
 
   const { it } = useStore();
 
