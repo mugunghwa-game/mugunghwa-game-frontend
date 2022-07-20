@@ -14,7 +14,7 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
     } else if (5 < shoulderLength <= 26) {
       //중간정도일때
       console.log("5~26");
-      return compareAngle(firstResult, secondResult, 4);
+      return compareAngle(firstResult, secondResult, 5.6);
     } else if (shoulderLength <= 5) {
       //가장멀때
       console.log("5");
@@ -166,10 +166,11 @@ export function getAngle(y1, y2, x1, x2) {
 export function sholuderLengthinScreen(pose) {
   const leftResult = keyword(pose, "leftShoulder");
   const rightResult = keyword(pose, "rightShoulder");
+
   const result =
     ((leftResult.position.x - rightResult.position.x) * 100) /
     window.innerWidth;
-
+  console.log(result, "shoulder");
   return result;
 }
 

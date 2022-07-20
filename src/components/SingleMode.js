@@ -7,8 +7,9 @@ import styled from "styled-components";
 import useStore from "../store/store";
 import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
+import Button from "./Button";
 import DefaultPage from "./DefaultPage";
-import Event from "./Event";
+import DistanceAdustment from "./DistanceAdjustment";
 
 function SingleMode() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ function SingleMode() {
     navigate("/ending");
   }
 
+  const handleButton = () => {};
   const runPosenet = async () => {
     const net = await posenet.load({
       inputResolution: { width: 640, height: 480 },
@@ -50,6 +52,7 @@ function SingleMode() {
         clearInterval(temp), console.log("done");
       }, 20000);
     }
+
     if (isReadySingleMode && hasStop) {
       const temp = setInterval(() => {
         detect(net);
@@ -108,27 +111,39 @@ function SingleMode() {
 
   return (
     <DefaultPage>
-      <DescriptionContent
-        isSingleMode={isSingleMode}
-        isReadySingleMode={isReadySingleMode}
-      />
+      <Description>
+        {!isReadySingleMode && (
+          <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
+        )}
+        {isReadySingleMode && (
+          <div>
+            술래가 <span className="color">무궁화 꽃이 피었습니다</span>를
+            외치면
+            <span className="color"> 3초</span>간 동작을 멈춰야합니다
+          </div>
+        )}
+      </Description>
+
       <UserCamera>
+        <div className="stop">
+          <Button handleClick={handleButton}>멈춤</Button>
+        </div>
         <Webcam className="userVideo" autoPlay ref={userVideo} />
         <canvas className="userVideo" ref={userCanvas} />
       </UserCamera>
-      {!isReadySingleMode && (
-        <DistanceAdjustment handleSingleMode={setIsReadySingleMode} />
-      )}
-      {isReadySingleMode && (
-        <Event
-          touchDown={touchDown}
-          handleCountDownStart={setCountDownStart}
-          handleLoser={setIsItLoser}
-        />
-      )}
     </DefaultPage>
   );
 }
+
+const Description = styled.div`
+  margin-top: 2.5vh;
+  text-align: center;
+  font-size: 3.7vh;
+
+  .color {
+    color: #199816;
+  }
+`;
 
 const UserCamera = styled.div`
   .userVideo {
@@ -137,6 +152,13 @@ const UserCamera = styled.div`
     height: 500px;
     align-items: center;
     object-fit: fill;
+    margin-left: 3rem;
+    margin-top: 1rem;
+  }
+
+  .stop {
+    float: right;
+    margin-right: 3rem;
   }
 `;
 

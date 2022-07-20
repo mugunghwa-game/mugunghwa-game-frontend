@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import DefaultPage from "./DefaultPage";
 
-function GameMode() {
+export default function GameMode() {
   const navigate = useNavigate();
 
   const handleExitButton = () => {
@@ -12,7 +12,7 @@ function GameMode() {
   };
 
   const handleSingleModeButton = () => {
-    navigate("/singleGame");
+    navigate("/singleMode");
   };
 
   const handleMultiModeButton = () => {
@@ -80,5 +80,3 @@ const Mode = styled.div`
     }
   }
 `;
-
-export default GameMode;

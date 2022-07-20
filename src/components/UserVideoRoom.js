@@ -58,9 +58,9 @@ export default function UserVideoRoom({
       <div>
         {peers.map((peer, index) => (
           <Video
-            key={index}
+            key={peer.peerID}
             index={index}
-            peer={peer}
+            peer={peer.peer}
             peersRef={peersRef}
             participantList={participantList}
             itUser={itUser}

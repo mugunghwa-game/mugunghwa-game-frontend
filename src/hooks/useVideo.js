@@ -59,8 +59,13 @@ export default function useVideo() {
               peerID: user,
               peer,
             });
-            peers.push(peer);
+
+            peers.push({
+              peerID: user,
+              peer: peer,
+            });
           });
+
           setPeers(peers);
         });
 
@@ -68,18 +73,38 @@ export default function useVideo() {
           console.log("userJoined", payload);
           const peer = addPeer(payload.signal, payload.callerID, stream);
 
-          peersRef.current.push({
+          const peerObj = {
             peerID: payload.callerID,
-            peer,
-          });
+            peer: peer,
+          };
 
-          setPeers((users) => [...users, peer]);
+          peersRef.current.push(peerObj);
+
+          setPeers((users) => [...users, peerObj]);
         });
 
         socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
           console.log("receivings", payload);
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
+        });
+
+        socket.on(SOCKET.USER_LEFT, (payload) => {
+          const peerObj = peersRef.current.find(
+            (peer) => peer.peerID === payload
+          );
+
+          const peers = peersRef.current.filter(
+            (peer) => peer.peerID !== payload
+          );
+
+          peersRef.current = peers;
+
+          if (peerObj) {
+            peerObj.peer.destroy();
+          }
+
+          setPeers((peers) => peers.filter((peer) => peer.peerID !== payload));
         });
       });
 
@@ -89,6 +114,7 @@ export default function useVideo() {
       socket.off(SOCKET.USER);
       socket.off(SOCKET.USER_JOINED);
       socket.off(SOCKET.RECEIVING_RETURNED_SIGNAL);
+      socket.off(SOCKET.USER_LEFT);
     };
   }, []);
 

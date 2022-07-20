@@ -19,7 +19,6 @@ const useStore = create(
     fistParticipantPreparation: false,
     secondParticipantPreparation: false,
     count: 0,
-    vidoeNumber: 0,
 
     addCount: (item) =>
       set((state) => ({
@@ -138,7 +137,6 @@ const useStore = create(
         fistParticipantPreparation: false,
         secondParticipantPreparation: false,
         count: 0,
-        vidoeNumber: 0,
       })),
   }))
 );

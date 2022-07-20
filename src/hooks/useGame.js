@@ -9,17 +9,22 @@ import { socket } from "../utils/socket";
 
 export default function useGame(
   participantUser,
-  handleTouchDown,
   handleItCount,
   handleParticipantUser,
   handleStop,
   clickCount,
-  isItLoser,
   itCount,
   hasStop,
-  difficulty
+  difficulty,
+  countdownStart,
+  handleCountDownStart
 ) {
-  const count = 0;
+  const navigate = useNavigate();
+
+  const [countDown, setCounDown] = useState(3);
+  const [isItLoser, setIsItLoser] = useState(false);
+  const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
+
   const {
     firstParticipantPose,
     secondParticipantPose,
@@ -43,14 +48,16 @@ export default function useGame(
 
       const firstResult = visibleButton(firstParticipantPose[0]);
 
-      if (firstResult) {
-        handleTouchDown(true);
-      }
-      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
       if (firstParticipantMoved) {
         socketApi.userMoved(socket.id);
       }
+
+      if (firstResult) {
+        setHasTouchDownButton(true);
+      }
+      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
     }
+
     if (
       secondParticipantPose.length === 3 &&
       participantUser[1].id === socket.id
@@ -64,25 +71,24 @@ export default function useGame(
 
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
-      if (secondParticipantResult) {
-        handleTouchDown(true);
-      }
       if (secondParticipantMoved) {
         socketApi.userMoved(socket.id);
+      }
+
+      if (secondParticipantResult) {
+        setHasTouchDownButton(true);
       }
     }
   }, [firstParticipantPose, secondParticipantPose]);
 
   useEffect(() => {
     socket.on(SOCKET.POSEDETECTION_START, (payload) => {
-      if (payload) {
-        handleStop(true);
-        handleItCount((prev) => prev - 1);
-      }
+      handleStop(true);
+      handleItCount((prev) => prev - 1);
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      if (payload.count === 6) {
+      if (payload.count === 5) {
         if (
           payload.participant.filter((person) => person.opportunity === 0)
             .length === 2
@@ -99,10 +105,9 @@ export default function useGame(
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
-      if (payload) {
-        addWinner("술래");
-        navigate("/ending");
-      }
+      //참가자 둘 다 기회가 0일때
+      addWinner("술래");
+      navigate("/ending");
     });
 
     return () => {
@@ -110,34 +115,51 @@ export default function useGame(
       socket.off(SOCKET.GAME_END);
       socket.off(SOCKET.POSEDETECTION_START);
     };
-  }, [clickCount, hasStop, winner]);
+  }, [hasStop, winner]);
+
+  console.log(clickCount, "clickCount", itCount);
 
   useEffect(() => {
-    if (itCount === 0 && clickCount === 5) {
-      socket.on(SOCKET.USER_LOSER, (payload) => {
-        addWinner("술래");
-        navigate("/ending");
-      });
+    let interval;
+
+    if (countdownStart) {
+      if (countDown > 1) {
+        interval = setInterval(() => {
+          setCounDown((prev) => prev - 1);
+        }, 1000);
+      }
     }
 
+    setTimeout(() => {
+      clearInterval(interval);
+
+      setCounDown(3);
+      handleCountDownStart(false);
+    }, 3000);
+  }, [countdownStart]);
+
+  useEffect(() => {
     if (isItLoser) {
+      //등때리기 버튼 눌렀을 때
       socketApi.itLoser(true);
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
-      if (payload) {
-        addWinner("참가자");
-        navigate("/ending");
-      }
+      //등때리기 버튼 눌렀을 때
+      addWinner("참가자");
+      navigate("/ending");
     });
 
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
       socket.off(SOCKET.USER_LOSER);
     };
-  }, [clickCount, isItLoser]);
+  }, [clickCount, isItLoser, itCount]);
 
   return {
-    count,
+    hasTouchDownButton,
+    countdownStart,
+    countDown,
+    setIsItLoser,
   };
 }

@@ -17,11 +17,11 @@ function WaitingRoom() {
     addPerson,
     people,
     addParticipant,
-    participantList,
     addParticipantList,
     participant,
     updatePerson,
   } = useStore();
+
   const hasIt = people.filter((item) => item.role === "it");
 
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
@@ -78,7 +78,6 @@ function WaitingRoom() {
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
-      console.log("payload", payload);
       setItCount(payload.it);
       setParticipantCount(payload.participant);
     });

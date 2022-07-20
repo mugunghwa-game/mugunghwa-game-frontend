@@ -9,7 +9,7 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-export default function useeDistanceAdjustment(gameMode, handleMode) {
+export default function useDistanceAdjustment(gameMode, handleMode) {
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -45,7 +45,7 @@ export default function useeDistanceAdjustment(gameMode, handleMode) {
         const isItChild = divisionChildAndAdult(
           preStartFirstParticipantPose[0]
         );
-
+        console.log(sholuderLength);
         if (
           0 < sholuderLength < 5 &&
           preStartFirstParticipantPose[0].score > 0.8

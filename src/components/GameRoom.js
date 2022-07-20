@@ -21,7 +21,7 @@ function GameRoom() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
-
+  console.log(fistParticipantPreparation, secondParticipantPreparation);
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
   const [clickCount, setClickCount] = useState(0);
@@ -48,7 +48,9 @@ function GameRoom() {
 
     if (mode === "game" && hasStop) {
       const temp = setInterval(() => {
-        detect(net);
+        if (socket.id !== itUser[0]) {
+          detect(net);
+        }
       }, 1000);
 
       setTimeout(() => {
@@ -118,7 +120,7 @@ function GameRoom() {
   return (
     <DefaultPage>
       {!fistParticipantPreparation && !secondParticipantPreparation && (
-        <DistanceAdjustment handleMode={setMode} />
+        <DistanceAdjustment mode={mode} handleMode={setMode} />
       )}
       {fistParticipantPreparation && secondParticipantPreparation && (
         <Game
