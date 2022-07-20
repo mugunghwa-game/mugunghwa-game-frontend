@@ -120,7 +120,7 @@ function GameRoom() {
   return (
     <DefaultPage>
       {!fistParticipantPreparation && !secondParticipantPreparation && (
-        <DistanceAdjustment handleMode={setMode} />
+        <DistanceAdjustment handleMode={setMode} mode={mode} />
       )}
       {fistParticipantPreparation && secondParticipantPreparation && (
         <Game

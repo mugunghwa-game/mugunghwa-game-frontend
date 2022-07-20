@@ -9,7 +9,7 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-export default function useeDistanceAdjustment(gameMode, handleMode) {
+export default function useDistanceAdjustment(gameMode, handleMode) {
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,

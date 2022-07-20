@@ -1,100 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
-import { SOCKET } from "../constants/constants";
+import useDistanceAdjustment from "../hooks/useDistanceAdjustment";
 import useStore from "../store/store";
-import {
-  divisionChildAndAdult,
-  sholuderLengthinScreen,
-} from "../utils/motionDetection";
 import { socket, socketApi } from "../utils/socket";
 
-export default function DistanceAdustment({ handleMode }) {
-  const {
-    preStartFirstParticipantPose,
-    preStartSecondparticipantPose,
-    updateFirstParticipantPreparation,
-    updateSecondParticipantPreparation,
-    updateSecondChildParticipant,
-    updateFirstChildParticipant,
-    singleModeUserPose,
-    participantList,
-    it,
-  } = useStore();
+export default function DistanceAdustment({ handleMode, mode }) {
+  const { it } = useStore();
 
-  console.log(preStartFirstParticipantPose, preStartSecondparticipantPose);
-
-  useEffect(() => {
-    if (singleModeUserPose.length !== 0) {
-      const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
-
-      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
-        handleSingleMode(true);
-      }
-    }
-  }, [singleModeUserPose]);
-
-  useEffect(() => {
-    if (participantList) {
-      if (
-        preStartFirstParticipantPose.length !== 0 &&
-        participantList[0] === socket.id
-      ) {
-        const sholuderLength = sholuderLengthinScreen(
-          preStartFirstParticipantPose[0]
-        );
-        const isItChild = divisionChildAndAdult(
-          preStartFirstParticipantPose[0]
-        );
-
-        if (
-          0 < sholuderLength < 5 &&
-          preStartFirstParticipantPose[0].score > 0.8
-        ) {
-          console.log("heelllll here is one");
-          isItChild ? updateFirstChildParticipant() : null;
-          socketApi.isReady(true);
-        }
-      }
-
-      if (
-        preStartSecondparticipantPose.length !== 0 &&
-        participantList[1] === socket.id
-      ) {
-        const isItChild = divisionChildAndAdult(
-          preStartSecondparticipantPose[0]
-        );
-
-        if (
-          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
-          preStartSecondparticipantPose[0].score > 0.8
-        ) {
-          isItChild ? updateSecondChildParticipant() : null;
-          socketApi.isReady(true);
-        }
-      }
-    }
-
-    socket.on(SOCKET.PREPARED_GAME, (payload) => {
-      updateFirstParticipantPreparation();
-      updateSecondParticipantPreparation();
-
-      handleMode("game");
-    });
-
-    socket.on(SOCKET.PREPARED, (payload) => {
-      updateFirstParticipantPreparation();
-      updateSecondParticipantPreparation();
-
-      handleMode("game");
-    });
-
-    return () => {
-      socket.off(SOCKET.PREPARED_GAME);
-      socket.off(SOCKET.PREPARED);
-    };
-  }, [preStartFirstParticipantPose, preStartFirstParticipantPose]);
-
+  const { gameMode } = useDistanceAdjustment(mode, handleMode);
   return (
     <>
       <Description>
