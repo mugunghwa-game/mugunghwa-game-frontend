@@ -143,7 +143,7 @@ export default function useGame(
       navigate("/ending");
     });
 
-    socket.on("clickCount none", (payload) => {
+    socket.on(SOCKET.CLICK_COUNT_NONE, (payload) => {
       console.log(payload);
       payload.filter((person) => person.opportunity !== 0).length > 0
         ? addWinner("참가자")
@@ -155,7 +155,7 @@ export default function useGame(
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
       socket.off(SOCKET.USER_LOSER);
-      socket.off("clickCount nont");
+      socket.off(SOCKET.CLICK_COUNT_NONE);
     };
   }, [isItLoser]);
 

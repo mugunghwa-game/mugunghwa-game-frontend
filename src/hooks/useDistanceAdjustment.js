@@ -34,45 +34,41 @@ export default function useDistanceAdjustment(gameMode, handleMode) {
   }, [singleModeUserPose]);
 
   useEffect(() => {
-    if (participantList) {
+    // if (participantList) {
+    if (
+      preStartFirstParticipantPose.length !== 0 &&
+      participantList[0] === socket.id
+    ) {
+      const sholuderLength = sholuderLengthinScreen(
+        preStartFirstParticipantPose[0]
+      );
+      const isItChild = divisionChildAndAdult(preStartFirstParticipantPose[0]);
+      console.log(sholuderLength);
       if (
-        preStartFirstParticipantPose.length !== 0 &&
-        participantList[0] === socket.id
+        0 < sholuderLength < 5 &&
+        preStartFirstParticipantPose[0].score > 0.8
       ) {
-        const sholuderLength = sholuderLengthinScreen(
-          preStartFirstParticipantPose[0]
-        );
-        const isItChild = divisionChildAndAdult(
-          preStartFirstParticipantPose[0]
-        );
-        console.log(sholuderLength);
-        if (
-          0 < sholuderLength < 5 &&
-          preStartFirstParticipantPose[0].score > 0.8
-        ) {
-          console.log("heelllll here is one");
-          isItChild ? updateFirstChildParticipant() : null;
-          socketApi.isReady(true);
-        }
-      }
-
-      if (
-        preStartSecondparticipantPose.length !== 0 &&
-        participantList[1] === socket.id
-      ) {
-        const isItChild = divisionChildAndAdult(
-          preStartSecondparticipantPose[0]
-        );
-
-        if (
-          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
-          preStartSecondparticipantPose[0].score > 0.8
-        ) {
-          isItChild ? updateSecondChildParticipant() : null;
-          socketApi.isReady(true);
-        }
+        console.log("heelllll here is one");
+        isItChild ? updateFirstChildParticipant() : null;
+        socketApi.isReady(true);
       }
     }
+
+    if (
+      preStartSecondparticipantPose.length !== 0 &&
+      participantList[1] === socket.id
+    ) {
+      const isItChild = divisionChildAndAdult(preStartSecondparticipantPose[0]);
+
+      if (
+        0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
+        preStartSecondparticipantPose[0].score > 0.8
+      ) {
+        isItChild ? updateSecondChildParticipant() : null;
+        socketApi.isReady(true);
+      }
+    }
+    // }
 
     socket.on(SOCKET.PREPARED_GAME, (payload) => {
       if (payload) {

@@ -52,6 +52,7 @@ export const SOCKET = {
   IT_LOSER_GAME_END: "itLoser-gameEnd",
   INFO_INITIALIZATION: "infoInitialization",
   USER_LEFT: "userLeft",
+  CLICK_COUNT_NONE: "clickCount none",
 };
 
 export const GAME = {

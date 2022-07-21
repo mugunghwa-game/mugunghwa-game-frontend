@@ -125,6 +125,8 @@ export function helpDetection(pose) {
         secondPoint.position.x
       );
 
+      console.log(result, "shoulder");
+
       return result;
     }
   }
@@ -168,9 +170,9 @@ export function sholuderLengthinScreen(pose) {
   const rightResult = keyword(pose, "rightShoulder");
 
   const result =
-    ((leftResult.position.x - rightResult.position.x) * 100) /
+    (Math.abs(rightResult.position.x - leftResult.position.x) * 100) /
     window.innerWidth;
-  console.log(result, "shoulder");
+
   return result;
 }
 

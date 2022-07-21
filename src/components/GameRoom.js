@@ -21,7 +21,7 @@ function GameRoom() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
-  console.log(firstParticipantPreparation, secondParticipantPreparation);
+
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
   const [clickCount, setClickCount] = useState(0);
