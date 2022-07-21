@@ -9,7 +9,6 @@ export default function DistanceAdustment({ handleMode, mode }) {
   const { it } = useStore();
 
   const { gameMode } = useDistanceAdjustment(mode, handleMode);
-  console.log(window.innerWidth);
 
   return (
     <>
