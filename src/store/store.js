@@ -16,7 +16,7 @@ const useStore = create(
     secondParticipantPose: [],
     isChildFirstParticipant: false,
     isChildSecondParticipant: false,
-    fistParticipantPreparation: false,
+    firstParticipantPreparation: false,
     secondParticipantPreparation: false,
     count: 0,
 
@@ -111,7 +111,7 @@ const useStore = create(
       })),
     updateFirstParticipantPreparation: (item) =>
       set((state) => ({
-        fistParticipantPreparation: true,
+        firstParticipantPreparation: true,
       })),
     updateSecondParticipantPreparation: (item) =>
       set((state) => ({
@@ -120,6 +120,11 @@ const useStore = create(
     addWinner: (item) =>
       set((state) => ({
         winner: item,
+      })),
+    resetPreparation: () =>
+      set(() => ({
+        firstParticipantPreparation: false,
+        secondParticipantPreparation: false,
       })),
     removeAll: () =>
       set(() => ({
@@ -134,7 +139,7 @@ const useStore = create(
         preStartSecondparticipantPose: [],
         isChildFirstParticipant: false,
         isChildSecondParticipant: false,
-        fistParticipantPreparation: false,
+        firstParticipantPreparation: false,
         secondParticipantPreparation: false,
         count: 0,
       })),

@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import main from "../asset/main.gif";
+import useStore from "../store/store";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 
 function Main() {
   const navigate = useNavigate();
+
+  const {
+    resetPreparation,
+    firstParticipantPreparation,
+    secondParticipantPreparation,
+  } = useStore();
+
+  console.log(firstParticipantPreparation, secondParticipantPreparation);
+  useEffect(() => {
+    resetPreparation();
+  }, []);
 
   const handleGowaitingRoom = () => {
     navigate("/gameMode");

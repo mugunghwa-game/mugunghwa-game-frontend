@@ -36,8 +36,8 @@ export const socketApi = {
   motionStart: (state) => {
     socket.emit(SOCKET.MOTION_START, state);
   },
-  userMoved: (user) => {
-    socket.emit(SOCKET.MOVED, user);
+  userMoved: (user, state) => {
+    socket.emit(SOCKET.MOVED, { user, state });
   },
   countEnd: (state) => {
     socket.emit(SOCKET.COUNT_END, state);
