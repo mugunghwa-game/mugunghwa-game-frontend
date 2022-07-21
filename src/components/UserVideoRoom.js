@@ -17,7 +17,7 @@ export default function UserVideoRoom({
   peersRef,
   participantList,
 }) {
-  const { fistParticipantPreparation, secondParticipantPreparation } =
+  const { firstParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
   const handleStopButton = () => {
@@ -39,7 +39,7 @@ export default function UserVideoRoom({
         ) : (
           <span>참가자{socket.id}</span>
         )}
-        {fistParticipantPreparation && secondParticipantPreparation && (
+        {firstParticipantPreparation && secondParticipantPreparation && (
           <div className="userOpportunity">
             기회의 수
             {itUser && socket.id === itUser[0] && <span> {itCount}</span>}

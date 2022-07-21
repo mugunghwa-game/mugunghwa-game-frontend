@@ -17,11 +17,11 @@ function GameRoom() {
     addPreStartSecondparticipantPose,
     addFirstParticipantPose,
     addSecondParticipantPose,
-    fistParticipantPreparation,
+    firstParticipantPreparation,
     secondParticipantPreparation,
     participantList,
   } = useStore();
-  console.log(fistParticipantPreparation, secondParticipantPreparation);
+  console.log(firstParticipantPreparation, secondParticipantPreparation);
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
   const [clickCount, setClickCount] = useState(0);
@@ -119,10 +119,10 @@ function GameRoom() {
 
   return (
     <DefaultPage>
-      {!fistParticipantPreparation && !secondParticipantPreparation && (
+      {!firstParticipantPreparation && !secondParticipantPreparation && (
         <DistanceAdjustment mode={mode} handleMode={setMode} />
       )}
-      {fistParticipantPreparation && secondParticipantPreparation && (
+      {firstParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}
           handleParticipantUser={setParticipantUser}
@@ -184,7 +184,7 @@ const UserView = styled.div`
 
   .me {
     color: #f47676;
-    font-size: 30px;
+    font-size: 3vh;
   }
 
   .stop {

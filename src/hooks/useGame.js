@@ -21,7 +21,7 @@ export default function useGame(
 ) {
   const navigate = useNavigate();
 
-  const [countDown, setCounDown] = useState(3);
+  const [countDown, setCountDown] = useState(3);
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
 
@@ -49,7 +49,9 @@ export default function useGame(
       const firstResult = visibleButton(firstParticipantPose[0]);
 
       if (firstParticipantMoved) {
-        socketApi.userMoved(socket.id);
+        socketApi.userMoved(socket.id, true);
+      } else {
+        socketApi.userMoved(socket.id, false);
       }
 
       if (firstResult) {
@@ -72,7 +74,9 @@ export default function useGame(
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
       if (secondParticipantMoved) {
-        socketApi.userMoved(socket.id);
+        socketApi.userMoved(socket.id, true);
+      } else {
+        socketApi.userMoved(socket.id, false);
       }
 
       if (secondParticipantResult) {
@@ -88,18 +92,7 @@ export default function useGame(
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      if (payload.count === 5) {
-        if (
-          payload.participant.filter((person) => person.opportunity === 0)
-            .length === 2
-        ) {
-          addWinner("술래");
-        } else {
-          addWinner("참가자");
-        }
-        navigate("/ending");
-      }
-
+      console.log(payload);
       handleParticipantUser(payload.participant);
       handleStop(false);
     });
@@ -115,7 +108,7 @@ export default function useGame(
       socket.off(SOCKET.GAME_END);
       socket.off(SOCKET.POSEDETECTION_START);
     };
-  }, [hasStop, winner]);
+  }, [winner]);
 
   console.log(clickCount, "clickCount", itCount);
 
@@ -125,7 +118,7 @@ export default function useGame(
     if (countdownStart) {
       if (countDown > 1) {
         interval = setInterval(() => {
-          setCounDown((prev) => prev - 1);
+          setCountDown((prev) => prev - 1);
         }, 1000);
       }
     }
@@ -133,7 +126,7 @@ export default function useGame(
     setTimeout(() => {
       clearInterval(interval);
 
-      setCounDown(3);
+      setCountDown(3);
       handleCountDownStart(false);
     }, 3000);
   }, [countdownStart]);
@@ -150,11 +143,21 @@ export default function useGame(
       navigate("/ending");
     });
 
+    socket.on("clickCount none", (payload) => {
+      console.log(payload);
+      payload.filter((person) => person.opportunity !== 0).length > 0
+        ? addWinner("참가자")
+        : addWinner("술래");
+
+      navigate("/ending");
+    });
+
     return () => {
       socket.off(SOCKET.IT_LOSER_GAME_END);
       socket.off(SOCKET.USER_LOSER);
+      socket.off("clickCount nont");
     };
-  }, [clickCount, isItLoser, itCount]);
+  }, [isItLoser]);
 
   return {
     hasTouchDownButton,

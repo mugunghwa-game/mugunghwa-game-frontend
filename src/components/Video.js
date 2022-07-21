@@ -12,7 +12,7 @@ export default function Video({
   peer,
   itCount,
 }) {
-  const { fistParticipantPreparation, secondParticipantPreparation } =
+  const { firstParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
   const participantId = participantUser.map((person) => person.id);
@@ -26,7 +26,7 @@ export default function Video({
 
   return (
     <VideoContainer>
-      {fistParticipantPreparation && secondParticipantPreparation && (
+      {firstParticipantPreparation && secondParticipantPreparation && (
         <>
           {peersRef.current[index].peerID === itUser[0] && (
             <span className="role">
