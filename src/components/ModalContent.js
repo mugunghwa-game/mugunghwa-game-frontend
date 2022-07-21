@@ -24,7 +24,6 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
 
   const handleDifficulty = (event) => {
     socketApi.userCount(socket.id, "it", event.target.innerText);
-    console.log(participantList);
 
     participantList.includes(socket.id)
       ? deleteParticipantList(socket.id)

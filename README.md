@@ -10,6 +10,8 @@
 
 `#childFriendly` `#realTime` `#poseDetection`
 
+<br><br>
+
 ### 📦 CONTENTS
 
 ---
@@ -23,17 +25,23 @@
 - 💻 [Tech Stack](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
 - 📋 [Technical Log](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
 
+<br><br>
+
 ### 🔍 Preview
 
 ---
 
 [https://user-images.githubusercontent.com/83874298/180159851-1c7e9aa7-d3a7-45fb-ac65-602f26dc2e3f.mp4](https://user-images.githubusercontent.com/83874298/180159851-1c7e9aa7-d3a7-45fb-ac65-602f26dc2e3f.mp4)
 
+<br><br>
+
 ### 🖇 Link
 
 ---
 
 **Deploy** [https://mugunghwa.site](https://mugunghwa.site)
+
+<br><br>
 
 ### 🗓 Planning
 
@@ -45,6 +53,8 @@
 
 **7월 4일 ~ 7월 16일 :** 개발 진행, 배포, 테스트 작성
 
+<br><br>
+
 ### 💫  Motivation
 
 ---
@@ -54,6 +64,7 @@
 이제 그 친구들은 모두 이러저러한 사정으로 멀리 살게되었고 시간을 맞춰 만나는 것도 쉽지 않게 되었습니다. 그때의 친구들과 함께 만나지 않아도 함께 놀이를 할 수 있다면 얼마나 좋을까? 하는 생각에서 출발하게 되었습니다.
 
 이제는 아이들의 엄마가 된 친구들과 친구들의 아이들과 함께 할 수 있는 게임을 만들고 싶었고 이 생각이 이번프로젝트에 시작이었습니다.
+<br><br>
 
 ### 🔮 Feature
 
@@ -82,6 +93,7 @@ _술래가 멈춤버튼을 눌렀을 때 참가자가 움직일 경우 기회의
 _참가자가 카메라로부터 일정거리이상 다가오게 되면 ‘등때리기'버튼이 나타나며 이 버튼을 누를 경우 참가자가 승리하게 됩니다._
 
 [https://user-images.githubusercontent.com/83874298/180148565-f2190457-5f03-4e50-8056-bc609e266158.mov](https://user-images.githubusercontent.com/83874298/180162215-8682a417-ac68-4b77-a2a2-c5ca7c59e0e3.mov)
+<br><br>
 
 ### 💻 Tech Stack
 
@@ -115,6 +127,8 @@ _참가자가 카메라로부터 일정거리이상 다가오게 되면 ‘등�
 
 - Frontend : Netlify
 - Backend: AWS Elastic Beanstalk
+
+<br><br>
 
 ### 📋Technical Log
 
