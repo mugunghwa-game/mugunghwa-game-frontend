@@ -10,18 +10,13 @@ import DefaultPage from "./DefaultPage";
 function Main() {
   const navigate = useNavigate();
 
-  const {
-    resetPreparation,
-    firstParticipantPreparation,
-    secondParticipantPreparation,
-  } = useStore();
+  const { resetPreparation } = useStore();
 
-  console.log(firstParticipantPreparation, secondParticipantPreparation);
   useEffect(() => {
     resetPreparation();
   }, []);
 
-  const handleGowaitingRoom = () => {
+  const handleGoWaitingRoom = () => {
     navigate("/gameMode");
   };
 
@@ -39,7 +34,7 @@ function Main() {
         <img src={main} alt={main} />
       </Sentence>
       <WrapButton>
-        <Button handleClick={handleGowaitingRoom}>게임참여하기</Button>
+        <Button handleClick={handleGoWaitingRoom}>게임참여하기</Button>
       </WrapButton>
     </DefaultPage>
   );

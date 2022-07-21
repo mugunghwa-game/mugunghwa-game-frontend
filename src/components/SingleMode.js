@@ -9,7 +9,6 @@ import { moveDetection, visibleButton } from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
-import DistanceAdustment from "./DistanceAdjustment";
 
 function SingleMode() {
   const navigate = useNavigate();

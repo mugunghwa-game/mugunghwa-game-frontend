@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { createMemoryHistory } from "history";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -24,4 +26,18 @@ test("2. 처음으로 돌아가기 버튼은 활성화 되어있어야 한다.",
   );
 
   expect(getByText(/처음으로 돌아가기/i)).not.toBeDisabled();
+});
+
+test("3. 처음으로 돌아가기 버튼을 누르면 첫화면으로 돌아간다.", () => {
+  const history = createMemoryHistory();
+
+  render(
+    <MemoryRouter>
+      <Ending />
+    </MemoryRouter>
+  );
+
+  userEvent.click(screen.getByText(/처음으로 돌아가기/i));
+
+  expect(history.location.pathname).toEqual("/");
 });
