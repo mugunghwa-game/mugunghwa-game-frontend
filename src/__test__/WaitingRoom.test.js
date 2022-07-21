@@ -4,7 +4,7 @@ import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import SocketMock from "socket.io-mock";
 
-import WaitingRoom from "./WaitingRoom";
+import WaitingRoom from "../components/WaitingRoom";
 
 test("1. 게임 대기페이지에는 '나가기', '규칙알아보기'가 있으며, '술래, 참가자'가 있으며 '게임 참여하기'버튼이 존재한다.", () => {
   render(
