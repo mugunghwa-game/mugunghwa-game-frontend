@@ -62,7 +62,7 @@ function Game({
       <EventZone>
         {hasTouchDownButton && (
           <Button property="alram" handleClick={handleIt}>
-            술래 등 때리기
+            등 때리기
           </Button>
         )}
         {countdownStart && <div className="countDown">{countDown}</div>}
