@@ -161,12 +161,9 @@ export function sholuderLengthinScreen(pose) {
   return result;
 }
 
-export function visibleButton(video, mode) {
+export function visibleButton(video) {
   const shoulderLength = sholuderLengthinScreen(video);
 
-  if (mode === "single") {
-    shoulderLength;
-  }
   if (shoulderLength >= 8) {
     return true;
   }

@@ -19,18 +19,18 @@ test("1. 메인페이지에 '게임참여하기'버튼과, gif파일이 보여�
   expect(screen.getByText("꽃"));
 });
 
-// test("2. 메인페이지에 게임참여하기 버튼을 누르면 waitingRoom으로 이동한다.", async () => {
-//   const history = createMemoryHistory();
+test("2. 메인페이지에 게임참여하기 버튼을 누르면 waitingRoom으로 이동한다.", async () => {
+  const history = createMemoryHistory();
 
-//   const { getByText } = render(
-//     <MemoryRouter history={history}>
-//       <App />
-//     </MemoryRouter>
-//   );
+  const { getByText } = render(
+    <MemoryRouter history={history}>
+      <App />
+    </MemoryRouter>
+  );
 
-//   fireEvent.click(getByText(/게임참여하기/i));
+  fireEvent.click(getByText(/게임참여하기/i));
 
-//   expect(getByText("술래"));
-//   expect(getByText("참가자"));
-//   expect(getByText("게임시작"));
-// });
+  expect(getByText("술래"));
+  expect(getByText("참가자"));
+  expect(getByText("게임시작"));
+});
