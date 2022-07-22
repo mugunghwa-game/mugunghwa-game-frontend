@@ -41,6 +41,14 @@ function SingleMode() {
   const [isButtonClick, setIsButtonClick] = useState(true);
   const audio = new Audio(bgm);
 
+  useEffect(() => {
+    audio.play();
+
+    return () => {
+      audio.pause();
+    };
+  }, []);
+
   const handleButton = () => {
     if (isButtonClick) {
       setCountDownStart(true);
@@ -70,7 +78,7 @@ function SingleMode() {
     if (hasStop) {
       const temp = setInterval(() => {
         detect(net);
-      }, 990);
+      }, 1000);
 
       setTimeout(() => {
         clearInterval(temp), console.log("done");
@@ -92,9 +100,11 @@ function SingleMode() {
 
       if (pose !== null && userCanvas.current !== null) {
         drawCanvas(pose, video, video.width, video.height, userCanvas);
+
         if (gameMode === "prepare") {
           addSingleModeUserPose(pose);
         }
+
         if (gameMode === "game") {
           addSingleModeUserGamePose(pose);
         }
@@ -104,7 +114,6 @@ function SingleMode() {
 
   useEffect(() => {
     runPosenet();
-    audio.play();
   }, [hasStop]);
 
   useEffect(() => {
@@ -199,11 +208,6 @@ function SingleMode() {
           </div>
         )}
       </Description>
-      {isReadySingleMode && touchDown && (
-        <Button property="alram" handleClick={handleIt}>
-          술래 등때리기
-        </Button>
-      )}
       <CountDown>
         {countDownStart && <div className="countDown">{countDown}</div>}
       </CountDown>
@@ -214,6 +218,11 @@ function SingleMode() {
         </div>
         {isReadySingleMode && (
           <div className="stop">
+            {touchDown && (
+              <Button property="alram" handleClick={handleIt}>
+                술래 등 때리기
+              </Button>
+            )}
             <div className="participantCount">
               참가자 기회의 수 {participantCount}
             </div>
@@ -275,7 +284,7 @@ const UserCamera = styled.div`
   }
 
   .participantCount {
-    margin-bottom: 10vh;
+    margin-bottom: 5vh;
   }
 `;
 

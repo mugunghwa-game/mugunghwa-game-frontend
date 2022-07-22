@@ -25,11 +25,17 @@ const ButtonBody = styled.button`
   border-radius: 2vh;
   border-style: none;
   z-index: ${(props) => (props.property === "alram" ? "100" : null)};
-  position: ${(props) => (props.property === "alram" ? "absolute" : null)};
+  position: ${(props) =>
+    props.property === "alram" && props.children !== "술래 등 때리기"
+      ? "absolute"
+      : null};
   place-self: ${(props) => (props.property === "alram" ? "center" : null)};
-  margin-top: ${(props) => (props.property === "alram" ? "30vh" : null)};
+  margin-top: ${(props) =>
+    props.property === "alram" && props.children !== "술래 등 때리기"
+      ? "30vh"
+      : null};
   margin-left: ${(props) =>
-    props.property === "alram"
+    props.property === "alram" && props.children !== "술래 등 때리기"
       ? "50vh"
       : props.children === "멈춤"
       ? "5vh"
