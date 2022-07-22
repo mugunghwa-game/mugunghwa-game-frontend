@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import styled from "styled-components";
 
+import bgm from "../asset/bgm.mp3";
 import useStore from "../store/store";
 import {
   moveDetection,
@@ -29,7 +30,7 @@ function SingleMode() {
   const userVideo = useRef();
   const userCanvas = useRef();
   const [countDownStart, setCountDownStart] = useState(false);
-  const [countDown, setCountDown] = useState(3);
+  const [countDown, setCountDown] = useState(null);
   const [isReadySingleMode, setIsReadySingleMode] = useState(false);
   const [gameMode, setGameMode] = useState("prepare");
   const [touchDown, setTouchDown] = useState(false);
@@ -37,10 +38,17 @@ function SingleMode() {
   const [itCount, setItCount] = useState(5);
   const [participantCount, setParticipantCount] = useState(3);
   const [clickCount, setClickCount] = useState(0);
+  const [isButtonClick, setIsButtonClick] = useState(true);
+  const audio = new Audio(bgm);
 
   const handleButton = () => {
-    setHasStop(true);
-    setItCount((prev) => prev - 1);
+    if (isButtonClick) {
+      setCountDownStart(true);
+      setHasStop(true);
+      setItCount((prev) => prev - 1);
+      setIsButtonClick(false);
+      setCountDown(3);
+    }
   };
 
   const runPosenet = async () => {
@@ -62,13 +70,12 @@ function SingleMode() {
     if (hasStop) {
       const temp = setInterval(() => {
         detect(net);
-        setCountDownStart(true);
-      }, 1000);
+      }, 990);
 
       setTimeout(() => {
         clearInterval(temp), console.log("done");
         setHasStop(false);
-        setClickCount((prev) => prev + 1);
+        setIsButtonClick(true);
       }, 3000);
     }
   };
@@ -97,13 +104,14 @@ function SingleMode() {
 
   useEffect(() => {
     runPosenet();
+    audio.play();
   }, [hasStop]);
 
   useEffect(() => {
     if (singleModeUserPose.length !== 0) {
       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
 
-      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
+      if (0 < sholuderLength < 2.8 && singleModeUserPose[0].score > 0.8) {
         setIsReadySingleMode(true);
         setGameMode("game");
       }
@@ -118,7 +126,9 @@ function SingleMode() {
         difficulty
       );
 
-      const result = visibleButton(singleModeUserGamePoese[0], "single");
+      setClickCount((prev) => prev + 1);
+
+      const result = visibleButton(singleModeUserGamePoese[0]);
 
       if (result) {
         setTouchDown(true);
@@ -137,12 +147,13 @@ function SingleMode() {
     }
 
     if (clickCount === 5) {
-      if (participantCount === 0) {
-        addWinner("술래");
-      } else {
+      if (participantCount === 1) {
         addWinner("참가자");
+        navigate("/ending");
+      } else {
+        addWinner("술래");
+        navigate("/ending");
       }
-      navigate("/ending");
     }
   }, [itCount, participantCount, clickCount]);
 
@@ -155,20 +166,23 @@ function SingleMode() {
     let interval;
 
     if (countDownStart) {
-      if (countDown > 1) {
-        interval = setInterval(() => {
-          setCountDown((prev) => prev - 1);
-        }, 1000);
+      if (countDown === 0) {
+        setCountDown(null);
+        setCountDownStart(false);
       }
+      if (!countDown) {
+        return;
+      }
+
+      interval = setInterval(() => {
+        setCountDown((prev) => prev - 1);
+      }, 1000);
     }
 
-    setTimeout(() => {
+    return () => {
       clearInterval(interval);
-
-      setCountDown(3);
-      setCountDownStart(false);
-    }, 3000);
-  }, [countDownStart]);
+    };
+  }, [countDownStart, countDown]);
 
   return (
     <DefaultPage>
@@ -228,7 +242,7 @@ const CountDown = styled.div`
     position: absolute;
     font-size: 30vh;
     color: red;
-    margin-left: 60vh;
+    margin-left: 80vh;
   }
 `;
 

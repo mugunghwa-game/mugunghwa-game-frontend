@@ -83,11 +83,11 @@ const Description = styled.div`
 
 const EventZone = styled.div`
   .countDown {
-    z-index: 300;
     position: absolute;
     margin-left: 80vh;
-    font-size: 400px;
+    z-index: 300;
     color: red;
+    font-size: 400px;
   }
 `;
 

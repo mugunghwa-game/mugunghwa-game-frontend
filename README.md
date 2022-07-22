@@ -8,7 +8,7 @@
 
 무궁화 꽃이 피었습니다를 통해 지금 이 자리에서 친구들과 함께 그때 그 시절로 돌아갈 수 있습니다.
 
-`#childFriendly` `#realTime` `#poseDetection`
+`#realTime` ` #poseDetection``#childFriendly `
 
 <br>
 
