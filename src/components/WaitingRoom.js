@@ -45,8 +45,6 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    // socket.emit(SOCKET.READY, true);
-
     navigate("/countDown");
   };
 
@@ -87,10 +85,6 @@ function WaitingRoom() {
       setParticipantCount(payload.participant.length);
       setItCount(payload.it.length);
     });
-
-    // socket.on(SOCKET.START, (payload) => {
-    // payload ? navigate("/countDown") : null;
-    // });
 
     return () => {
       socket.off(SOCKET.SOCKET_ID);

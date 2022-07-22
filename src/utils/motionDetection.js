@@ -9,22 +9,22 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
 
   if (!isChild && difficult === "어려움") {
     if (shoulderLength > 23) {
-      return compareAngle(firstResult, secondResult, 0.3);
-    } else if (5 < shoulderLength <= 23) {
+      return compareAngle(firstResult, secondResult, 0.8);
+    } else if (3 < shoulderLength <= 23) {
       return compareAngle(firstResult, secondResult, 2.8);
-    } else if (shoulderLength <= 5) {
+    } else if (shoulderLength <= 3) {
       return compareAngle(firstResult, secondResult, 8);
     }
   }
   if (isChild || difficult === "쉬움")
-    if ((isChild && shoulderLength > 16) || shoulderLength > 23) {
-      return compareAngle(firstResult, secondResult, 0.4);
+    if ((isChild && shoulderLength > 16) || shoulderLength > 8) {
+      return compareAngle(firstResult, secondResult, 2);
     } else if (
-      (isChild && 3 < shoulderLength <= 16) ||
-      5 < shoulderLength <= 23
+      (isChild && 3 < shoulderLength <= 8) ||
+      3 < shoulderLength <= 8
     ) {
-      return compareAngle(firstResult, secondResult, 3.5);
-    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
+      return compareAngle(firstResult, secondResult, 5);
+    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 3) {
       return compareAngle(firstResult, secondResult, 10);
     }
 }
@@ -146,17 +146,9 @@ export function sholuderLengthinScreen(pose) {
   const leftResult = keyword(pose, "leftShoulder");
   const rightResult = keyword(pose, "rightShoulder");
 
-  let result;
-  if (window.innerWidth > 1440) {
-    result =
-      (Math.abs(rightResult.position.x - leftResult.position.x) * 100) /
-      window.innerWidth;
-    result = result * 4.0;
-  } else {
-    result =
-      (Math.abs(rightResult.position.x - leftResult.position.x) * 100) /
-      window.innerWidth;
-  }
+  const result =
+    (Math.abs(rightResult.position.x - leftResult.position.x) * 100) /
+    window.innerWidth;
 
   return result;
 }
@@ -164,7 +156,7 @@ export function sholuderLengthinScreen(pose) {
 export function visibleButton(video) {
   const shoulderLength = sholuderLengthinScreen(video);
 
-  if (shoulderLength >= 8) {
+  if (shoulderLength >= 6.5) {
     return true;
   }
 }

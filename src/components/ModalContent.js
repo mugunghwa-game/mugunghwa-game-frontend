@@ -1,4 +1,3 @@
-import { add } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import PropTypes from "prop-types";
 import React from "react";
 import { MdClose } from "react-icons/md";
