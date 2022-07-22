@@ -5,38 +5,44 @@ import Webcam from "react-webcam";
 import styled from "styled-components";
 
 import useStore from "../store/store";
-import { moveDetection, visibleButton } from "../utils/motionDetection";
+import {
+  moveDetection,
+  sholuderLengthinScreen,
+  visibleButton,
+} from "../utils/motionDetection";
 import { drawCanvas, videoReference } from "../utils/posenet";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
-import DistanceAdustment from "./DistanceAdjustment";
 
 function SingleMode() {
+  const {
+    addSingleModeUserPose,
+    singleModeUserPose,
+    addWinner,
+    difficulty,
+    singleModeUserGamePoese,
+    addSingleModeUserGamePose,
+  } = useStore();
+
   const navigate = useNavigate();
-  const { addSingleModeUserPose, singleModeUserPose, addWinner } = useStore();
+
   const userVideo = useRef();
   const userCanvas = useRef();
   const [countDownStart, setCountDownStart] = useState(false);
-  const [isSingleMode, setSingMode] = useState(true);
+  const [countDown, setCountDown] = useState(3);
   const [isReadySingleMode, setIsReadySingleMode] = useState(false);
-  const [userOpportunity, setUserOpportunity] = useState(3);
-  const [gameMode, setGameMode] = useState(false);
-  const difficulty = "쉬움";
+  const [gameMode, setGameMode] = useState("prepare");
   const [touchDown, setTouchDown] = useState(false);
-  const [isItLoser, setIsItLoser] = useState(false);
   const [hasStop, setHasStop] = useState(false);
+  const [itCount, setItCount] = useState(5);
+  const [participantCount, setParticipantCount] = useState(3);
+  const [clickCount, setClickCount] = useState(0);
 
-  if (isReadySingleMode) {
-    setGameMode(true);
-    setIsReadySingleMode(false);
-  }
+  const handleButton = () => {
+    setHasStop(true);
+    setItCount((prev) => prev - 1);
+  };
 
-  if (isItLoser) {
-    addWinner("참가자");
-    navigate("/ending");
-  }
-
-  const handleButton = () => {};
   const runPosenet = async () => {
     const net = await posenet.load({
       inputResolution: { width: 640, height: 480 },
@@ -53,14 +59,17 @@ function SingleMode() {
       }, 20000);
     }
 
-    if (isReadySingleMode && hasStop) {
+    if (hasStop) {
       const temp = setInterval(() => {
         detect(net);
+        setCountDownStart(true);
       }, 1000);
 
       setTimeout(() => {
         clearInterval(temp), console.log("done");
-      }, 20000);
+        setHasStop(false);
+        setClickCount((prev) => prev + 1);
+      }, 3000);
     }
   };
 
@@ -76,42 +85,95 @@ function SingleMode() {
 
       if (pose !== null && userCanvas.current !== null) {
         drawCanvas(pose, video, video.width, video.height, userCanvas);
-
-        addSingleModeUserPose(pose);
+        if (gameMode === "prepare") {
+          addSingleModeUserPose(pose);
+        }
+        if (gameMode === "game") {
+          addSingleModeUserGamePose(pose);
+        }
       }
     }
   };
 
   useEffect(() => {
     runPosenet();
-  }, []);
+  }, [hasStop]);
 
   useEffect(() => {
-    if (singleModeUserPose.length === 3 && hasStop) {
-      const moved = moveDetection(
-        singleModeUserPose[0],
-        singleModeUserPose[2],
-        difficulty
-      );
+    if (singleModeUserPose.length !== 0) {
+      const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
 
-      const result = visibleButton(singleModeUserPose[0]);
-
-      if (moved) {
-        setUserOpportunity((prev) => prev - 1);
-        if (userOpportunity === 0) {
-          addWinner("술래");
-          navigate("/ending");
-        }
-      }
-      if (result) {
-        setTouchDown(true);
+      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
+        setIsReadySingleMode(true);
+        setGameMode("game");
       }
     }
   }, [singleModeUserPose]);
 
+  useEffect(() => {
+    if (singleModeUserGamePoese.length === 3) {
+      const moved = moveDetection(
+        singleModeUserGamePoese[0],
+        singleModeUserGamePoese[2],
+        difficulty
+      );
+
+      const result = visibleButton(singleModeUserGamePoese[0], "single");
+
+      if (result) {
+        setTouchDown(true);
+      }
+
+      if (moved) {
+        setParticipantCount((prev) => prev - 1);
+      }
+    }
+  }, [singleModeUserGamePoese]);
+
+  useEffect(() => {
+    if (participantCount === 0 && itCount > 0) {
+      addWinner("술래");
+      navigate("/ending");
+    }
+
+    if (clickCount === 5) {
+      if (participantCount === 0) {
+        addWinner("술래");
+      } else {
+        addWinner("참가자");
+      }
+      navigate("/ending");
+    }
+  }, [itCount, participantCount, clickCount]);
+
+  const handleIt = () => {
+    addWinner("참가자");
+    navigate("/ending");
+  };
+
+  useEffect(() => {
+    let interval;
+
+    if (countDownStart) {
+      if (countDown > 1) {
+        interval = setInterval(() => {
+          setCountDown((prev) => prev - 1);
+        }, 1000);
+      }
+    }
+
+    setTimeout(() => {
+      clearInterval(interval);
+
+      setCountDown(3);
+      setCountDownStart(false);
+    }, 3000);
+  }, [countDownStart]);
+
   return (
     <DefaultPage>
       <Description>
+        <div>{difficulty} 모드</div>
         {!isReadySingleMode && (
           <span className="color">카메라 앞에서 10 발자국 뒤로 물러서세요</span>
         )}
@@ -123,13 +185,28 @@ function SingleMode() {
           </div>
         )}
       </Description>
-
+      {isReadySingleMode && touchDown && (
+        <Button property="alram" handleClick={handleIt}>
+          술래 등때리기
+        </Button>
+      )}
+      <CountDown>
+        {countDownStart && <div className="countDown">{countDown}</div>}
+      </CountDown>
       <UserCamera>
-        <div className="stop">
-          <Button handleClick={handleButton}>멈춤</Button>
+        <div className="video">
+          <Webcam className="userVideo" autoPlay ref={userVideo} />
+          <canvas className="userVideo" ref={userCanvas} />
         </div>
-        <Webcam className="userVideo" autoPlay ref={userVideo} />
-        <canvas className="userVideo" ref={userCanvas} />
+        {isReadySingleMode && (
+          <div className="stop">
+            <div className="participantCount">
+              참가자 기회의 수 {participantCount}
+            </div>
+            <Button handleClick={handleButton}>멈춤</Button>
+            <div className="itCount">술래 기회의 수 {itCount}</div>
+          </div>
+        )}
       </UserCamera>
     </DefaultPage>
   );
@@ -145,11 +222,27 @@ const Description = styled.div`
   }
 `;
 
+const CountDown = styled.div`
+  .countDown {
+    z-index: 300;
+    position: absolute;
+    font-size: 30vh;
+    color: red;
+    margin-left: 60vh;
+  }
+`;
+
 const UserCamera = styled.div`
+  display: grid;
+  grid-template-columns: 70vh 60vh;
+  grid-template-rows: 80vh 80vh;
+  justify-content: center;
+  margin-top: 2vh;
+
   .userVideo {
     position: absolute;
-    width: 500px;
-    height: 500px;
+    width: 50vh;
+    height: 65vh;
     align-items: center;
     object-fit: fill;
     margin-left: 3rem;
@@ -157,8 +250,18 @@ const UserCamera = styled.div`
   }
 
   .stop {
-    float: right;
-    margin-right: 3rem;
+    text-align: center;
+    align-self: center;
+  }
+
+  .itCount,
+  .participantCount {
+    font-size: 3vh;
+    margin-top: 3vh;
+  }
+
+  .participantCount {
+    margin-bottom: 10vh;
   }
 `;
 

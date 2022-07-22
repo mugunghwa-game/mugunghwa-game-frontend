@@ -1,10 +1,11 @@
+import { add } from "@tensorflow/tfjs-layers/dist/exports_layers";
 import PropTypes from "prop-types";
 import React from "react";
 import { MdClose } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
-import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
@@ -12,27 +13,33 @@ import Button from "./Button";
 function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   const {
     addIt,
+    addDifficulty,
     addPerson,
-    addParticipantList,
     deleteParticipantList,
     participantList,
   } = useStore();
+
+  const navigate = useNavigate();
 
   const handleClick = () => {
     handleModal(false);
   };
 
   const handleDifficulty = (event) => {
-    socketApi.userCount(socket.id, "it", event.target.innerText);
-    console.log(participantList);
+    if (modalText === "난이도를 골라주세요") {
+      addDifficulty(event.target.innerText);
+      navigate("/singleMode");
+    } else {
+      socketApi.userCount(socket.id, "it", event.target.innerText);
 
-    participantList.includes(socket.id)
-      ? deleteParticipantList(socket.id)
-      : null;
-    addIt(socket.id);
-    addPerson({ person: socket.id, role: "it" });
-    handleItCount((prev) => prev + 1);
-    handleModal(false);
+      participantList.includes(socket.id)
+        ? deleteParticipantList(socket.id)
+        : null;
+      addIt(socket.id);
+      addPerson({ person: socket.id, role: "it" });
+      handleItCount((prev) => prev + 1);
+      handleModal(false);
+    }
   };
 
   return (

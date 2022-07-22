@@ -13,6 +13,7 @@ import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
+
   const {
     addPerson,
     people,

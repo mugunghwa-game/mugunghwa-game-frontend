@@ -17,21 +17,8 @@ export default function useDistanceAdjustment(gameMode, handleMode) {
     updateSecondParticipantPreparation,
     updateSecondChildParticipant,
     updateFirstChildParticipant,
-    singleModeUserPose,
     participantList,
   } = useStore();
-
-  console.log(preStartFirstParticipantPose, preStartSecondparticipantPose);
-
-  useEffect(() => {
-    if (singleModeUserPose.length !== 0) {
-      const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
-
-      if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
-        handleSingleMode(true);
-      }
-    }
-  }, [singleModeUserPose]);
 
   useEffect(() => {
     if (

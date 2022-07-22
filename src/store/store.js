@@ -10,6 +10,7 @@ const useStore = create(
     difficulty: "",
     winner: "",
     singleModeUserPose: [],
+    singleModeUserGamePoese: [],
     preStartFirstParticipantPose: [],
     preStartSecondparticipantPose: [],
     firstParticipantPose: [],
@@ -72,6 +73,13 @@ const useStore = create(
           state.singleModeUserPose.length === 3
             ? [item]
             : [...state.singleModeUserPose, item],
+      })),
+    addSingleModeUserGamePose: (item) =>
+      set((state) => ({
+        singleModeUserGamePoese:
+          state.singleModeUserGamePoese.length === 3
+            ? [item]
+            : [...state.singleModeUserGamePoese, item],
       })),
     addPreStartFirstParticipantPose: (item) =>
       set((state) => ({
@@ -137,6 +145,8 @@ const useStore = create(
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],
         preStartSecondparticipantPose: [],
+        singleModeUserPose: [],
+        singleModeUserGamePoese: [],
         isChildFirstParticipant: false,
         isChildSecondParticipant: false,
         firstParticipantPreparation: false,

@@ -1,18 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+import { GAME } from "../constants/constants";
 import DefaultPage from "./DefaultPage";
+import Modal from "./Modal";
+import ModalContent from "./ModalContent";
 
 export default function GameMode() {
   const navigate = useNavigate();
+
+  const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
+    useState(false);
 
   const handleExitButton = () => {
     navigate("/");
   };
 
   const handleSingleModeButton = () => {
-    navigate("/singleMode");
+    setShouldDisplayDifficultyModal(true);
   };
 
   const handleMultiModeButton = () => {
@@ -21,6 +27,15 @@ export default function GameMode() {
 
   return (
     <DefaultPage>
+      {shouldDisplayDifficultyModal && (
+        <Modal property="difficulty">
+          <ModalContent
+            modalTitle={GAME.DIFFICULTY_CHOICE}
+            modalText="난이도를 골라주세요"
+            handleModal={setShouldDisplayDifficultyModal}
+          />
+        </Modal>
+      )}
       <Mode>
         <div className="exit" onClick={handleExitButton}>
           나가기
