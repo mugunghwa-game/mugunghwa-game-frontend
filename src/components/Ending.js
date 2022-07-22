@@ -17,6 +17,11 @@ function Ending() {
     socket.emit(SOCKET.INFO_INITIALIZATION, true);
 
     removeAll();
+
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => stream.getTracks().forEach((track) => track.stop()))
+      .catch((err) => console.log(err));
   }, []);
 
   const goHome = () => {
