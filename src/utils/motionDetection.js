@@ -6,41 +6,30 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
   const firstResult = helpDetection(firstPose);
   const secondResult = helpDetection(secondPose);
   const shoulderLength = sholuderLengthinScreen(firstPose);
-  console.log("first", firstResult, secondResult, shoulderLength);
+
   if (!isChild && difficult === "어려움") {
     if (shoulderLength > 23) {
-      console.log("23");
       return compareAngle(firstResult, secondResult, 0.3);
     } else if (5 < shoulderLength <= 23) {
-      console.log("5~23");
       return compareAngle(firstResult, secondResult, 2.8);
     } else if (shoulderLength <= 5) {
-      //가장멀때
-      console.log("5");
       return compareAngle(firstResult, secondResult, 8);
-      //각도 차 20일때 움직임이라고 체크하기
     }
   }
   if (isChild || difficult === "쉬움")
     if ((isChild && shoulderLength > 16) || shoulderLength > 23) {
-      console.log("26");
       return compareAngle(firstResult, secondResult, 0.4);
     } else if (
       (isChild && 3 < shoulderLength <= 16) ||
       5 < shoulderLength <= 23
     ) {
-      //중간정도일때
-      console.log("5~26");
       return compareAngle(firstResult, secondResult, 3.5);
     } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
-      //가장멀때
-      console.log("5");
       return compareAngle(firstResult, secondResult, 10);
     }
 }
 
 export function differenceAngle(first, second, distance) {
-  console.log(first, second, distance);
   if (first && second) {
     const difference = Math.abs(second - first);
 
@@ -71,7 +60,7 @@ export function compareAngle(firstPoint, secondPoint, degree) {
       secondPoint.rightleftEye,
       degree
     );
-    console.log(rightLeftEyeResult);
+
     const leftHipKneeResult = differenceAngle(
       firstPoint.leftHipKnee,
       firstPoint.leftHipKnee,
@@ -159,7 +148,6 @@ export function sholuderLengthinScreen(pose) {
 
   let result;
   if (window.innerWidth > 1440) {
-    console.log("here");
     result =
       (Math.abs(rightResult.position.x - leftResult.position.x) * 100) /
       window.innerWidth;

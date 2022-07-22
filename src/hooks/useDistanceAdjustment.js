@@ -20,8 +20,6 @@ export default function useDistanceAdjustment(gameMode, handleMode) {
     participantList,
   } = useStore();
 
-  console.log(preStartFirstParticipantPose, preStartSecondparticipantPose);
-
   useEffect(() => {
     if (
       preStartFirstParticipantPose.length !== 0 &&

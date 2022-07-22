@@ -47,7 +47,6 @@ export default function useVideo() {
             });
 
             peer.on("signal", (signal) => {
-              console.log(socket.id);
               socketApi.sendSignalAnotherUser({
                 userToSignal: user,
                 callerID: socket.id,
@@ -70,7 +69,6 @@ export default function useVideo() {
         });
 
         socket.on(SOCKET.USER_JOINED, (payload) => {
-          console.log("userJoined", payload);
           const peer = addPeer(payload.signal, payload.callerID, stream);
 
           const peerObj = {
@@ -84,7 +82,6 @@ export default function useVideo() {
         });
 
         socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
-          console.log("receivings", payload);
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
@@ -126,11 +123,9 @@ export default function useVideo() {
     });
 
     peer.on("signal", (signal) => {
-      console.log(signal, "누가 들어왓대", callerID, "<-얘가 왔대");
       socketApi.returningSignal({ signal, callerID });
     });
 
-    console.log("this is incomingSignal", incomingSignal);
     peer.signal(incomingSignal);
 
     return peer;

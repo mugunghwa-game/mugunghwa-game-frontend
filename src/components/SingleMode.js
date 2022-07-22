@@ -31,14 +31,12 @@ function SingleMode() {
   const [countDownStart, setCountDownStart] = useState(false);
   const [countDown, setCountDown] = useState(3);
   const [isReadySingleMode, setIsReadySingleMode] = useState(false);
-  const [gameMode, setGameMode] = useState("game");
+  const [gameMode, setGameMode] = useState("prepare");
   const [touchDown, setTouchDown] = useState(false);
   const [hasStop, setHasStop] = useState(false);
   const [itCount, setItCount] = useState(5);
   const [participantCount, setParticipantCount] = useState(3);
   const [clickCount, setClickCount] = useState(0);
-
-  console.log("difficulty", difficulty);
 
   const handleButton = () => {
     setHasStop(true);
@@ -75,8 +73,6 @@ function SingleMode() {
     }
   };
 
-  console.log(isReadySingleMode);
-
   const detect = async (net) => {
     if (
       typeof userVideo.current !== "undefined" &&
@@ -106,12 +102,7 @@ function SingleMode() {
   useEffect(() => {
     if (singleModeUserPose.length !== 0) {
       const sholuderLength = sholuderLengthinScreen(singleModeUserPose[0]);
-      console.log(
-        "어깨길이",
-        sholuderLength,
-        singleModeUserPose[0].score,
-        window.innerWidth
-      );
+
       if (0 < sholuderLength < 5 && singleModeUserPose[0].score > 0.8) {
         setIsReadySingleMode(true);
         setGameMode("game");
@@ -126,7 +117,7 @@ function SingleMode() {
         singleModeUserGamePoese[2],
         difficulty
       );
-      console.log(moved, "moved");
+
       const result = visibleButton(singleModeUserGamePoese[0], "single");
 
       if (result) {
@@ -141,13 +132,9 @@ function SingleMode() {
 
   useEffect(() => {
     if (participantCount === 0 && itCount > 0) {
-      //참가자의 count가 다 되었을 때
       addWinner("술래");
       navigate("/ending");
     }
-
-    //술래의 count가 다되었을 때, 참가자가 움직였는지 아닌지 확인해야함
-    //clickCount가 5개 되는 시점(술래의 기회가 0이 되고 움직임 감지가 끝나고난 뒤)
 
     if (clickCount === 5) {
       if (participantCount === 0) {
@@ -160,7 +147,6 @@ function SingleMode() {
   }, [itCount, participantCount, clickCount]);
 
   const handleIt = () => {
-    //등때리기버튼
     addWinner("참가자");
     navigate("/ending");
   };
@@ -199,7 +185,7 @@ function SingleMode() {
           </div>
         )}
       </Description>
-      {touchDown && (
+      {isReadySingleMode && touchDown && (
         <Button property="alram" handleClick={handleIt}>
           술래 등때리기
         </Button>

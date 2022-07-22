@@ -57,7 +57,6 @@ export default function useGame(
       if (firstResult) {
         setHasTouchDownButton(true);
       }
-      console.log("첫번째사람 움직임", firstParticipantMoved, difficulty);
     }
 
     if (
@@ -92,13 +91,11 @@ export default function useGame(
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
-      console.log(payload);
       handleParticipantUser(payload.participant);
       handleStop(false);
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
-      //참가자 둘 다 기회가 0일때
       addWinner("술래");
       navigate("/ending");
     });
@@ -109,8 +106,6 @@ export default function useGame(
       socket.off(SOCKET.POSEDETECTION_START);
     };
   }, [winner]);
-
-  console.log(clickCount, "clickCount", itCount);
 
   useEffect(() => {
     let interval;
@@ -133,18 +128,15 @@ export default function useGame(
 
   useEffect(() => {
     if (isItLoser) {
-      //등때리기 버튼 눌렀을 때
       socketApi.itLoser(true);
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {
-      //등때리기 버튼 눌렀을 때
       addWinner("참가자");
       navigate("/ending");
     });
 
     socket.on(SOCKET.CLICK_COUNT_NONE, (payload) => {
-      console.log(payload);
       payload.filter((person) => person.opportunity !== 0).length > 0
         ? addWinner("참가자")
         : addWinner("술래");
