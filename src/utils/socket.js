@@ -2,7 +2,7 @@ import io from "socket.io-client";
 
 import { SOCKET } from "../constants/constants";
 
-export const socket = io.connect("http://localhost:8080");
+export const socket = io.connect(process.env.REACT_APP_URL);
 
 export const socketApi = {
   userCount: (id, role, difficulty, roomId) => {

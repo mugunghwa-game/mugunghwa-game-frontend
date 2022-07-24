@@ -22,6 +22,7 @@ function GameRoom() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
+
   const { roomId } = useParams();
 
   const [hasStop, setHasStop] = useState(false);

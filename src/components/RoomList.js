@@ -67,7 +67,7 @@ export function RoomList() {
                   navigate(`/waitingRoom/${roomId}`);
                 }}
               >
-                {index}번방 {roomId} [
+                {index}번방 [
                 {`술래 ${roomInfo[roomId].it.length}/참가자${roomInfo[roomId].participant.length}`}
                 ]
               </p>
