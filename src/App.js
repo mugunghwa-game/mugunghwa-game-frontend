@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 
-import Countdown from "./components/Countdown";
 import Ending from "./components/Ending";
 import GameMode from "./components/GameMode";
 import GameRoom from "./components/GameRoom";
@@ -18,7 +17,6 @@ function App() {
       {/* <Route path="/singleMode" element={<SingleMode />} /> */}
       <Route path="/roomlist" element={<RoomList />} />
       <Route path="/waitingRoom/:roomId" element={<WaitingRoom />} />
-      {/* <Route path="/countdown" element={<Countdown />} /> */}
       <Route path="/game/:roomId" element={<GameRoom />} />
       <Route path="/ending" element={<Ending />} />
       <Route path="*" element={<NotFound />} />

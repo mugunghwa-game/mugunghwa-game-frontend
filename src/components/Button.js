@@ -17,7 +17,12 @@ function Button({ children, handleClick, property }) {
 const ButtonBody = styled.button`
   width: ${(props) =>
     props.property === "stop" || props.children === "멈춤" ? "30vh" : "55vh"};
-  height: ${(props) => (props.property === "alram" ? "20vh" : "14vh")};
+  height: ${(props) =>
+    props.property === "alram"
+      ? "20vh"
+      : props.children === "방 만들기"
+      ? "9vh"
+      : "14vh"};
   background-color: ${(props) =>
     props.property === "alram" ? "#f47676" : "#fbe6ce"};
   color: ${(props) => (props.property === "disabled" ? "#808080" : "#199816")};

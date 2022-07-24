@@ -6,10 +6,10 @@ import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
 import useStore from "../store/store";
-import { socket, socketApi } from "../utils/socket";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
+function ModalContent({ modalText, modalTitle, handleModal }) {
   const {
     addIt,
     addDifficulty,
@@ -20,6 +20,7 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
 
   const navigate = useNavigate();
   const { roomId } = useParams();
+
   const [hasIt, setHasIt] = useState(false);
 
   const handleClick = () => {
@@ -27,8 +28,6 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   };
 
   const handleRole = () => {
-    // const gameId = uuidv4();
-
     socket.emit("createGame", {
       roomId: socket.id,
       id: socket.id,
@@ -94,11 +93,11 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
         </>
       )}
       {modalTitle === "역할 설정하기" && (
-        <>
-          <Button handleClick={handleItRole}>술래</Button>
+        <RoleWarp>
+          <Role onClick={handleItRole}>술래</Role>
           {hasIt && (
             <>
-              <span className="buttonWarp">
+              <span className="buttonWarpper">
                 <span className="easy">
                   <Button handleClick={handleDifficulty}>쉬움</Button>
                 </span>
@@ -108,8 +107,8 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
               </span>
             </>
           )}
-          <Button handleClick={handleRole}>참가자</Button>
-        </>
+          <Role onClick={handleRole}>참가자</Role>
+        </RoleWarp>
       )}
     </Content>
   );
@@ -151,7 +150,31 @@ const Content = styled.div`
   .buttonWarp {
     display: flex;
     justify-content: space-around;
+    margin-left: 2vh;
+    margin-top: 10vh;
   }
+`;
+
+const RoleWarp = styled.div`
+  height: 50vh;
+
+  .buttonWarpper {
+    width: 105%;
+  }
+
+  .easy {
+    margin-right: 2vh;
+  }
+`;
+
+const Role = styled.div`
+  width: 100%;
+  height: 13vh;
+  text-align: center;
+  border-radius: 2vh;
+  margin-top: 80vh;
+  font-size: 4vh;
+  background-color: #fdf3ef;
 `;
 
 ModalContent.propTypes = {
