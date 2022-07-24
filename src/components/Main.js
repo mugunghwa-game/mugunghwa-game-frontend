@@ -17,7 +17,7 @@ function Main() {
   }, []);
 
   const handleGoWaitingRoom = () => {
-    navigate("/gameMode");
+    navigate("/roomList");
   };
 
   return (

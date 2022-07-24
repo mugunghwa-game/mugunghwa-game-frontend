@@ -1,15 +1,15 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
 import useStore from "../store/store";
-import { socket, socketApi } from "../utils/socket";
+import { socket } from "../utils/socket";
 import Button from "./Button";
 
-function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
+function ModalContent({ modalText, modalTitle, handleModal }) {
   const {
     addIt,
     addDifficulty,
@@ -19,24 +19,52 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   } = useStore();
 
   const navigate = useNavigate();
+  const { roomId } = useParams();
+
+  const [hasIt, setHasIt] = useState(false);
 
   const handleClick = () => {
     handleModal(false);
   };
 
-  const handleDifficulty = (event) => {
-    if (modalText === "난이도를 골라주세요") {
-      addDifficulty(event.target.innerText);
-      navigate("/singleMode");
-    } else {
-      socketApi.userCount(socket.id, "it", event.target.innerText);
+  const handleRole = () => {
+    socket.emit("createGame", {
+      roomId: socket.id,
+      id: socket.id,
+      role: "participant",
+    });
 
-      participantList.includes(socket.id)
-        ? deleteParticipantList(socket.id)
-        : null;
-      addIt(socket.id);
-      addPerson({ person: socket.id, role: "it" });
-      handleItCount((prev) => prev + 1);
+    navigate(`/waitingRoom/${socket.id}`);
+  };
+
+  const handleItRole = () => {
+    setHasIt(true);
+  };
+
+  const handleDifficulty = (event) => {
+    participantList.includes(socket.id)
+      ? deleteParticipantList(socket.id)
+      : null;
+    addIt(socket.id);
+    addPerson({ person: socket.id, role: "it" });
+    addDifficulty(event.target.innerText);
+
+    if (modalTitle === "역할 설정하기") {
+      socket.emit("createGame", {
+        roomId: socket.id,
+        id: socket.id,
+        role: "it",
+        difficulty: event.target.innerText,
+      });
+
+      navigate(`/waitingRoom/${socket.id}`);
+    } else {
+      socket.emit("user-count", {
+        id: socket.id,
+        role: "it",
+        difficulty: event.target.innerText,
+        roomId: roomId,
+      });
       handleModal(false);
     }
   };
@@ -54,7 +82,6 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
       <h2 className="description"> {modalText}</h2>
       {modalTitle === "난이도 선택" && (
         <>
-          <div className="none" />
           <span className="buttonWarp">
             <span className="easy">
               <Button handleClick={handleDifficulty}>쉬움</Button>
@@ -64,6 +91,24 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
             </span>
           </span>
         </>
+      )}
+      {modalTitle === "역할 설정하기" && (
+        <RoleWarp>
+          <Role onClick={handleItRole}>술래</Role>
+          {hasIt && (
+            <>
+              <span className="buttonWarpper">
+                <span className="easy">
+                  <Button handleClick={handleDifficulty}>쉬움</Button>
+                </span>
+                <span className="difficult">
+                  <Button handleClick={handleDifficulty}>어려움</Button>
+                </span>
+              </span>
+            </>
+          )}
+          <Role onClick={handleRole}>참가자</Role>
+        </RoleWarp>
       )}
     </Content>
   );
@@ -105,7 +150,31 @@ const Content = styled.div`
   .buttonWarp {
     display: flex;
     justify-content: space-around;
+    margin-left: 2vh;
+    margin-top: 10vh;
   }
+`;
+
+const RoleWarp = styled.div`
+  height: 50vh;
+
+  .buttonWarpper {
+    width: 105%;
+  }
+
+  .easy {
+    margin-right: 2vh;
+  }
+`;
+
+const Role = styled.div`
+  width: 100%;
+  height: 13vh;
+  text-align: center;
+  border-radius: 2vh;
+  margin-top: 80vh;
+  font-size: 4vh;
+  background-color: #fdf3ef;
 `;
 
 ModalContent.propTypes = {

@@ -9,7 +9,7 @@ import flower4 from "../asset/flower4.png";
 import flower5 from "../asset/flower5.png";
 import DefaultPage from "./DefaultPage";
 
-function Countdown() {
+function Countdown({ roomId }) {
   const navigate = useNavigate();
 
   const [flower, setFlower] = useState([]);
@@ -24,7 +24,7 @@ function Countdown() {
       )
     );
 
-    setTimeout(() => navigate("/game"), 5500);
+    setTimeout(() => navigate(`/game/${roomId}`), 5500);
   }, []);
 
   return (

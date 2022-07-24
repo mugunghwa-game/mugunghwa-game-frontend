@@ -11,9 +11,6 @@ function Game({
   handleItCount,
   handleParticipantUser,
   handleStop,
-  clickCount,
-  itCount,
-  hasStop,
   difficulty,
   countDownStart,
   handleCountDownStart,
@@ -24,9 +21,6 @@ function Game({
       handleItCount,
       handleParticipantUser,
       handleStop,
-      clickCount,
-      itCount,
-      hasStop,
       difficulty,
       countDownStart,
       handleCountDownStart
@@ -37,6 +31,7 @@ function Game({
   const handleIt = () => {
     setIsItLoser(true);
   };
+
   return (
     <>
       <Description>

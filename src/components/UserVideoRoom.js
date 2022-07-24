@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { useParams } from "react-router-dom";
 import Webcam from "react-webcam";
 
 import useStore from "../store/store";
@@ -20,9 +21,11 @@ export default function UserVideoRoom({
   const { firstParticipantPreparation, secondParticipantPreparation } =
     useStore();
 
+  const { roomId } = useParams();
+
   const handleStopButton = () => {
     if (itCount > 0) {
-      socketApi.motionStart(true);
+      socketApi.motionStart(true, roomId);
     }
   };
 

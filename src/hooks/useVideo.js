@@ -4,7 +4,7 @@ import Peer from "simple-peer";
 import { SOCKET } from "../constants/constants";
 import { socket, socketApi } from "../utils/socket";
 
-export default function useVideo() {
+export default function useVideo(roomId) {
   const [peers, setPeers] = useState([]);
   const userVideo = useRef();
   const peersRef = useRef([]);
@@ -29,9 +29,10 @@ export default function useVideo() {
           userVideo.current.srcObject = stream;
         }
 
-        socketApi.enterGameRoom(true);
+        socketApi.enterGameRoom(true, roomId);
 
         socket.on(SOCKET.USER, (payload) => {
+          console.log(payload);
           setItUser(payload.it);
           setParticipantUser(payload.participant);
           setDifficulty(payload.difficulty);
