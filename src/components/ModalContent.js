@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
@@ -19,24 +19,53 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
   } = useStore();
 
   const navigate = useNavigate();
+  const { roomId } = useParams();
+  const [hasIt, setHasIt] = useState(false);
 
   const handleClick = () => {
     handleModal(false);
   };
 
-  const handleDifficulty = (event) => {
-    if (modalText === "난이도를 골라주세요") {
-      addDifficulty(event.target.innerText);
-      navigate("/singleMode");
-    } else {
-      socketApi.userCount(socket.id, "it", event.target.innerText);
+  const handleRole = () => {
+    // const gameId = uuidv4();
 
-      participantList.includes(socket.id)
-        ? deleteParticipantList(socket.id)
-        : null;
-      addIt(socket.id);
-      addPerson({ person: socket.id, role: "it" });
-      handleItCount((prev) => prev + 1);
+    socket.emit("createGame", {
+      roomId: socket.id,
+      id: socket.id,
+      role: "participant",
+    });
+
+    navigate(`/waitingRoom/${socket.id}`);
+  };
+
+  const handleItRole = () => {
+    setHasIt(true);
+  };
+
+  const handleDifficulty = (event) => {
+    participantList.includes(socket.id)
+      ? deleteParticipantList(socket.id)
+      : null;
+    addIt(socket.id);
+    addPerson({ person: socket.id, role: "it" });
+    addDifficulty(event.target.innerText);
+
+    if (modalTitle === "역할 설정하기") {
+      socket.emit("createGame", {
+        roomId: socket.id,
+        id: socket.id,
+        role: "it",
+        difficulty: event.target.innerText,
+      });
+
+      navigate(`/waitingRoom/${socket.id}`);
+    } else {
+      socket.emit("user-count", {
+        id: socket.id,
+        role: "it",
+        difficulty: event.target.innerText,
+        roomId: roomId,
+      });
       handleModal(false);
     }
   };
@@ -54,7 +83,6 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
       <h2 className="description"> {modalText}</h2>
       {modalTitle === "난이도 선택" && (
         <>
-          <div className="none" />
           <span className="buttonWarp">
             <span className="easy">
               <Button handleClick={handleDifficulty}>쉬움</Button>
@@ -63,6 +91,24 @@ function ModalContent({ modalText, modalTitle, handleModal, handleItCount }) {
               <Button handleClick={handleDifficulty}>어려움</Button>
             </span>
           </span>
+        </>
+      )}
+      {modalTitle === "역할 설정하기" && (
+        <>
+          <Button handleClick={handleItRole}>술래</Button>
+          {hasIt && (
+            <>
+              <span className="buttonWarp">
+                <span className="easy">
+                  <Button handleClick={handleDifficulty}>쉬움</Button>
+                </span>
+                <span className="difficult">
+                  <Button handleClick={handleDifficulty}>어려움</Button>
+                </span>
+              </span>
+            </>
+          )}
+          <Button handleClick={handleRole}>참가자</Button>
         </>
       )}
     </Content>

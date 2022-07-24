@@ -5,10 +5,14 @@ import useDistanceAdjustment from "../hooks/useDistanceAdjustment";
 import useStore from "../store/store";
 import { socket } from "../utils/socket";
 
-export default function DistanceAdjustment({ handleMode, mode }) {
+export default function DistanceAdjustment({
+  handleMode,
+  mode,
+  participantUser,
+}) {
   const { it } = useStore();
 
-  const { gameMode } = useDistanceAdjustment(mode, handleMode);
+  const { gameMode } = useDistanceAdjustment(mode, handleMode, participantUser);
 
   return (
     <>

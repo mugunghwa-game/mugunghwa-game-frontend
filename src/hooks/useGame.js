@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
@@ -12,14 +12,12 @@ export default function useGame(
   handleItCount,
   handleParticipantUser,
   handleStop,
-  clickCount,
-  itCount,
-  hasStop,
   difficulty,
   countdownStart,
   handleCountDownStart
 ) {
   const navigate = useNavigate();
+  const { roomId } = useParams();
 
   const [countDown, setCountDown] = useState(3);
   const [isItLoser, setIsItLoser] = useState(false);
@@ -49,9 +47,9 @@ export default function useGame(
       const firstResult = visibleButton(firstParticipantPose[0]);
 
       if (firstParticipantMoved) {
-        socketApi.userMoved(socket.id, true);
+        socketApi.userMoved(socket.id, true, roomId);
       } else {
-        socketApi.userMoved(socket.id, false);
+        socketApi.userMoved(socket.id, false, roomId);
       }
 
       if (firstResult) {
@@ -73,9 +71,9 @@ export default function useGame(
       const secondParticipantResult = visibleButton(secondParticipantPose[0]);
 
       if (secondParticipantMoved) {
-        socketApi.userMoved(socket.id, true);
+        socketApi.userMoved(socket.id, true, roomId);
       } else {
-        socketApi.userMoved(socket.id, false);
+        socketApi.userMoved(socket.id, false, roomId);
       }
 
       if (secondParticipantResult) {
@@ -128,7 +126,7 @@ export default function useGame(
 
   useEffect(() => {
     if (isItLoser) {
-      socketApi.itLoser(true);
+      socketApi.itLoser(true, roomId);
     }
 
     socket.on(SOCKET.IT_LOSER_GAME_END, (payload) => {

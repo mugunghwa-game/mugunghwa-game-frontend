@@ -1,5 +1,6 @@
 import * as posenet from "@tensorflow-models/posenet";
 import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import useVideo from "../hooks/useVideo";
@@ -21,6 +22,7 @@ function GameRoom() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
+  const { roomId } = useParams();
 
   const [hasStop, setHasStop] = useState(false);
   const [countDownStart, setCountDownStart] = useState(false);
@@ -38,7 +40,7 @@ function GameRoom() {
     peers,
     peersRef,
     setParticipantUser,
-  } = useVideo();
+  } = useVideo(roomId);
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -77,6 +79,7 @@ function GameRoom() {
     ) {
       runPosenet();
     }
+
     if (mode === "game" && hasStop) {
       runPosenet();
 
@@ -101,7 +104,9 @@ function GameRoom() {
         if (mode === "prepare") {
           if (participantUser[0].id === socket.id) {
             addPreStartFirstParticipantPose(pose);
-          } else {
+          }
+
+          if (participantUser[1].id === socket.id) {
             addPreStartSecondparticipantPose(pose);
           }
         }
@@ -119,9 +124,16 @@ function GameRoom() {
 
   return (
     <DefaultPage>
-      {!firstParticipantPreparation && !secondParticipantPreparation && (
-        <DistanceAdjustment mode={mode} handleMode={setMode} />
-      )}
+      {!firstParticipantPreparation &&
+        !secondParticipantPreparation &&
+        participantUser && (
+          <DistanceAdjustment
+            mode={mode}
+            handleMode={setMode}
+            roomId={roomId}
+            participantUser={participantUser}
+          />
+        )}
       {firstParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}
@@ -148,6 +160,7 @@ function GameRoom() {
               peers={peers}
               peersRef={peersRef}
               participantList={participantList}
+              roomId={roomId}
             />
           )}
         </UserCamera>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { GAME, RULE_DESCRIPTION } from "../constants/constants";
@@ -7,12 +7,14 @@ import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
+import Countdown from "./Countdown";
 import DefaultPage from "./DefaultPage";
 import Modal from "./Modal";
 import ModalContent from "./ModalContent";
 
 function WaitingRoom() {
   const navigate = useNavigate();
+  const { roomId } = useParams();
 
   const {
     addPerson,
@@ -21,18 +23,18 @@ function WaitingRoom() {
     addParticipantList,
     participant,
     updatePerson,
+    it,
   } = useStore();
-
-  const hasIt = people.filter((item) => item.role === "it");
 
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
     useState(false);
-  const [itCount, setItCount] = useState(hasIt.length);
+  const [itCount, setItCount] = useState(it.length);
   const [participantCount, setParticipantCount] = useState(0);
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
   const [shouldDisplayProgressModal, setShouldDisplayProgressModal] =
     useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const handleRuleModal = () => {
     setShouldDisplayModal(true);
@@ -45,19 +47,20 @@ function WaitingRoom() {
   };
 
   const handleGame = () => {
-    navigate("/countDown");
+    setIsReady(true);
   };
 
   const handleExist = () => {
-    socketApi.leaveRoom(socket.id);
+    socketApi.leaveRoom(socket.id, roomId);
+
     updatePerson(socket.id);
 
-    navigate("/");
+    navigate("/roomList");
   };
 
   const handleRole = () => {
     if (participantCount < 2) {
-      socketApi.userCount(socket.id, "participant");
+      socketApi.userCount(socket.id, "participant", null, roomId);
 
       addPerson({ person: socket.id, role: "participant" });
       addParticipant(socket.id);
@@ -68,7 +71,7 @@ function WaitingRoom() {
   };
 
   useEffect(() => {
-    socketApi.joinRoom("gameRoom");
+    socketApi.joinRoom(roomId);
 
     socket.on(SOCKET.SOCKET_ID, (payload) => {
       setItCount(payload.it);
@@ -95,70 +98,77 @@ function WaitingRoom() {
 
   return (
     <DefaultPage>
-      <Content>
-        {shouldDisplayModal && (
-          <Modal>
-            <ModalContent
-              modalTitle={GAME.RULE}
-              modalText={RULE_DESCRIPTION}
-              handleModal={setShouldDisplayModal}
-            />
-          </Modal>
-        )}
-        {shouldDisplayDifficultyModal && hasIt && (
-          <Modal property="difficulty">
-            <ModalContent
-              handleItCount={setItCount}
-              modalTitle={GAME.DIFFICULTY_CHOICE}
-              modalText={GAME.DIFFICULTY_CHOICE_DESCRIPTION}
-              handleModal={setShouldDisplayDifficultyModal}
-            />
-          </Modal>
-        )}
-        {shouldDisplayInfoModal && (
-          <Modal property="info">
-            <ModalContent
-              handleModal={setShouldDisplayInfoModal}
-              modalTitle={GAME.INFO_MODAL_TITLE}
-              modalText={GAME.INFO_MODAL_TEXT}
-            />
-          </Modal>
-        )}
-        {shouldDisplayProgressModal && (
-          <Modal property="info">
-            <ModalContent
-              handleModal={setShouldDisplayProgressModal}
-              modalTitle={GAME.INFO_MODAL_TITLE}
-              modalText={GAME.GAME_PROGRESS}
-            />
-          </Modal>
-        )}
-        <div className="exit" onClick={handleExist}>
-          나가기
-        </div>
-        <div className="rule" onClick={handleRuleModal}>
-          규칙알아보기
-        </div>
-        <div className="participation">게임참여하기</div>
-        <div className="it">
-          <p className="choice" onClick={handleDifficultyChoice}>
-            술래 <span className="count">{itCount}/1명</span>
-          </p>
-        </div>
-        <div className="participant" onClick={handleRole}>
-          <p className="choice">
-            참가자 <span className="count">{participantCount}/2명</span>
-          </p>
-        </div>
-      </Content>
-      <ButtonWrap>
-        <Button
-          property={itCount !== 1 || participantCount !== 2 ? "disabled" : null}
-          handleClick={handleGame}
-        >
-          게임시작
-        </Button>
-      </ButtonWrap>
+      {!isReady && (
+        <>
+          <Content>
+            {shouldDisplayModal && (
+              <Modal>
+                <ModalContent
+                  modalTitle={GAME.RULE}
+                  modalText={RULE_DESCRIPTION}
+                  handleModal={setShouldDisplayModal}
+                />
+              </Modal>
+            )}
+            {shouldDisplayDifficultyModal && (
+              <Modal property="difficulty">
+                <ModalContent
+                  handleItCount={setItCount}
+                  modalTitle={GAME.DIFFICULTY_CHOICE}
+                  modalText={GAME.DIFFICULTY_CHOICE_DESCRIPTION}
+                  handleModal={setShouldDisplayDifficultyModal}
+                />
+              </Modal>
+            )}
+            {shouldDisplayInfoModal && (
+              <Modal property="info">
+                <ModalContent
+                  handleModal={setShouldDisplayInfoModal}
+                  modalTitle={GAME.INFO_MODAL_TITLE}
+                  modalText={GAME.INFO_MODAL_TEXT}
+                />
+              </Modal>
+            )}
+            {shouldDisplayProgressModal && (
+              <Modal property="info">
+                <ModalContent
+                  handleModal={setShouldDisplayProgressModal}
+                  modalTitle={GAME.INFO_MODAL_TITLE}
+                  modalText={GAME.GAME_PROGRESS}
+                />
+              </Modal>
+            )}
+            <div className="exit" onClick={handleExist}>
+              나가기
+            </div>
+            <div className="rule" onClick={handleRuleModal}>
+              규칙알아보기
+            </div>
+            <div className="participation">게임참여하기</div>
+            <div className="it">
+              <p className="choice" onClick={handleDifficultyChoice}>
+                술래 <span className="count">{itCount}/1명</span>
+              </p>
+            </div>
+            <div className="participant" onClick={handleRole}>
+              <p className="choice">
+                참가자 <span className="count">{participantCount}/2명</span>
+              </p>
+            </div>
+          </Content>
+          <ButtonWrap>
+            <Button
+              property={
+                itCount !== 1 || participantCount !== 2 ? "disabled" : null
+              }
+              handleClick={handleGame}
+            >
+              게임시작
+            </Button>
+          </ButtonWrap>
+        </>
+      )}
+      {isReady && <Countdown roomId={roomId} />}
     </DefaultPage>
   );
 }

@@ -37,6 +37,7 @@ function Game({
   const handleIt = () => {
     setIsItLoser(true);
   };
+
   return (
     <>
       <Description>
