@@ -32,8 +32,6 @@ function WaitingRoom() {
   const [itCount, setItCount] = useState(it.length);
   const [participantCount, setParticipantCount] = useState(0);
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
-  const [shouldDisplayProgressModal, setShouldDisplayProgressModal] =
-    useState(false);
   const [isReady, setIsReady] = useState(false);
 
   const handleRuleModal = () => {
@@ -76,7 +74,6 @@ function WaitingRoom() {
     socket.on(SOCKET.SOCKET_ID, (payload) => {
       setItCount(payload.it);
       setParticipantCount(payload.participant);
-      setShouldDisplayProgressModal(payload.isProgress);
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
@@ -123,18 +120,9 @@ function WaitingRoom() {
             {shouldDisplayInfoModal && (
               <Modal property="info">
                 <ModalContent
-                  handleModal={setShouldDisplayInfoModal}
                   modalTitle={GAME.INFO_MODAL_TITLE}
                   modalText={GAME.INFO_MODAL_TEXT}
-                />
-              </Modal>
-            )}
-            {shouldDisplayProgressModal && (
-              <Modal property="info">
-                <ModalContent
-                  handleModal={setShouldDisplayProgressModal}
-                  modalTitle={GAME.INFO_MODAL_TITLE}
-                  modalText={GAME.GAME_PROGRESS}
+                  handleModal={setShouldDisplayInfoModal}
                 />
               </Modal>
             )}
@@ -168,7 +156,7 @@ function WaitingRoom() {
           </ButtonWrap>
         </>
       )}
-      {isReady && <Countdown roomId={roomId} />}
+      {isReady && <Countdown />}
     </DefaultPage>
   );
 }

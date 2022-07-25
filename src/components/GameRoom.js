@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import bgm from "../asset/bgm.mp3";
 import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
@@ -13,6 +14,15 @@ import Game from "./Game";
 import UserVideoRoom from "./UserVideoRoom";
 
 function GameRoom() {
+  const { roomId } = useParams();
+
+  const [hasStop, setHasStop] = useState(false);
+  const [countDownStart, setCountDownStart] = useState(false);
+  const [itCount, setItCount] = useState(5);
+  const [mode, setMode] = useState("prepare");
+  const userCanvas = useRef();
+  const audio = new Audio(bgm);
+
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -22,15 +32,6 @@ function GameRoom() {
     secondParticipantPreparation,
     participantList,
   } = useStore();
-
-  const { roomId } = useParams();
-
-  const [hasStop, setHasStop] = useState(false);
-  const [countDownStart, setCountDownStart] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const [itCount, setItCount] = useState(5);
-  const [mode, setMode] = useState("prepare");
-  const userCanvas = useRef();
 
   const {
     userVideo,
@@ -42,6 +43,14 @@ function GameRoom() {
     peersRef,
     setParticipantUser,
   } = useVideo(roomId);
+
+  useEffect(() => {
+    audio.play();
+
+    return () => {
+      audio.pause();
+    };
+  }, []);
 
   const runPosenet = async () => {
     const net = await posenet.load({
@@ -57,9 +66,7 @@ function GameRoom() {
       }, 1000);
 
       setTimeout(() => {
-        setClickCount((prev) => prev + 1),
-          clearInterval(temp),
-          console.log("done");
+        clearInterval(temp), console.log("done");
       }, 3000);
     }
 
@@ -125,27 +132,22 @@ function GameRoom() {
 
   return (
     <DefaultPage>
-      {!firstParticipantPreparation &&
-        !secondParticipantPreparation &&
-        participantUser && (
-          <DistanceAdjustment
-            mode={mode}
-            handleMode={setMode}
-            roomId={roomId}
-            participantUser={participantUser}
-          />
-        )}
+      {!firstParticipantPreparation && !secondParticipantPreparation && (
+        <DistanceAdjustment
+          mode={mode}
+          handleMode={setMode}
+          participantUser={participantUser}
+        />
+      )}
       {firstParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}
           handleParticipantUser={setParticipantUser}
           countDownStart={countDownStart}
           handleCountDownStart={setCountDownStart}
-          itCount={itCount}
           handleItCount={setItCount}
           hasStop={hasStop}
           handleStop={setHasStop}
-          clickCount={clickCount}
           difficulty={difficulty}
         />
       )}
@@ -161,7 +163,6 @@ function GameRoom() {
               peers={peers}
               peersRef={peersRef}
               participantList={participantList}
-              roomId={roomId}
             />
           )}
         </UserCamera>
@@ -188,8 +189,8 @@ const UserView = styled.div`
     height: 20em;
     width: 20em;
     object-fit: fill;
-    background-color: aliceblue;
     justify-items: stretch;
+    background-color: aliceblue;
   }
 
   .it {
@@ -217,9 +218,9 @@ const UserCamera = styled.div`
 
   .userVideo {
     position: absolute;
-    margin-left: 5vh;
     width: 65vh;
     height: 45vh;
+    margin-left: 5vh;
     object-fit: fill;
   }
 

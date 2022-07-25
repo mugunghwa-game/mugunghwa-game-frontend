@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { socket } from "../utils/socket";
+import { SOCKET } from "../constants/constants";
+import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
 import Modal from "./Modal";
@@ -25,19 +26,19 @@ export function RoomList() {
   };
 
   useEffect(() => {
-    socket.emit("roomList", true);
+    socketApi.roomList("roomList", true);
 
-    socket.on("room-info", (payload) => {
+    socket.on(SOCKET.ROOM_INFO, (payload) => {
       setRoomInfo(payload.rooms);
     });
 
-    socket.on("new-room", (payload) => {
+    socket.on(SOCKET.NEW_ROOM, (payload) => {
       setRoomInfo(payload);
     });
 
     return () => {
-      socket.off("room-info");
-      socket.off("new-room");
+      socket.off(SOCKET.ROOM_INFO);
+      socket.off(SOCKET.NEW_ROOM);
     };
   }, []);
 
@@ -63,7 +64,7 @@ export function RoomList() {
             <div key={roomId} className="room">
               <p
                 onClick={() => {
-                  socket.emit("join-room", roomId);
+                  socketApi.joinRoom(roomId);
                   navigate(`/waitingRoom/${roomId}`);
                 }}
               >
@@ -100,23 +101,23 @@ const RoomInfo = styled.div`
 const List = styled.div`
   width: 80%;
   height: 70%;
-  background-color: #fdf3ef;
   margin: auto;
   margin-top: 2vh;
   overflow: auto;
   border-radius: 2vh;
+  background-color: #fdf3ef;
 
   .room {
     height: 6vh;
     text-align: center;
-    background-color: #faafaf;
     margin-top: 4vh;
     line-height: 5.3vh;
+    background-color: #faafaf;
     cursor: pointer;
   }
 `;
 
 const ButtonWrap = styled.div`
-  text-align: center;
   margin-top: 3vh;
+  text-align: center;
 `;

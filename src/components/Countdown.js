@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import flower1 from "../asset/flower1.png";
@@ -9,8 +9,9 @@ import flower4 from "../asset/flower4.png";
 import flower5 from "../asset/flower5.png";
 import DefaultPage from "./DefaultPage";
 
-function Countdown({ roomId }) {
+function Countdown() {
   const navigate = useNavigate();
+  const { roomId } = useParams();
 
   const [flower, setFlower] = useState([]);
   const flowers = [flower1, flower2, flower3, flower4, flower5];

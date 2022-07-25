@@ -15,6 +15,8 @@ export default function useDistanceAdjustment(
   handleMode,
   participantUser
 ) {
+  const { roomId } = useParams();
+
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -23,8 +25,6 @@ export default function useDistanceAdjustment(
     updateSecondChildParticipant,
     updateFirstChildParticipant,
   } = useStore();
-
-  const { roomId } = useParams();
 
   useEffect(() => {
     if (participantUser) {
@@ -40,8 +40,8 @@ export default function useDistanceAdjustment(
           preStartFirstParticipantPose[0]
         );
         if (
-          0 < sholuderLength < 5 &&
-          preStartFirstParticipantPose[0].score > 0.8
+          0 < sholuderLength < 20 &&
+          preStartFirstParticipantPose[0].score > 0.1
         ) {
           isItChild ? updateFirstChildParticipant() : null;
           socketApi.isReady(true, roomId);
@@ -57,8 +57,8 @@ export default function useDistanceAdjustment(
         );
 
         if (
-          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
-          preStartSecondparticipantPose[0].score > 0.8
+          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 20 &&
+          preStartSecondparticipantPose[0].score > 0.1
         ) {
           isItChild ? updateSecondChildParticipant() : null;
           socketApi.isReady(true, roomId);
