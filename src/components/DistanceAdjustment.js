@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
@@ -17,6 +18,7 @@ export default function DistanceAdjustment({
   return (
     <>
       <Description>
+        {gameMode === "prepare" && "준비모드"}
         {it[0] === socket.id ? (
           <>
             <span className="color">
@@ -40,3 +42,9 @@ const Description = styled.div`
     color: #199816;
   }
 `;
+
+DistanceAdjustment.propTypes = {
+  handleMode: PropTypes.func,
+  mode: PropTypes.string,
+  participantUser: PropTypes.array,
+};

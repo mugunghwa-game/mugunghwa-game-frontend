@@ -38,7 +38,6 @@ export const SOCKET = {
   USER_JOINED: "user joined",
   IS_READY: "isReady",
   PREPARED_GAME: "prepared-game",
-  PREPARED: "prepared",
   RECEIVING_RETURNED_SIGNAL: "receiving-returned-signal",
   RETURNING_SIGNAL: "returning signal",
   POSEDETECTION_START: "poseDetection-start",

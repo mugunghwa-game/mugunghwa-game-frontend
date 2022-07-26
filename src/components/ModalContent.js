@@ -105,7 +105,7 @@ const Role = styled.div`
 `;
 
 ModalContent.propTypes = {
-  modalText: PropTypes.string,
+  modalText: PropTypes.object,
   modalTitle: PropTypes.string,
   handleModal: PropTypes.func,
   handleItCount: PropTypes.func,

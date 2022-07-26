@@ -16,7 +16,6 @@ export default function UserVideoRoom({
   participantUser,
   peers,
   peersRef,
-  participantList,
 }) {
   const { roomId } = useParams();
 
@@ -65,7 +64,6 @@ export default function UserVideoRoom({
             index={index}
             peer={peer.peer}
             peersRef={peersRef}
-            participantList={participantList}
             itUser={itUser}
             itCount={itCount}
             participantUser={participantUser}
@@ -84,5 +82,4 @@ UserVideoRoom.propTypes = {
   participantUser: PropTypes.array,
   peers: PropTypes.array,
   peersRef: PropTypes.object,
-  participantList: PropTypes.array,
 };

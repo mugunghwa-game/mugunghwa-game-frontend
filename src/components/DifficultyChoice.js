@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -71,3 +72,8 @@ const Difficulty = styled.div`
       props.modalTitle === "역할 설정하기" ? "2vh" : null};
   }
 `;
+
+DifficultyChoice.propTypes = {
+  modalTitle: PropTypes.string,
+  handleModal: PropTypes.func,
+};

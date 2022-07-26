@@ -30,7 +30,6 @@ function GameRoom() {
     addSecondParticipantPose,
     firstParticipantPreparation,
     secondParticipantPreparation,
-    participantList,
   } = useStore();
 
   const {
@@ -59,23 +58,23 @@ function GameRoom() {
     });
 
     if (mode === "game" && hasStop) {
-      const temp = setInterval(() => {
+      const detection = setInterval(() => {
         if (socket.id !== itUser[0]) {
           detect(net);
         }
       }, 1000);
 
       setTimeout(() => {
-        clearInterval(temp), console.log("done");
+        clearInterval(detection), console.log("done");
       }, 3000);
     }
 
     if (mode === "prepare" && itUser[0] !== socket.id) {
-      const temp = setInterval(() => {
+      const detection = setInterval(() => {
         detect(net);
       }, 3000);
 
-      setTimeout(() => clearInterval(temp) && console.log("done"), 20000);
+      setTimeout(() => clearInterval(detection) && console.log("done"), 20000);
     }
   };
 
@@ -112,9 +111,7 @@ function GameRoom() {
         if (mode === "prepare") {
           if (participantUser[0].id === socket.id) {
             addPreStartFirstParticipantPose(pose);
-          }
-
-          if (participantUser[1].id === socket.id) {
+          } else {
             addPreStartSecondparticipantPose(pose);
           }
         }
@@ -162,7 +159,6 @@ function GameRoom() {
               userCanvas={userCanvas}
               peers={peers}
               peersRef={peersRef}
-              participantList={participantList}
             />
           )}
         </UserCamera>
