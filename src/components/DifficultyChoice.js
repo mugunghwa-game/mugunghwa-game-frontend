@@ -24,7 +24,7 @@ export default function DifficultyChoice({ modalTitle, handleModal }) {
       ? deleteParticipantList(socket.id)
       : null;
     addIt(socket.id);
-    addPerson({ person: socket.id, role: "it" });
+    // addPerson({ person: socket.id, role: "it" });
     addDifficulty(event.target.innerText);
 
     if (modalTitle === "역할 설정하기") {

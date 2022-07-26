@@ -16,15 +16,7 @@ function WaitingRoom() {
   const navigate = useNavigate();
   const { roomId } = useParams();
 
-  const {
-    addPerson,
-    people,
-    addParticipant,
-    addParticipantList,
-    participant,
-    updatePerson,
-    it,
-  } = useStore();
+  const { it } = useStore();
 
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -51,18 +43,12 @@ function WaitingRoom() {
   const handleExist = () => {
     socketApi.leaveRoom(socket.id, roomId);
 
-    updatePerson(socket.id);
-
     navigate("/roomList");
   };
 
   const handleRole = () => {
     if (participantCount < 2) {
       socketApi.userCount(socket.id, "participant", null, roomId);
-
-      addPerson({ person: socket.id, role: "participant" });
-      addParticipant(socket.id);
-      addParticipantList(socket.id);
     } else {
       setShouldDisplayInfoModal(true);
     }
@@ -82,6 +68,7 @@ function WaitingRoom() {
     });
 
     socket.on(SOCKET.UPDATE_USER, (payload) => {
+      console.log(payload);
       setParticipantCount(payload.participant.length);
       setItCount(payload.it.length);
     });
@@ -91,7 +78,7 @@ function WaitingRoom() {
       socket.off(SOCKET.ROLE_COUNT);
       socket.off(SOCKET.UPDATE_USER);
     };
-  }, [participant, people, itCount]);
+  }, [participantCount, itCount]);
 
   return (
     <DefaultPage>
