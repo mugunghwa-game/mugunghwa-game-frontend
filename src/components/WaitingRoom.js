@@ -16,15 +16,7 @@ function WaitingRoom() {
   const navigate = useNavigate();
   const { roomId } = useParams();
 
-  const {
-    addPerson,
-    people,
-    addParticipant,
-    addParticipantList,
-    participant,
-    updatePerson,
-    it,
-  } = useStore();
+  const { it } = useStore();
 
   const [shouldDisplayModal, setShouldDisplayModal] = useState(false);
   const [shouldDisplayDifficultyModal, setShouldDisplayDifficultyModal] =
@@ -32,8 +24,6 @@ function WaitingRoom() {
   const [itCount, setItCount] = useState(it.length);
   const [participantCount, setParticipantCount] = useState(0);
   const [shouldDisplayInfoModal, setShouldDisplayInfoModal] = useState(false);
-  const [shouldDisplayProgressModal, setShouldDisplayProgressModal] =
-    useState(false);
   const [isReady, setIsReady] = useState(false);
 
   const handleRuleModal = () => {
@@ -53,18 +43,12 @@ function WaitingRoom() {
   const handleExist = () => {
     socketApi.leaveRoom(socket.id, roomId);
 
-    updatePerson(socket.id);
-
     navigate("/roomList");
   };
 
   const handleRole = () => {
     if (participantCount < 2) {
       socketApi.userCount(socket.id, "participant", null, roomId);
-
-      addPerson({ person: socket.id, role: "participant" });
-      addParticipant(socket.id);
-      addParticipantList(socket.id);
     } else {
       setShouldDisplayInfoModal(true);
     }
@@ -76,7 +60,6 @@ function WaitingRoom() {
     socket.on(SOCKET.SOCKET_ID, (payload) => {
       setItCount(payload.it);
       setParticipantCount(payload.participant);
-      setShouldDisplayProgressModal(payload.isProgress);
     });
 
     socket.on(SOCKET.ROLE_COUNT, (payload) => {
@@ -94,7 +77,7 @@ function WaitingRoom() {
       socket.off(SOCKET.ROLE_COUNT);
       socket.off(SOCKET.UPDATE_USER);
     };
-  }, [participant, people, itCount]);
+  }, [participantCount, itCount]);
 
   return (
     <DefaultPage>
@@ -123,18 +106,9 @@ function WaitingRoom() {
             {shouldDisplayInfoModal && (
               <Modal property="info">
                 <ModalContent
-                  handleModal={setShouldDisplayInfoModal}
                   modalTitle={GAME.INFO_MODAL_TITLE}
                   modalText={GAME.INFO_MODAL_TEXT}
-                />
-              </Modal>
-            )}
-            {shouldDisplayProgressModal && (
-              <Modal property="info">
-                <ModalContent
-                  handleModal={setShouldDisplayProgressModal}
-                  modalTitle={GAME.INFO_MODAL_TITLE}
-                  modalText={GAME.GAME_PROGRESS}
+                  handleModal={setShouldDisplayInfoModal}
                 />
               </Modal>
             )}
@@ -168,7 +142,7 @@ function WaitingRoom() {
           </ButtonWrap>
         </>
       )}
-      {isReady && <Countdown roomId={roomId} />}
+      {isReady && <Countdown />}
     </DefaultPage>
   );
 }

@@ -175,3 +175,13 @@ export function divisionChildAndAdult(video) {
 
   sholuderLength <= 4 && userBodyWidth < childStandardBodyWidth ? true : false;
 }
+
+export function distanceAdjustment(pose, user, id) {
+  if (pose.length !== 0 && user === id) {
+    const sholuderLength = sholuderLengthinScreen(pose[0]);
+
+    if (0 < sholuderLength <= 20 && pose[0].score > 0.1) {
+      return true;
+    }
+  }
+}

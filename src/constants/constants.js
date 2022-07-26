@@ -20,7 +20,11 @@ export const RULE_DESCRIPTION = (() => (
 
 export const SOCKET = {
   ROOM_NAME: "gameRoom",
+  ROOM_LIST: "roomList",
+  CREATE_RAME_ROOM: "createGame",
+  ROOM_INFO: "room-info",
   JOIN_ROOM: "join-room",
+  NEW_ROOM: "new-room",
   LEAVE_ROOM: "leaveRoom",
   SOCKET_ID: "socket-id",
   USER_COUNT: "user-count",
@@ -34,7 +38,6 @@ export const SOCKET = {
   USER_JOINED: "user joined",
   IS_READY: "isReady",
   PREPARED_GAME: "prepared-game",
-  PREPARED: "prepared",
   RECEIVING_RETURNED_SIGNAL: "receiving-returned-signal",
   RETURNING_SIGNAL: "returning signal",
   POSEDETECTION_START: "poseDetection-start",
@@ -62,5 +65,4 @@ export const GAME = {
     "난이도 선택은 술래만 할 수 있으며 한 번 선택하면 바꿀 수 없습니다.",
   INFO_MODAL_TITLE: "알려드립니다",
   INFO_MODAL_TEXT: "인원이 다 찼습니다",
-  GAME_PROGRESS: "게임 중입니다",
 };

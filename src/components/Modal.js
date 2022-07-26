@@ -44,7 +44,6 @@ const ModalBody = styled.div`
     display: flex;
     justify-content: center;
     flex-direction: column;
-    margin: 10px 20px;
   }
 `;
 

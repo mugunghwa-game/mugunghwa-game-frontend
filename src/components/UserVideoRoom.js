@@ -16,12 +16,11 @@ export default function UserVideoRoom({
   participantUser,
   peers,
   peersRef,
-  participantList,
 }) {
+  const { roomId } = useParams();
+
   const { firstParticipantPreparation, secondParticipantPreparation } =
     useStore();
-
-  const { roomId } = useParams();
 
   const handleStopButton = () => {
     if (itCount > 0) {
@@ -47,9 +46,9 @@ export default function UserVideoRoom({
             기회의 수
             {itUser && socket.id === itUser[0] && <span> {itCount}</span>}
             {participantUser.map(
-              (person, index) =>
+              (person) =>
                 person.id === socket.id && (
-                  <span key={index}>{person.opportunity}</span>
+                  <span key={person.id}>{person.opportunity}</span>
                 )
             )}
             {socket.id === itUser[0] && (
@@ -65,7 +64,6 @@ export default function UserVideoRoom({
             index={index}
             peer={peer.peer}
             peersRef={peersRef}
-            participantList={participantList}
             itUser={itUser}
             itCount={itCount}
             participantUser={participantUser}
@@ -84,5 +82,4 @@ UserVideoRoom.propTypes = {
   participantUser: PropTypes.array,
   peers: PropTypes.array,
   peersRef: PropTypes.object,
-  participantList: PropTypes.array,
 };

@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { SOCKET } from "../constants/constants";
 import useStore from "../store/store";
 import {
+  distanceAdjustment,
   divisionChildAndAdult,
-  sholuderLengthinScreen,
 } from "../utils/motionDetection";
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
@@ -15,6 +15,8 @@ export default function useDistanceAdjustment(
   handleMode,
   participantUser
 ) {
+  const { roomId } = useParams();
+
   const {
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
@@ -24,67 +26,51 @@ export default function useDistanceAdjustment(
     updateFirstChildParticipant,
   } = useStore();
 
-  const { roomId } = useParams();
-
   useEffect(() => {
     if (participantUser) {
-      if (
-        preStartFirstParticipantPose.length !== 0 &&
-        participantUser[0].id === socket.id
-      ) {
-        const sholuderLength = sholuderLengthinScreen(
-          preStartFirstParticipantPose[0]
-        );
+      const firstParticipantResult = distanceAdjustment(
+        preStartFirstParticipantPose,
+        participantUser[0].id,
+        socket.id
+      );
 
+      if (firstParticipantResult) {
         const isItChild = divisionChildAndAdult(
           preStartFirstParticipantPose[0]
         );
-        if (
-          0 < sholuderLength < 5 &&
-          preStartFirstParticipantPose[0].score > 0.8
-        ) {
-          isItChild ? updateFirstChildParticipant() : null;
-          socketApi.isReady(true, roomId);
-        }
+
+        isItChild ? updateFirstChildParticipant() : null;
+
+        socketApi.isReady(true, roomId);
       }
 
-      if (
-        preStartSecondparticipantPose.length !== 0 &&
-        participantUser[1].id === socket.id
-      ) {
+      const secondParticipantResult = distanceAdjustment(
+        preStartSecondparticipantPose,
+        participantUser[1].id,
+        socket.id
+      );
+
+      if (secondParticipantResult) {
         const isItChild = divisionChildAndAdult(
           preStartSecondparticipantPose[0]
         );
 
-        if (
-          0 < sholuderLengthinScreen(preStartSecondparticipantPose[0]) <= 5 &&
-          preStartSecondparticipantPose[0].score > 0.8
-        ) {
-          isItChild ? updateSecondChildParticipant() : null;
-          socketApi.isReady(true, roomId);
-        }
+        isItChild ? updateSecondChildParticipant() : null;
+
+        socketApi.isReady(true, roomId);
       }
-
-      socket.on(SOCKET.PREPARED_GAME, (payload) => {
-        if (payload) {
-          updateFirstParticipantPreparation();
-          updateSecondParticipantPreparation();
-          handleMode("game");
-        }
-      });
-
-      socket.on(SOCKET.PREPARED, (payload) => {
-        if (payload) {
-          updateFirstParticipantPreparation();
-          updateSecondParticipantPreparation();
-          handleMode("game");
-        }
-      });
     }
+
+    socket.on(SOCKET.PREPARED_GAME, (payload) => {
+      if (payload) {
+        updateFirstParticipantPreparation();
+        updateSecondParticipantPreparation();
+        handleMode("game");
+      }
+    });
 
     return () => {
       socket.off(SOCKET.PREPARED_GAME);
-      socket.off(SOCKET.PREPARED);
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
 

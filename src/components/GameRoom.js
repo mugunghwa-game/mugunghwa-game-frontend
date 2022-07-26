@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import bgm from "../asset/bgm.mp3";
 import useVideo from "../hooks/useVideo";
 import useStore from "../store/store";
 import { drawCanvas, videoReference } from "../utils/posenet";
@@ -13,6 +14,15 @@ import Game from "./Game";
 import UserVideoRoom from "./UserVideoRoom";
 
 function GameRoom() {
+  const { roomId } = useParams();
+
+  const [hasStop, setHasStop] = useState(false);
+  const [countDownStart, setCountDownStart] = useState(false);
+  const [itCount, setItCount] = useState(5);
+  const [mode, setMode] = useState("prepare");
+  const userCanvas = useRef();
+  const audio = new Audio(bgm);
+
   const {
     addPreStartFirstParticipantPose,
     addPreStartSecondparticipantPose,
@@ -20,17 +30,7 @@ function GameRoom() {
     addSecondParticipantPose,
     firstParticipantPreparation,
     secondParticipantPreparation,
-    participantList,
   } = useStore();
-
-  const { roomId } = useParams();
-
-  const [hasStop, setHasStop] = useState(false);
-  const [countDownStart, setCountDownStart] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const [itCount, setItCount] = useState(5);
-  const [mode, setMode] = useState("prepare");
-  const userCanvas = useRef();
 
   const {
     userVideo,
@@ -43,6 +43,14 @@ function GameRoom() {
     setParticipantUser,
   } = useVideo(roomId);
 
+  useEffect(() => {
+    audio.play();
+
+    return () => {
+      audio.pause();
+    };
+  }, []);
+
   const runPosenet = async () => {
     const net = await posenet.load({
       inputResolution: { width: 640, height: 480 },
@@ -50,25 +58,23 @@ function GameRoom() {
     });
 
     if (mode === "game" && hasStop) {
-      const temp = setInterval(() => {
+      const detection = setInterval(() => {
         if (socket.id !== itUser[0]) {
           detect(net);
         }
       }, 1000);
 
       setTimeout(() => {
-        setClickCount((prev) => prev + 1),
-          clearInterval(temp),
-          console.log("done");
+        clearInterval(detection), console.log("done");
       }, 3000);
     }
 
     if (mode === "prepare" && itUser[0] !== socket.id) {
-      const temp = setInterval(() => {
+      const detection = setInterval(() => {
         detect(net);
       }, 3000);
 
-      setTimeout(() => clearInterval(temp) && console.log("done"), 20000);
+      setTimeout(() => clearInterval(detection) && console.log("done"), 20000);
     }
   };
 
@@ -105,9 +111,7 @@ function GameRoom() {
         if (mode === "prepare") {
           if (participantUser[0].id === socket.id) {
             addPreStartFirstParticipantPose(pose);
-          }
-
-          if (participantUser[1].id === socket.id) {
+          } else {
             addPreStartSecondparticipantPose(pose);
           }
         }
@@ -125,27 +129,22 @@ function GameRoom() {
 
   return (
     <DefaultPage>
-      {!firstParticipantPreparation &&
-        !secondParticipantPreparation &&
-        participantUser && (
-          <DistanceAdjustment
-            mode={mode}
-            handleMode={setMode}
-            roomId={roomId}
-            participantUser={participantUser}
-          />
-        )}
+      {!firstParticipantPreparation && !secondParticipantPreparation && (
+        <DistanceAdjustment
+          mode={mode}
+          handleMode={setMode}
+          participantUser={participantUser}
+        />
+      )}
       {firstParticipantPreparation && secondParticipantPreparation && (
         <Game
           participantUser={participantUser}
           handleParticipantUser={setParticipantUser}
           countDownStart={countDownStart}
           handleCountDownStart={setCountDownStart}
-          itCount={itCount}
           handleItCount={setItCount}
           hasStop={hasStop}
           handleStop={setHasStop}
-          clickCount={clickCount}
           difficulty={difficulty}
         />
       )}
@@ -160,8 +159,6 @@ function GameRoom() {
               userCanvas={userCanvas}
               peers={peers}
               peersRef={peersRef}
-              participantList={participantList}
-              roomId={roomId}
             />
           )}
         </UserCamera>
@@ -188,8 +185,8 @@ const UserView = styled.div`
     height: 20em;
     width: 20em;
     object-fit: fill;
-    background-color: aliceblue;
     justify-items: stretch;
+    background-color: aliceblue;
   }
 
   .it {
@@ -217,9 +214,9 @@ const UserCamera = styled.div`
 
   .userVideo {
     position: absolute;
-    margin-left: 5vh;
     width: 65vh;
     height: 45vh;
+    margin-left: 5vh;
     object-fit: fill;
   }
 

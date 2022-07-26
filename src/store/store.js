@@ -3,14 +3,10 @@ import { persist } from "zustand/middleware";
 
 const useStore = create(
   persist((set) => ({
-    people: [],
-    participant: [],
     it: [],
     participantList: [],
     difficulty: "",
     winner: "",
-    singleModeUserPose: [],
-    singleModeUserGamePoese: [],
     preStartFirstParticipantPose: [],
     preStartSecondparticipantPose: [],
     firstParticipantPose: [],
@@ -25,20 +21,6 @@ const useStore = create(
       set((state) => ({
         count: state.count + 1,
       })),
-    addPerson: (item) =>
-      set((state) => ({
-        people: [
-          ...state.people.filter((person) => person.person !== item.person),
-          { person: item.person, role: item.role },
-        ],
-      })),
-    updatePerson: (id) =>
-      set((state) => ({
-        people: state.people.filter((person) => person.person !== id),
-        participant: state.participant.filter((person) => person.id !== id),
-        it: state.it.filter((itUser) => itUser !== id),
-        participantList: state.participantList.filter((user) => user !== id),
-      })),
     addIt: (item) =>
       set((state) => ({
         it: [item],
@@ -46,10 +28,6 @@ const useStore = create(
     addDifficulty: (item) =>
       set((state) => ({
         difficulty: item,
-      })),
-    addParticipant: (item) =>
-      set((state) => ({
-        participant: [...state.participant, { id: item, opportunity: 3 }],
       })),
     addParticipantList: (item) =>
       set((state) => ({
@@ -66,20 +44,6 @@ const useStore = create(
             each.opportunity -= 1;
           }
         }),
-      })),
-    addSingleModeUserPose: (item) =>
-      set((state) => ({
-        singleModeUserPose:
-          state.singleModeUserPose.length === 3
-            ? [item]
-            : [...state.singleModeUserPose, item],
-      })),
-    addSingleModeUserGamePose: (item) =>
-      set((state) => ({
-        singleModeUserGamePoese:
-          state.singleModeUserGamePoese.length === 3
-            ? [item]
-            : [...state.singleModeUserGamePoese, item],
       })),
     addPreStartFirstParticipantPose: (item) =>
       set((state) => ({
@@ -136,8 +100,6 @@ const useStore = create(
       })),
     removeAll: () =>
       set(() => ({
-        people: [],
-        participant: [],
         participantList: [],
         it: [],
         difficulty: "",
@@ -145,8 +107,6 @@ const useStore = create(
         secondParticipantPose: [],
         preStartFirstParticipantPose: [],
         preStartSecondparticipantPose: [],
-        singleModeUserPose: [],
-        singleModeUserGamePoese: [],
         isChildFirstParticipant: false,
         isChildSecondParticipant: false,
         firstParticipantPreparation: false,

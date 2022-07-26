@@ -1,25 +1,15 @@
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
-import useStore from "../store/store";
-import { socket } from "../utils/socket";
-import Button from "./Button";
+import { socket, socketApi } from "../utils/socket";
+import DifficultyChoice from "./DifficultyChoice";
 
 function ModalContent({ modalText, modalTitle, handleModal }) {
-  const {
-    addIt,
-    addDifficulty,
-    addPerson,
-    deleteParticipantList,
-    participantList,
-  } = useStore();
-
   const navigate = useNavigate();
-  const { roomId } = useParams();
 
   const [hasIt, setHasIt] = useState(false);
 
@@ -28,45 +18,13 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
   };
 
   const handleRole = () => {
-    socket.emit("createGame", {
-      roomId: socket.id,
-      id: socket.id,
-      role: "participant",
-    });
+    socketApi.createGameRoom(socket.id, socket.id, "participant");
 
     navigate(`/waitingRoom/${socket.id}`);
   };
 
   const handleItRole = () => {
     setHasIt(true);
-  };
-
-  const handleDifficulty = (event) => {
-    participantList.includes(socket.id)
-      ? deleteParticipantList(socket.id)
-      : null;
-    addIt(socket.id);
-    addPerson({ person: socket.id, role: "it" });
-    addDifficulty(event.target.innerText);
-
-    if (modalTitle === "역할 설정하기") {
-      socket.emit("createGame", {
-        roomId: socket.id,
-        id: socket.id,
-        role: "it",
-        difficulty: event.target.innerText,
-      });
-
-      navigate(`/waitingRoom/${socket.id}`);
-    } else {
-      socket.emit("user-count", {
-        id: socket.id,
-        role: "it",
-        difficulty: event.target.innerText,
-        roomId: roomId,
-      });
-      handleModal(false);
-    }
   };
 
   return (
@@ -81,31 +39,16 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
       <hr />
       <h2 className="description"> {modalText}</h2>
       {modalTitle === "난이도 선택" && (
-        <>
-          <span className="buttonWarp">
-            <span className="easy">
-              <Button handleClick={handleDifficulty}>쉬움</Button>
-            </span>
-            <span className="difficult">
-              <Button handleClick={handleDifficulty}>어려움</Button>
-            </span>
-          </span>
-        </>
+        <DifficultyChoice handleModal={handleModal} modalTitle={modalTitle} />
       )}
       {modalTitle === "역할 설정하기" && (
         <RoleWarp>
           <Role onClick={handleItRole}>술래</Role>
           {hasIt && (
-            <>
-              <span className="buttonWarpper">
-                <span className="easy">
-                  <Button handleClick={handleDifficulty}>쉬움</Button>
-                </span>
-                <span className="difficult">
-                  <Button handleClick={handleDifficulty}>어려움</Button>
-                </span>
-              </span>
-            </>
+            <DifficultyChoice
+              handleModal={handleModal}
+              modalTitle={modalTitle}
+            />
           )}
           <Role onClick={handleRole}>참가자</Role>
         </RoleWarp>
@@ -146,42 +89,25 @@ const Content = styled.div`
   hr {
     margin-top: 20px;
   }
-
-  .buttonWarp {
-    display: flex;
-    justify-content: space-around;
-    margin-left: 2vh;
-    margin-top: 10vh;
-  }
 `;
 
 const RoleWarp = styled.div`
   height: 50vh;
-
-  .buttonWarpper {
-    width: 105%;
-  }
-
-  .easy {
-    margin-right: 2vh;
-  }
 `;
 
 const Role = styled.div`
   width: 100%;
-  height: 13vh;
+  height: 15vh;
   text-align: center;
-  border-radius: 2vh;
-  margin-top: 80vh;
+  margin-top: 8vh;
   font-size: 4vh;
   background-color: #fdf3ef;
 `;
 
 ModalContent.propTypes = {
-  modalText: PropTypes.string,
+  modalText: PropTypes.any,
   modalTitle: PropTypes.string,
   handleModal: PropTypes.func,
-  handleItCount: PropTypes.func,
 };
 
 export default ModalContent;

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
@@ -85,5 +86,15 @@ const EventZone = styled.div`
     font-size: 400px;
   }
 `;
+
+Game.propTypes = {
+  participantUser: PropTypes.array,
+  handleItCount: PropTypes.func,
+  handleParticipantUser: PropTypes.func,
+  handleStop: PropTypes.func,
+  difficulty: PropTypes.string,
+  countDownStart: PropTypes.bool,
+  handleCountDownStart: PropTypes.func,
+};
 
 export default Game;

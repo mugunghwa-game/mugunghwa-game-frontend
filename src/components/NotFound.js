@@ -2,8 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import notfoundbackground from "../asset/notfoundbackground.png";
-import notfoundflower from "../asset/notfoundflower.png";
+import notFoundbackground from "../asset/notfoundbackground.png";
+import notFoundFlower from "../asset/notfoundflower.png";
 import Button from "./Button";
 
 function NotFound() {
@@ -15,10 +15,10 @@ function NotFound() {
 
   return (
     <Background>
-      <img src={notfoundbackground} alt={notfoundbackground} />
+      <img src={notFoundbackground} alt={notFoundbackground} />
       <span className="notfound">페이지를 찾지 못했습니다</span>
       <span className="number">
-        4<img className="flower" src={notfoundflower} alt={notfoundflower} />4
+        4<img className="flower" src={notFoundFlower} alt={notFoundFlower} />4
       </span>
       <ButtonWarp>
         <Button handleClick={handleGoHome}>처음으로 돌아가기</Button>

@@ -33,6 +33,25 @@ export default function useGame(
   } = useStore();
 
   useEffect(() => {
+    let interval;
+
+    if (countdownStart) {
+      if (countDown > 1) {
+        interval = setInterval(() => {
+          setCountDown((prev) => prev - 1);
+        }, 1000);
+      }
+    }
+
+    setTimeout(() => {
+      clearInterval(interval);
+
+      setCountDown(3);
+      handleCountDownStart(false);
+    }, 3000);
+  }, [countdownStart]);
+
+  useEffect(() => {
     if (
       firstParticipantPose.length === 3 &&
       participantUser[0].id === socket.id
@@ -104,25 +123,6 @@ export default function useGame(
       socket.off(SOCKET.POSEDETECTION_START);
     };
   }, [winner]);
-
-  useEffect(() => {
-    let interval;
-
-    if (countdownStart) {
-      if (countDown > 1) {
-        interval = setInterval(() => {
-          setCountDown((prev) => prev - 1);
-        }, 1000);
-      }
-    }
-
-    setTimeout(() => {
-      clearInterval(interval);
-
-      setCountDown(3);
-      handleCountDownStart(false);
-    }, 3000);
-  }, [countdownStart]);
 
   useEffect(() => {
     if (isItLoser) {

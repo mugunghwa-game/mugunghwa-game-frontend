@@ -5,6 +5,17 @@ import { SOCKET } from "../constants/constants";
 export const socket = io.connect(process.env.REACT_APP_URL);
 
 export const socketApi = {
+  roomList: (name, state) => {
+    socket.emit(SOCKET.ROOM_LIST, { name, state });
+  },
+  createGameRoom: (roomId, id, role, difficulty) => {
+    socket.emit(SOCKET.CREATE_RAME_ROOM, {
+      roomId,
+      id,
+      role,
+      difficulty,
+    });
+  },
   userCount: (id, role, difficulty, roomId) => {
     socket.emit(SOCKET.USER_COUNT, {
       id,
@@ -13,8 +24,8 @@ export const socketApi = {
       roomId,
     });
   },
-  joinRoom: (roomName) => {
-    socket.emit(SOCKET.JOIN_ROOM, roomName);
+  joinRoom: (roomId) => {
+    socket.emit(SOCKET.JOIN_ROOM, roomId);
   },
   leaveRoom: (user, roomId) => {
     socket.emit(SOCKET.LEAVE_ROOM, { user, roomId });
