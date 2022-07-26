@@ -58,6 +58,8 @@ const ButtonBody = styled.button`
 
 Button.propTypes = {
   children: PropTypes.string,
+  handleClick: PropTypes.func,
+  property: PropTypes.string,
 };
 
 export default Button;

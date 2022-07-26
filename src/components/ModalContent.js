@@ -108,7 +108,6 @@ ModalContent.propTypes = {
   modalText: PropTypes.any,
   modalTitle: PropTypes.string,
   handleModal: PropTypes.func,
-  handleItCount: PropTypes.func,
 };
 
 export default ModalContent;

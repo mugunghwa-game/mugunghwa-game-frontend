@@ -32,7 +32,6 @@ export default function useVideo(roomId) {
         socketApi.enterGameRoom(true, roomId);
 
         socket.on(SOCKET.USER, (payload) => {
-          console.log(payload);
           setItUser(payload.it);
           setParticipantUser(payload.participant);
           setDifficulty(payload.difficulty);

@@ -11,20 +11,14 @@ export default function DifficultyChoice({ modalTitle, handleModal }) {
   const { roomId } = useParams();
   const navigate = useNavigate();
 
-  const {
-    addIt,
-    addDifficulty,
-    addPerson,
-    deleteParticipantList,
-    participantList,
-  } = useStore();
+  const { addIt, addDifficulty, deleteParticipantList, participantList } =
+    useStore();
 
   const handleDifficulty = (event) => {
     participantList.includes(socket.id)
       ? deleteParticipantList(socket.id)
       : null;
     addIt(socket.id);
-    // addPerson({ person: socket.id, role: "it" });
     addDifficulty(event.target.innerText);
 
     if (modalTitle === "역할 설정하기") {

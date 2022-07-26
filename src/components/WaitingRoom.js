@@ -68,7 +68,6 @@ function WaitingRoom() {
     });
 
     socket.on(SOCKET.UPDATE_USER, (payload) => {
-      console.log(payload);
       setParticipantCount(payload.participant.length);
       setItCount(payload.it.length);
     });
