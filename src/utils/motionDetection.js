@@ -5,27 +5,28 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
 
   const firstResult = helpDetection(firstPose);
   const secondResult = helpDetection(secondPose);
+
   const shoulderLength = sholuderLengthinScreen(firstPose);
 
   if (!isChild && difficult === "어려움") {
-    if (shoulderLength > 23) {
+    if (shoulderLength > 26) {
       return compareAngle(firstResult, secondResult, 0.8);
-    } else if (3 < shoulderLength <= 23) {
-      return compareAngle(firstResult, secondResult, 2.8);
-    } else if (shoulderLength <= 3) {
-      return compareAngle(firstResult, secondResult, 8);
+    } else if (5 < shoulderLength <= 23) {
+      return compareAngle(firstResult, secondResult, 4);
+    } else if (shoulderLength <= 5) {
+      return compareAngle(firstResult, secondResult, 16);
     }
   }
   if (isChild || difficult === "쉬움")
-    if ((isChild && shoulderLength > 16) || shoulderLength > 8) {
-      return compareAngle(firstResult, secondResult, 2);
+    if ((isChild && shoulderLength > 16) || shoulderLength > 26) {
+      return compareAngle(firstResult, secondResult, 1);
     } else if (
-      (isChild && 3 < shoulderLength <= 8) ||
-      3 < shoulderLength <= 8
+      (isChild && 3 < shoulderLength <= 16) ||
+      5 < shoulderLength <= 26
     ) {
-      return compareAngle(firstResult, secondResult, 5);
-    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 3) {
-      return compareAngle(firstResult, secondResult, 10);
+      return compareAngle(firstResult, secondResult, 7);
+    } else if ((isChild && shoulderLength <= 3) || shoulderLength <= 5) {
+      return compareAngle(firstResult, secondResult, 20);
     }
 }
 
@@ -33,12 +34,10 @@ export function differenceAngle(first, second, distance) {
   if (first && second) {
     const difference = Math.abs(second - first);
 
-    if (distance === 1 && difference > 0.5) {
-      return true;
-    }
-    if (distance !== 1 && difference > distance) {
-      return true;
-    }
+    return (
+      (distance === 1 && difference > 0.5) ||
+      (distance !== 1 && difference > distance)
+    );
   }
 }
 
@@ -55,6 +54,7 @@ export function compareAngle(firstPoint, secondPoint, degree) {
       secondPoint.leftShoulderElbow,
       degree
     );
+
     const rightLeftEyeResult = differenceAngle(
       firstPoint.rightleftEye,
       secondPoint.rightleftEye,
@@ -66,29 +66,25 @@ export function compareAngle(firstPoint, secondPoint, degree) {
       firstPoint.leftHipKnee,
       degree
     );
+
     const rightHipKneeResult = differenceAngle(
       firstPoint.rightHipKnee,
       firstPoint.rightHipKnee,
       degree
     );
 
-    if (
+    return (
       rightShoulderElbowResult ||
       leftShoulderElbowResult ||
       rightLeftEyeResult ||
       leftHipKneeResult ||
       rightHipKneeResult
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   }
 }
 
 export function keyword(poses, keyword) {
-  const result = poses.keypoints.find((keypoint) => keypoint.part === keyword);
-  return result;
+  return poses.keypoints.find((keypoint) => keypoint.part === keyword);
 }
 
 export function helpDetection(pose) {
@@ -123,16 +119,17 @@ export function helpDetection(pose) {
   const rightleftEye = help(rightEye, leftEye);
 
   return {
-    leftHipKnee: leftHipKnee,
-    rightHipKnee: rightHipKnee,
-    leftShoulderElbow: leftShoulderElbow,
-    rightShoulderElbow: rightShoulderElbow,
-    rightleftEye: rightleftEye,
+    leftHipKnee,
+    rightHipKnee,
+    leftShoulderElbow,
+    rightShoulderElbow,
+    rightleftEye,
   };
 }
 
 export function getAngle(y1, y2, x1, x2) {
   const tan = Math.atan2(y2 - y1, x2 - x1);
+
   let angle = (tan * 180) / Math.PI;
 
   if (angle < 0) {
@@ -146,25 +143,23 @@ export function sholuderLengthinScreen(pose) {
   const leftResult = keyword(pose, "leftShoulder");
   const rightResult = keyword(pose, "rightShoulder");
 
-  const result =
+  return (
     (Math.abs(rightResult.position.x - leftResult.position.x) * 100) /
-    window.innerWidth;
-
-  return result;
+    window.innerWidth
+  );
 }
 
 export function visibleButton(video) {
   const shoulderLength = sholuderLengthinScreen(video);
 
-  if (shoulderLength >= 6.5) {
-    return true;
-  }
+  return shoulderLength >= 8;
 }
 
 export function divisionChildAndAdult(video) {
   const leftShoulder = keyword(video, "leftShoulder");
   const rightShoulder = keyword(video, "rightShoulder");
   const leftHip = keyword(video, "leftHip");
+
   const childStandardBodyWidth = 6000;
 
   const sholuderLength = sholuderLengthinScreen(video);
@@ -173,15 +168,13 @@ export function divisionChildAndAdult(video) {
     Math.abs(leftShoulder.position.x - rightShoulder.position.x) *
     Math.abs(leftShoulder.position.y - leftHip.position.y);
 
-  sholuderLength <= 4 && userBodyWidth < childStandardBodyWidth ? true : false;
+  return sholuderLength <= 4 && userBodyWidth < childStandardBodyWidth;
 }
 
 export function distanceAdjustment(pose, user, id) {
   if (pose.length !== 0 && user === id) {
     const sholuderLength = sholuderLengthinScreen(pose[0]);
 
-    if (0 < sholuderLength <= 20 && pose[0].score > 0.1) {
-      return true;
-    }
+    return 0 < sholuderLength <= 5 && pose[0].score > 0.8;
   }
 }

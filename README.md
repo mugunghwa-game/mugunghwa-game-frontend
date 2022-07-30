@@ -16,14 +16,14 @@
 
 ---
 
-- 🌺 [무궁화 꽃이 피었습니다](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🔍 [Preview](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🖇 [Link](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🗓 [Planning](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 💫 [Motivation](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🔮 [Feature](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 💻 [Tech Stack](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 📋 [Technical Log](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
+- 🌺 [무궁화 꽃이 피었습니다](#🌺-무궁화-꽃이-피었습니다)
+- 🔍 [Preview](#🔍-preview)
+- 🖇 [Link](#🖇-link)
+- 🗓 [Planning](#🗓-planning)
+- 💫 [Motivation](#💫-motivation)
+- 🔮 [Feature](#🔮-feature)
+- 💻 [Tech Stack](#💻-tech-stack)
+- 📋 [Technical Log](#📋technical-log)
 
 <br>
 
@@ -64,6 +64,7 @@ https://user-images.githubusercontent.com/83874298/180927088-8a9d4160-57ac-4ada-
 이제 그 친구들은 모두 이러저러한 사정으로 멀리 살게되었고 시간을 맞춰 만나는 것도 쉽지 않게 되었습니다. 그때의 친구들과 함께 만나지 않아도 함께 놀이를 할 수 있다면 얼마나 좋을까? 하는 생각에서 출발하게 되었습니다.
 
 이제는 아이들의 엄마가 된 친구들과 친구들의 아이들과 함께 할 수 있는 게임을 만들고 싶었고 이 생각이 이번프로젝트에 시작이었습니다.
+
 <br>
 
 ### 🔮 Feature
@@ -71,9 +72,12 @@ https://user-images.githubusercontent.com/83874298/180927088-8a9d4160-57ac-4ada-
 ---
 
 - **방 만들기**
+
   _사용자는 방을 만들 수 있고, 방을 만들 때 역할을 선택할 수 있습니다._
 
 https://user-images.githubusercontent.com/83874298/180639943-656987ed-fe28-4191-89d2-3590c41b2f09.mov
+
+<br>
 
 - **역할선택**
 
@@ -81,17 +85,23 @@ _사용자는 술래와 참가자 중 하나를 선택할 수 있습니다._
 
 https://user-images.githubusercontent.com/83874298/180639942-4013fa9a-669b-4eeb-a146-ac3b3430454a.mov
 
+<br>
+
 - **거리측정**
 
 _참가자가 카메라와 일정거리 이상 유지되면 게임모드로 넘어가게 됩니다._
 
 [https://user-images.githubusercontent.com/83874298/180161717-2f7dfd7b-9f97-4a22-82d6-35b2093f771d.mov](https://user-images.githubusercontent.com/83874298/180161717-2f7dfd7b-9f97-4a22-82d6-35b2093f771d.mov)
 
+<br>
+
 - **움직이면 기회수 차감**
 
 _술래가 멈춤버튼을 눌렀을 때 참가자가 움직일 경우 기회의 수가 1씩 줄어들게 됩니다._
 
 [https://user-images.githubusercontent.com/83874298/180149564-bee8e192-d5f2-40d4-a620-2b0b41de53ce.mov](https://user-images.githubusercontent.com/83874298/180161195-33b3012a-f2b6-4fff-b2be-36a6a1d29daf.mov)
+
+<br>
 
 - **등때리기 버튼**
 

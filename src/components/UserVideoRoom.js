@@ -35,15 +35,17 @@ export default function UserVideoRoom({
         <canvas ref={userCanvas} className="userVideo" />
       </div>
       <div className="userRole">
-        <span className="me"> 나</span>
-        {socket.id === itUser[0] ? (
-          <span>술래{socket.id}</span>
-        ) : (
-          <span>참가자{socket.id}</span>
-        )}
+        <span className="me"> 나 </span>
+        {socket.id === itUser[0] ? <span>술래</span> : <span>참가자</span>}
         {firstParticipantPreparation && secondParticipantPreparation && (
-          <div className="userOpportunity">
-            기회의 수
+          <div
+            className={
+              socket.id === itUser[0]
+                ? "userOpportunity"
+                : "participantUserOpportunity"
+            }
+          >
+            기회의 수{"  "}
             {itUser && socket.id === itUser[0] && <span> {itCount}</span>}
             {participantUser.map(
               (person) =>

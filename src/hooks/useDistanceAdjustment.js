@@ -62,11 +62,9 @@ export default function useDistanceAdjustment(
     }
 
     socket.on(SOCKET.PREPARED_GAME, (payload) => {
-      if (payload) {
-        updateFirstParticipantPreparation();
-        updateSecondParticipantPreparation();
-        handleMode("game");
-      }
+      updateFirstParticipantPreparation();
+      updateSecondParticipantPreparation();
+      handleMode("game");
     });
 
     return () => {
