@@ -119,11 +119,11 @@ export function helpDetection(pose) {
   const rightleftEye = help(rightEye, leftEye);
 
   return {
-    leftHipKnee: leftHipKnee,
-    rightHipKnee: rightHipKnee,
-    leftShoulderElbow: leftShoulderElbow,
-    rightShoulderElbow: rightShoulderElbow,
-    rightleftEye: rightleftEye,
+    leftHipKnee,
+    rightHipKnee,
+    leftShoulderElbow,
+    rightShoulderElbow,
+    rightleftEye,
   };
 }
 
@@ -159,6 +159,7 @@ export function divisionChildAndAdult(video) {
   const leftShoulder = keyword(video, "leftShoulder");
   const rightShoulder = keyword(video, "rightShoulder");
   const leftHip = keyword(video, "leftHip");
+
   const childStandardBodyWidth = 6000;
 
   const sholuderLength = sholuderLengthinScreen(video);

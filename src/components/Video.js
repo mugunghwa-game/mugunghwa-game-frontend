@@ -40,10 +40,7 @@ export default function Video({
           )}
           {participantId.includes(peersRef.current[index].peerID) && (
             <span className="role">
-              <span className="highlight">
-                참가자{peersRef.current[index].peerID}
-              </span>{" "}
-              기회의 수{" "}
+              <span className="highlight">참가자</span> 기회의 수{" "}
               <span className="highlight">
                 {participantUser[participantIndex].opportunity}
               </span>
