@@ -5,7 +5,7 @@ import React from "react";
 import Modal from "../components/Modal";
 import ModalPortal from "../Portal";
 
-it("1.should show modal when have props", () => {
+test("1.should show modal when have props", () => {
   let portalRoot = document.getElementById("modal-root");
 
   if (!portalRoot) {
@@ -29,7 +29,7 @@ it("1.should show modal when have props", () => {
   expect(screen.getByText("hello")).toContainHTML("div");
 });
 
-it("2. should have style in modal div", () => {
+test("2. should have style in modal div", () => {
   let portalRoot = document.getElementById("modal-root");
 
   if (!portalRoot) {
