@@ -77,11 +77,15 @@ https://user-images.githubusercontent.com/83874298/180927088-8a9d4160-57ac-4ada-
 
 https://user-images.githubusercontent.com/83874298/180639943-656987ed-fe28-4191-89d2-3590c41b2f09.mov
 
+<br>
+
 - **역할선택**
 
 _사용자는 술래와 참가자 중 하나를 선택할 수 있습니다._
 
 https://user-images.githubusercontent.com/83874298/180639942-4013fa9a-669b-4eeb-a146-ac3b3430454a.mov
+
+<br>
 
 - **거리측정**
 
@@ -89,11 +93,15 @@ _참가자가 카메라와 일정거리 이상 유지되면 게임모드로 넘�
 
 [https://user-images.githubusercontent.com/83874298/180161717-2f7dfd7b-9f97-4a22-82d6-35b2093f771d.mov](https://user-images.githubusercontent.com/83874298/180161717-2f7dfd7b-9f97-4a22-82d6-35b2093f771d.mov)
 
+<br>
+
 - **움직이면 기회수 차감**
 
 _술래가 멈춤버튼을 눌렀을 때 참가자가 움직일 경우 기회의 수가 1씩 줄어들게 됩니다._
 
 [https://user-images.githubusercontent.com/83874298/180149564-bee8e192-d5f2-40d4-a620-2b0b41de53ce.mov](https://user-images.githubusercontent.com/83874298/180161195-33b3012a-f2b6-4fff-b2be-36a6a1d29daf.mov)
+
+<br>
 
 - **등때리기 버튼**
 

@@ -92,7 +92,7 @@ Game.propTypes = {
   handleItCount: PropTypes.func,
   handleParticipantUser: PropTypes.func,
   handleStop: PropTypes.func,
-  difficulty: PropTypes.string,
+  difficulty: PropTypes.array,
   countDownStart: PropTypes.bool,
   handleCountDownStart: PropTypes.func,
 };
