@@ -36,11 +36,7 @@ export default function UserVideoRoom({
       </div>
       <div className="userRole">
         <span className="me"> 나</span>
-        {socket.id === itUser[0] ? (
-          <span>술래{socket.id}</span>
-        ) : (
-          <span>참가자{socket.id}</span>
-        )}
+        {socket.id === itUser[0] ? <span>술래</span> : <span>참가자</span>}
         {firstParticipantPreparation && secondParticipantPreparation && (
           <div className="userOpportunity">
             기회의 수

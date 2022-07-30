@@ -16,14 +16,14 @@
 
 ---
 
-- 🌺 [무궁화 꽃이 피었습니다](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🔍 [Preview](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🖇 [Link](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🗓 [Planning](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 💫 [Motivation](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 🔮 [Feature](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 💻 [Tech Stack](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
-- 📋 [Technical Log](https://www.notion.so/README-8b9219ea9eba4f0ca088cfa259c63d4b)
+- 🌺 [무궁화 꽃이 피었습니다](#🌺-무궁화-꽃이-피었습니다)
+- 🔍 [Preview](#🔍-preview)
+- 🖇 [Link](#🖇-link)
+- 🗓 [Planning](#🗓-planning)
+- 💫 [Motivation](#💫-motivation)
+- 🔮 [Feature](#🔮-feature)
+- 💻 [Tech Stack](#💻-tech-stack)
+- 📋 [Technical Log](#📋technical-log)
 
 <br>
 
@@ -64,6 +64,7 @@ https://user-images.githubusercontent.com/83874298/180927088-8a9d4160-57ac-4ada-
 이제 그 친구들은 모두 이러저러한 사정으로 멀리 살게되었고 시간을 맞춰 만나는 것도 쉽지 않게 되었습니다. 그때의 친구들과 함께 만나지 않아도 함께 놀이를 할 수 있다면 얼마나 좋을까? 하는 생각에서 출발하게 되었습니다.
 
 이제는 아이들의 엄마가 된 친구들과 친구들의 아이들과 함께 할 수 있는 게임을 만들고 싶었고 이 생각이 이번프로젝트에 시작이었습니다.
+
 <br>
 
 ### 🔮 Feature
@@ -71,6 +72,7 @@ https://user-images.githubusercontent.com/83874298/180927088-8a9d4160-57ac-4ada-
 ---
 
 - **방 만들기**
+
   _사용자는 방을 만들 수 있고, 방을 만들 때 역할을 선택할 수 있습니다._
 
 https://user-images.githubusercontent.com/83874298/180639943-656987ed-fe28-4191-89d2-3590c41b2f09.mov

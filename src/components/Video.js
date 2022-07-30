@@ -37,8 +37,7 @@ export default function Video({
           )}
           {participantId.includes(peersRef.current[index].peerID) && (
             <span className="role">
-              {peersRef.current[index].peerID}참가자
-              {index}
+              참가자
               <span className="count">
                 {participantUser[index].opportunity}
               </span>
