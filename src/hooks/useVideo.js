@@ -83,6 +83,7 @@ export default function useVideo(roomId) {
 
         socket.on(SOCKET.RECEIVING_RETURNED_SIGNAL, (payload) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
+
           item.peer.signal(payload.signal);
         });
 

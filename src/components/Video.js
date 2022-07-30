@@ -16,6 +16,10 @@ export default function Video({
     useStore();
 
   const participantId = participantUser.map((person) => person.id);
+  const participantIndex = participantId.indexOf(
+    peersRef.current[index].peerID
+  );
+
   const anotherUserRef = useRef();
 
   useEffect(() => {
@@ -30,16 +34,18 @@ export default function Video({
         <>
           {peersRef.current[index].peerID === itUser[0] && (
             <span className="role">
-              술래
-              {itUser[0]}
-              <span className="count">{itCount}</span>
+              <span className="highlight"> 술래 </span>기회의 수{" "}
+              <span className="highlight">{itCount}</span>
             </span>
           )}
           {participantId.includes(peersRef.current[index].peerID) && (
             <span className="role">
-              참가자
-              <span className="count">
-                {participantUser[index].opportunity}
+              <span className="highlight">
+                참가자{peersRef.current[index].peerID}
+              </span>{" "}
+              기회의 수{" "}
+              <span className="highlight">
+                {participantUser[participantIndex].opportunity}
               </span>
             </span>
           )}
@@ -51,10 +57,9 @@ export default function Video({
 }
 
 const VideoContainer = styled.div`
-  margin-left: 30vh;
-  width: 30vh;
+  margin-left: 20vh;
+  width: 40vh;
   height: 30vh;
-  line-height: 2vh;
   margin-bottom: 2vh;
 
   .otherUser {
@@ -66,10 +71,9 @@ const VideoContainer = styled.div`
 
   .role {
     position: absolute;
-    font-size: 1.5vh;
   }
 
-  .count {
+  .highlight {
     color: #f47676;
   }
 `;

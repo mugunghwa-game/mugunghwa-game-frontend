@@ -5,6 +5,7 @@ export function moveDetection(firstPose, secondPose, difficult, isChild) {
 
   const firstResult = helpDetection(firstPose);
   const secondResult = helpDetection(secondPose);
+
   const shoulderLength = sholuderLengthinScreen(firstPose);
 
   if (!isChild && difficult === "어려움") {
@@ -72,17 +73,13 @@ export function compareAngle(firstPoint, secondPoint, degree) {
       degree
     );
 
-    if (
+    return (
       rightShoulderElbowResult ||
       leftShoulderElbowResult ||
       rightLeftEyeResult ||
       leftHipKneeResult ||
       rightHipKneeResult
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   }
 }
 
@@ -132,6 +129,7 @@ export function helpDetection(pose) {
 
 export function getAngle(y1, y2, x1, x2) {
   const tan = Math.atan2(y2 - y1, x2 - x1);
+
   let angle = (tan * 180) / Math.PI;
 
   if (angle < 0) {
@@ -176,6 +174,6 @@ export function distanceAdjustment(pose, user, id) {
   if (pose.length !== 0 && user === id) {
     const sholuderLength = sholuderLengthinScreen(pose[0]);
 
-    return 0 < sholuderLength <= 5 && pose[0].score > 0.8;
+    return 0 < sholuderLength <= 20 && pose[0].score > 0.1;
   }
 }

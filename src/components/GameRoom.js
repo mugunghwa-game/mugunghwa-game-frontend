@@ -233,6 +233,13 @@ const UserCamera = styled.div`
     font-size: 2em;
   }
 
+  .participantUserOpportunity {
+    margin-top: 40vh;
+    text-align: center;
+    font-size: 2em;
+    margin-left: 18vh;
+  }
+
   .me {
     color: #f47676;
     vertical-align: center;
