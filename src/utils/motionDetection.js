@@ -175,6 +175,6 @@ export function distanceAdjustment(pose, user, id) {
   if (pose.length !== 0 && user === id) {
     const sholuderLength = sholuderLengthinScreen(pose[0]);
 
-    return 0 < sholuderLength <= 5 && pose[0].score > 0.8;
+    return 0 < sholuderLength <= 20 && pose[0].score > 0.1;
   }
 }
