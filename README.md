@@ -16,14 +16,14 @@
 
 ---
 
-- 🌺 [무궁화 꽃이 피었습니다](#🌺-무궁화-꽃이-피었습니다)
-- 🔍 [Preview](#🔍-preview)
-- 🖇 [Link](#🖇-link)
-- 🗓 [Planning](#🗓-planning)
-- 💫 [Motivation](#💫-motivation)
-- 🔮 [Feature](#🔮-feature)
-- 💻 [Tech Stack](#💻-tech-stack)
-- 📋 [Technical Log](#📋technical-log)
+- 🌺 [무궁화 꽃이 피었습니다](#-무궁화-꽃이-피었습니다)
+- 🔍 [Preview](#preview)
+- 🖇 [Link](#link)
+- 🗓 [Planning](#planning)
+- 💫 [Motivation](#motivation)
+- 🔮 [Feature](#feature)
+- 💻 [Tech Stack](#tech-stack)
+- 📋 [Technical Log](#Technical-log)
 
 <br>
 
@@ -73,7 +73,7 @@ https://user-images.githubusercontent.com/83874298/180927088-8a9d4160-57ac-4ada-
 
 - **방 만들기**
 
-  _사용자는 방을 만들 수 있고, 방을 만들 때 역할을 선택할 수 있습니다._
+_사용자는 방을 만들 수 있고, 방을 만들 때 역할을 선택할 수 있습니다._
 
 https://user-images.githubusercontent.com/83874298/180639943-656987ed-fe28-4191-89d2-3590c41b2f09.mov
 

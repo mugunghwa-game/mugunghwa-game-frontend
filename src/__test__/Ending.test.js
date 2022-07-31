@@ -1,3 +1,5 @@
+import "../__mocks__/navigator";
+
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryHistory } from "history";
@@ -6,38 +8,46 @@ import { MemoryRouter } from "react-router-dom";
 
 import Ending from "../components/Ending";
 
-test("1. 엔딩 페이지에 '게임 결과'가 나와야 하며 '처음으로 돌아가기'버튼이 있어야 한다", () => {
-  render(
-    <MemoryRouter>
-      <Ending />
-    </MemoryRouter>
-  );
+navigator.mediaDevices.getUserMedia = () => {
+  return new Promise((resolve) => {
+    resolve();
+  });
+};
 
-  expect(screen.getByText("게임 결과"));
-  expect(screen.getByText("처음으로 돌아가기"));
-  expect(screen.getByRole("button"));
-});
+describe("Ending component", () => {
+  it("1. 엔딩 페이지에 '게임 결과'가 나와야 하며 '처음으로 돌아가기'버튼이 있어야 한다", () => {
+    render(
+      <MemoryRouter>
+        <Ending />
+      </MemoryRouter>
+    );
 
-test("2. 처음으로 돌아가기 버튼은 활성화 되어있어야 한다.", () => {
-  const { getByText } = render(
-    <MemoryRouter>
-      <Ending />
-    </MemoryRouter>
-  );
+    expect(screen.getByText("게임 결과"));
+    expect(screen.getByText("처음으로 돌아가기"));
+    expect(screen.getByRole("button"));
+  });
 
-  expect(getByText(/처음으로 돌아가기/i)).not.toBeDisabled();
-});
+  it("2. 처음으로 돌아가기 버튼은 활성화 되어있어야 한다.", () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <Ending />
+      </MemoryRouter>
+    );
 
-test("3. 처음으로 돌아가기 버튼을 누르면 첫화면으로 돌아간다.", () => {
-  const history = createMemoryHistory();
+    expect(getByText(/처음으로 돌아가기/i)).not.toBeDisabled();
+  });
 
-  render(
-    <MemoryRouter>
-      <Ending />
-    </MemoryRouter>
-  );
+  it("3. 처음으로 돌아가기 버튼을 누르면 첫화면으로 돌아간다.", () => {
+    const history = createMemoryHistory();
 
-  userEvent.click(screen.getByText(/처음으로 돌아가기/i));
+    render(
+      <MemoryRouter>
+        <Ending />
+      </MemoryRouter>
+    );
 
-  expect(history.location.pathname).toEqual("/");
+    userEvent.click(screen.getByText(/처음으로 돌아가기/i));
+
+    expect(history.location.pathname).toEqual("/");
+  });
 });
