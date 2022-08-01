@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import notFoundbackground from "../asset/notfoundbackground.png";
+import notFoundBackground from "../asset/notfoundbackground.png";
 import notFoundFlower from "../asset/notfoundflower.png";
 import Button from "./Button";
 
@@ -15,8 +15,8 @@ function NotFound() {
 
   return (
     <Background>
-      <img src={notFoundbackground} alt={notFoundbackground} />
-      <span className="notfound">페이지를 찾지 못했습니다</span>
+      <img src={notFoundBackground} alt={notFoundBackground} />
+      <span className="notFound">페이지를 찾지 못했습니다</span>
       <span className="number">
         4<img className="flower" src={notFoundFlower} alt={notFoundFlower} />4
       </span>
@@ -48,7 +48,7 @@ const Background = styled.div`
     vertical-align: middle;
   }
 
-  .notfound {
+  .notFound {
     position: absolute;
     top: 30%;
     left: 50%;

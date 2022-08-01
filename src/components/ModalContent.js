@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import flowericon from "../asset/flowericon.jpeg";
+import { GAME } from "../constants/constants";
 import { socket, socketApi } from "../utils/socket";
 import DifficultyChoice from "./DifficultyChoice";
 
@@ -14,7 +15,7 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
   const [hasIt, setHasIt] = useState(false);
 
   const handleClick = () => {
-    handleModal(false);
+    handleModal((state) => !state);
   };
 
   const handleRole = () => {
@@ -24,7 +25,7 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
   };
 
   const handleItRole = () => {
-    setHasIt(true);
+    setHasIt((state) => !state);
   };
 
   return (
@@ -38,16 +39,16 @@ function ModalContent({ modalText, modalTitle, handleModal }) {
       </h2>
       <hr />
       <h2 className="description"> {modalText}</h2>
-      {modalTitle === "난이도 선택" && (
+      {modalTitle === GAME.DIFFICULTY_CHOICE && (
         <DifficultyChoice handleModal={handleModal} modalTitle={modalTitle} />
       )}
-      {modalTitle === "역할 설정하기" && (
+      {modalTitle === GAME.ROLE_CHOICE && (
         <RoleWarp>
           <Role onClick={handleItRole}>술래</Role>
           {hasIt && (
             <DifficultyChoice
-              handleModal={handleModal}
               modalTitle={modalTitle}
+              handleModal={handleModal}
             />
           )}
           <Role onClick={handleRole}>참가자</Role>
@@ -102,6 +103,7 @@ const Role = styled.div`
   margin-top: 8vh;
   font-size: 4vh;
   background-color: #fdf3ef;
+  cursor: pointer;
 `;
 
 ModalContent.propTypes = {

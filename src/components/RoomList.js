@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { SOCKET } from "../constants/constants";
+import { GAME, SOCKET } from "../constants/constants";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
 import DefaultPage from "./DefaultPage";
@@ -47,8 +47,8 @@ export function RoomList() {
       {shouldDisplayRoomCreateModal && (
         <Modal>
           <ModalContent
+            modalTitle={GAME.ROLE_CHOICE}
             handleModal={setShouldDisplayRoomCreateModal}
-            modalTitle="역할 설정하기"
           />
         </Modal>
       )}

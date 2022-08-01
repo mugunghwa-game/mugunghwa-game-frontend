@@ -10,11 +10,7 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-export default function useDistanceAdjustment(
-  gameMode,
-  handleMode,
-  participantUser
-) {
+export default function useDistanceAdjustment(handleMode, participantUser) {
   const { roomId } = useParams();
 
   const {
@@ -71,8 +67,4 @@ export default function useDistanceAdjustment(
       socket.off(SOCKET.PREPARED_GAME);
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
-
-  return {
-    gameMode,
-  };
 }

@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
+import { GAME } from "../constants/constants";
 import useStore from "../store/store";
 import { socket, socketApi } from "../utils/socket";
 import Button from "./Button";
@@ -21,7 +22,7 @@ export default function DifficultyChoice({ modalTitle, handleModal }) {
     addIt(socket.id);
     addDifficulty(event.target.innerText);
 
-    if (modalTitle === "역할 설정하기") {
+    if (modalTitle === GAME.ROLE_CHOICE) {
       socketApi.createGameRoom(
         socket.id,
         socket.id,
@@ -53,17 +54,18 @@ export default function DifficultyChoice({ modalTitle, handleModal }) {
 
 const Difficulty = styled.div`
   .buttonWarp {
-    width: ${(props) => (props.modalTitle === "역할 설정하기" ? "105%" : null)};
+    width: ${(props) =>
+      props.modalTitle === GAME.ROLE_CHOICE ? "105%" : null};
     display: flex;
     justify-content: space-around;
     margin-left: 2vh;
     margin-top: ${(props) =>
-      props.modalTitle === "역할 설정하기" ? null : "5vh"};
+      props.modalTitle === GAME.ROLE_CHOICE ? null : "5vh"};
   }
 
   .easy {
     margin-right: ${(props) =>
-      props.modalTitle === "역할 설정하기" ? "2vh" : null};
+      props.modalTitle === GAME.ROLE_CHOICE ? "2vh" : null};
   }
 `;
 

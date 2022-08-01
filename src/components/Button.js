@@ -45,6 +45,7 @@ const ButtonBody = styled.button`
       : props.children === "멈춤"
       ? "5vh"
       : null};
+  cursor: pointer;
 
   :hover {
     background-color: #fbddcf;

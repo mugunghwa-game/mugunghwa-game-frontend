@@ -57,41 +57,32 @@ function GameRoom() {
       scale: 0.8,
     });
 
-    if (mode === "game" && hasStop) {
-      const detection = setInterval(() => {
-        if (socket.id !== itUser[0]) {
+    if (
+      (mode === "game" && hasStop && itUser[0] !== socket.id) ||
+      (mode === "prepare" && itUser[0] !== socket.id)
+    ) {
+      const detection = setInterval(
+        () => {
           detect(net);
-        }
-      }, 1000);
+        },
+        mode === "game" ? 1000 : 3000
+      );
 
-      setTimeout(() => {
-        clearInterval(detection), console.log("done");
-      }, 3000);
-    }
-
-    if (mode === "prepare" && itUser[0] !== socket.id) {
-      const detection = setInterval(() => {
-        detect(net);
-      }, 3000);
-
-      setTimeout(() => clearInterval(detection) && console.log("done"), 20000);
+      setTimeout(
+        () => clearInterval(detection) && console.log("done"),
+        mode === "game" ? 3000 : 20000
+      );
     }
   };
 
   useEffect(() => {
-    if (
-      mode === "prepare" &&
-      isRedadyPoseDetection &&
-      itUser[0] !== socket.id
-    ) {
-      runPosenet();
-    }
-
-    if (mode === "game" && hasStop) {
+    if (isRedadyPoseDetection || (mode === "game" && hasStop)) {
       runPosenet();
 
-      setCountDownStart(true);
-      setHasStop(false);
+      if (mode === "game") {
+        setCountDownStart(true);
+        setHasStop(false);
+      }
     }
   }, [hasStop, isRedadyPoseDetection]);
 
