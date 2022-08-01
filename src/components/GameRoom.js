@@ -1,5 +1,5 @@
 import * as posenet from "@tensorflow-models/posenet";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Profiler, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 

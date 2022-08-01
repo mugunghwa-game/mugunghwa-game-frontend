@@ -10,14 +10,12 @@ import {
 import { socket } from "../utils/socket";
 import { socketApi } from "../utils/socket";
 
-export default function useDistanceAdjustment(
-  gameMode,
-  handleMode,
-  participantUser
-) {
+export default function useDistanceAdjustment(handleMode, participantUser) {
   const { roomId } = useParams();
 
   const {
+    firstParticipantPreparation,
+    secondParticipantPreparation,
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
     updateFirstParticipantPreparation,
@@ -25,6 +23,8 @@ export default function useDistanceAdjustment(
     updateSecondChildParticipant,
     updateFirstChildParticipant,
   } = useStore();
+
+  console.log(firstParticipantPreparation, secondParticipantPreparation);
 
   useEffect(() => {
     if (participantUser) {
@@ -71,8 +71,4 @@ export default function useDistanceAdjustment(
       socket.off(SOCKET.PREPARED_GAME);
     };
   }, [preStartFirstParticipantPose, preStartSecondparticipantPose]);
-
-  return {
-    gameMode,
-  };
 }

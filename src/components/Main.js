@@ -10,10 +10,10 @@ import DefaultPage from "./DefaultPage";
 function Main() {
   const navigate = useNavigate();
 
-  const { resetPreparation } = useStore();
+  const { removeAll } = useStore();
 
   useEffect(() => {
-    resetPreparation();
+    removeAll();
   }, []);
 
   const handleGoWaitingRoom = () => {
