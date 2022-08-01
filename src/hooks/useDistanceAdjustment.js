@@ -14,8 +14,6 @@ export default function useDistanceAdjustment(handleMode, participantUser) {
   const { roomId } = useParams();
 
   const {
-    firstParticipantPreparation,
-    secondParticipantPreparation,
     preStartFirstParticipantPose,
     preStartSecondparticipantPose,
     updateFirstParticipantPreparation,
@@ -23,8 +21,6 @@ export default function useDistanceAdjustment(handleMode, participantUser) {
     updateSecondChildParticipant,
     updateFirstChildParticipant,
   } = useStore();
-
-  console.log(firstParticipantPreparation, secondParticipantPreparation);
 
   useEffect(() => {
     if (participantUser) {
