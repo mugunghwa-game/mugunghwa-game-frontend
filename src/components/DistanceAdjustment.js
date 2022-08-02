@@ -42,6 +42,5 @@ const Description = styled.div`
 
 DistanceAdjustment.propTypes = {
   handleMode: PropTypes.func,
-  mode: PropTypes.string,
   participantUser: PropTypes.array,
 };
