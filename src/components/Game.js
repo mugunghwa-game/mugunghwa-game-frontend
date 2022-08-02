@@ -30,7 +30,7 @@ function Game({
   const { it } = useStore();
 
   const handleIt = () => {
-    setIsItLoser(true);
+    setIsItLoser((state) => !state);
   };
 
   return (

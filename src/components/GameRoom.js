@@ -122,7 +122,6 @@ function GameRoom() {
     <DefaultPage>
       {!firstParticipantPreparation && !secondParticipantPreparation && (
         <DistanceAdjustment
-          mode={mode}
           handleMode={setMode}
           participantUser={participantUser}
         />
@@ -134,7 +133,6 @@ function GameRoom() {
           countDownStart={countDownStart}
           handleCountDownStart={setCountDownStart}
           handleItCount={setItCount}
-          hasStop={hasStop}
           handleStop={setHasStop}
           difficulty={difficulty}
         />
