@@ -16,6 +16,7 @@ export default function UserVideoRoom({
   participantUser,
   peers,
   peersRef,
+  hasStop,
 }) {
   const { roomId } = useParams();
 
@@ -23,7 +24,7 @@ export default function UserVideoRoom({
     useStore();
 
   const handleStopButton = () => {
-    if (itCount > 0) {
+    if (itCount > 0 && hasStop) {
       socketApi.motionStart(true, roomId);
     }
   };

@@ -14,12 +14,13 @@ export default function useGame(
   handleStop,
   difficulty,
   countdownStart,
-  handleCountDownStart
+  handleCountDownStart,
+  hasStop
 ) {
   const navigate = useNavigate();
   const { roomId } = useParams();
 
-  const [countDown, setCountDown] = useState(3);
+  const [countDown, setCountDown] = useState(null);
   const [isItLoser, setIsItLoser] = useState(false);
   const [hasTouchDownButton, setHasTouchDownButton] = useState(false);
 
@@ -36,20 +37,25 @@ export default function useGame(
     let interval;
 
     if (countdownStart) {
-      if (countDown > 1) {
-        interval = setInterval(() => {
-          setCountDown((prev) => prev - 1);
-        }, 1000);
+      if (countDown === 0) {
+        setCountDown(null);
+        handleCountDownStart(false);
       }
+      if (!countDown) {
+        handleStop(true);
+
+        return;
+      }
+
+      interval = setInterval(() => {
+        setCountDown((prev) => prev - 1);
+      }, 1000);
     }
 
-    setTimeout(() => {
+    return () => {
       clearInterval(interval);
-
-      setCountDown(3);
-      handleCountDownStart(false);
-    }, 3000);
-  }, [countdownStart]);
+    };
+  }, [countdownStart, countDown, hasStop]);
 
   useEffect(() => {
     if (
@@ -103,13 +109,13 @@ export default function useGame(
 
   useEffect(() => {
     socket.on(SOCKET.POSEDETECTION_START, (payload) => {
-      handleStop(true);
+      handleStop(false);
       handleItCount((prev) => prev - 1);
+      setCountDown(3);
     });
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
       handleParticipantUser(payload.participant);
-      handleStop(false);
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {

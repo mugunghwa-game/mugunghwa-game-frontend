@@ -16,7 +16,7 @@ import UserVideoRoom from "./UserVideoRoom";
 function GameRoom() {
   const { roomId } = useParams();
 
-  const [hasStop, setHasStop] = useState(false);
+  const [hasStop, setHasStop] = useState(true);
   const [countDownStart, setCountDownStart] = useState(false);
   const [itCount, setItCount] = useState(5);
   const [mode, setMode] = useState("prepare");
@@ -81,7 +81,6 @@ function GameRoom() {
 
       if (mode === "game") {
         setCountDownStart(true);
-        setHasStop(false);
       }
     }
   }, [hasStop, isRedadyPoseDetection]);
@@ -135,6 +134,7 @@ function GameRoom() {
           handleItCount={setItCount}
           handleStop={setHasStop}
           difficulty={difficulty}
+          hasStop={hasStop}
         />
       )}
       <UserView>
@@ -148,6 +148,8 @@ function GameRoom() {
               userCanvas={userCanvas}
               peers={peers}
               peersRef={peersRef}
+              hasStop={hasStop}
+              handleStop={setHasStop}
             />
           )}
         </UserCamera>

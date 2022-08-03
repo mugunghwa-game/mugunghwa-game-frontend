@@ -15,6 +15,7 @@ function Game({
   difficulty,
   countDownStart,
   handleCountDownStart,
+  hasStop,
 }) {
   const { hasTouchDownButton, countdownStart, countDown, setIsItLoser } =
     useGame(
@@ -24,7 +25,8 @@ function Game({
       handleStop,
       difficulty,
       countDownStart,
-      handleCountDownStart
+      handleCountDownStart,
+      hasStop
     );
 
   const { it } = useStore();
