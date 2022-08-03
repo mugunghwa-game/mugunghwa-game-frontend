@@ -116,7 +116,6 @@ export default function useGame(
 
     socket.on(SOCKET.PARTICIPANT_REMAINING_OPPORTUNITY, (payload) => {
       handleParticipantUser(payload.participant);
-      // handleStop(true);
     });
 
     socket.on(SOCKET.GAME_END, (payload) => {
